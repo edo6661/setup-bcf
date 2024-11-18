@@ -22,7 +22,8 @@ fun SearchBarCustom(
   onSearch : (String) -> Unit,
   modifier : Modifier = Modifier,
   textStyle : TextStyle = StyledText.MobileSmallRegular,
-  color : Color = ColorPalette.Monochrome300
+  color : Color = ColorPalette.Monochrome300,
+  title : String
 ) {
   var query by remember { mutableStateOf("") }
 
@@ -38,7 +39,7 @@ fun SearchBarCustom(
 
     placeholder = {
       Text(
-        "Cari Pertanyaan",
+        text = title,
         style = textStyle,
         color = color
       )

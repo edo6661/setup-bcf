@@ -53,7 +53,8 @@ fun CustomOutlinedTextField(
   labelDefaultColor : Color = ColorPalette.Monochrome300,
   trailingIcon : @Composable (() -> Unit)? = null,
   readOnly : Boolean = false,
-  borderColor : Color = ColorPalette.Outline
+  borderColor : Color = ColorPalette.Outline,
+  bgColor : Color = Color.White
 ) {
   val isFocused = remember { mutableStateOf(false) }
 
@@ -92,7 +93,8 @@ fun CustomOutlinedTextField(
       textStyle = StyledText.MobileSmallRegular,
       isError = error != null,
       colors = getTextFieldColors(
-        borderColor = borderColor
+        borderColor = borderColor,
+        bgColor = bgColor
       ),
       enabled = isEnabled,
       readOnly = readOnly
@@ -178,13 +180,18 @@ private fun PlaceholderText(placeholder : String) {
 
 @Composable
 private fun getTextFieldColors(
-  borderColor : Color
+  borderColor : Color,
+  bgColor : Color
 ) : TextFieldColors {
 
   return OutlinedTextFieldDefaults.colors(
     unfocusedBorderColor = borderColor,
     focusedBorderColor = borderColor,
     disabledBorderColor = borderColor,
+    unfocusedContainerColor = bgColor,
+    focusedContainerColor = bgColor,
+    disabledContainerColor = bgColor,
+
     errorBorderColor = ColorPalette.Error,
     errorLabelColor = ColorPalette.Error,
     errorLeadingIconColor = ColorPalette.Error,

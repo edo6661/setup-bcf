@@ -67,7 +67,8 @@ fun TopSection(
       verticalAlignment = Alignment.CenterVertically
     ) {
       SearchBarCustom(
-        onSearch = onSearch
+        onSearch = onSearch,
+        title = "Cari Penilaian",
       )
 
       SmallFloatingActionButton(

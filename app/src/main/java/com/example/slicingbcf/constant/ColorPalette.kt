@@ -54,6 +54,7 @@ object ColorPalette {
   val Muted = Color(0xFF6B6B6B) // #6B6B6B
   val Shadow = Color(0x13000000)
   val PrimaryBorder = Color(0xFF333333) // #333333
+  val PrimaryContainer = Color(0xFFEADDFF) // #EADDFF
 
   // keeping the original color from figma aswell
   val colors = mapOf(
@@ -100,6 +101,7 @@ object ColorPalette {
     "Status Success" to "#28A745",
     "Bg Status Success" to "#B3F0D5C",
     "Primary Border" to "#333333",
-    "Success 500" to "#198754"
+    "Success 500" to "#198754",
+    "Primary Container" to "#EADDFF"
   )
 }
