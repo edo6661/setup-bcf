@@ -15,7 +15,7 @@ fun NavGraphBuilder.mentorNavGraph(
   navController : NavHostController
 ) {
   navigation(
-    startDestination = Screen.Mentor.DetailPitchdeck("1").route, route = "mentor"
+    startDestination = Screen.Mentor.MoreDetailPitchdeck("1").route, route = "mentor"
   ) {
     composable(
       route = Screen.Mentor.PenilaianPeserta.route
