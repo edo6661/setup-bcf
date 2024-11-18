@@ -53,6 +53,7 @@ fun CustomOutlinedTextField(
   labelDefaultColor : Color = ColorPalette.Monochrome300,
   trailingIcon : @Composable (() -> Unit)? = null,
   readOnly : Boolean = false,
+  borderColor : Color = ColorPalette.Outline
 ) {
   val isFocused = remember { mutableStateOf(false) }
 
@@ -90,7 +91,9 @@ fun CustomOutlinedTextField(
       placeholder = { PlaceholderText(placeholder) },
       textStyle = StyledText.MobileSmallRegular,
       isError = error != null,
-      colors = getTextFieldColors(),
+      colors = getTextFieldColors(
+        borderColor = borderColor
+      ),
       enabled = isEnabled,
       readOnly = readOnly
     )
@@ -174,10 +177,14 @@ private fun PlaceholderText(placeholder : String) {
 }
 
 @Composable
-private fun getTextFieldColors() : TextFieldColors {
+private fun getTextFieldColors(
+  borderColor : Color
+) : TextFieldColors {
+
   return OutlinedTextFieldDefaults.colors(
-    unfocusedBorderColor = ColorPalette.Outline,
-    focusedBorderColor = ColorPalette.Outline,
+    unfocusedBorderColor = borderColor,
+    focusedBorderColor = borderColor,
+    disabledBorderColor = borderColor,
     errorBorderColor = ColorPalette.Error,
     errorLabelColor = ColorPalette.Error,
     errorLeadingIconColor = ColorPalette.Error,
@@ -202,12 +209,11 @@ fun CustomClickableTextField(
     modifier = modifier
       .padding(16.dp)
       .clickable(onClick = onClick)
-      .border(1.dp, Color.Gray, shape = RoundedCornerShape(8.dp)) // Menambahkan border
-      .background(Color.White, shape = RoundedCornerShape(8.dp)) // Background putih
-      .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp) // Padding di dalam Box
+      .border(1.dp, Color.Gray, shape = RoundedCornerShape(8.dp))
+      .background(Color.White, shape = RoundedCornerShape(8.dp))
+      .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp)
   ) {
     Column {
-      // Label di atas input
       Text(
         text = label,
         style = TextStyle(
@@ -220,7 +226,6 @@ fun CustomClickableTextField(
 
       Spacer(modifier = Modifier.height(4.dp))
 
-      // Input text di bawah label
       BasicTextField(
         value = value,
         onValueChange = onValueChange,
@@ -230,7 +235,6 @@ fun CustomClickableTextField(
         modifier = Modifier.fillMaxWidth()
       )
 
-      // Placeholder jika value kosong
       if (value.isEmpty()) {
         Text(
           text = placeholder,
@@ -239,7 +243,6 @@ fun CustomClickableTextField(
         )
       }
 
-      // Trailing icon di sebelah kanan
       if (trailingIcon != null) {
         Box(modifier = Modifier.align(Alignment.End)) {
           trailingIcon()

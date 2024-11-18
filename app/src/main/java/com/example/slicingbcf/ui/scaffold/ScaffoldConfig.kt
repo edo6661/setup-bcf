@@ -55,6 +55,13 @@ fun scaffoldConfig(currentRoute : String?)
       )
     }
 
+    "pusat-informasi/{id}"           -> {
+      ScaffoldConfig(
+        showMainNav = false,
+        showBackNav = true,
+      )
+    }
+
     else                             -> ScaffoldConfig()
 
   }

@@ -35,6 +35,13 @@ fun dropdownItemsPeserta(
 ) : List<DropdownItem> {
   return listOf(
     DropdownItem(
+      text = "Pusat Informasi",
+      onClick = {
+        navigateAndCloseSideNav(Screen.Peserta.PusatInformasi.route)
+      },
+      route = Screen.Peserta.PusatInformasi.route
+    ),
+    DropdownItem(
       text = "Data Peserta",
       onClick = {
         navigateAndCloseSideNav(Screen.Peserta.DataPeserta.route)
