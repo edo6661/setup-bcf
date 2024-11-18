@@ -9,6 +9,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
@@ -31,7 +32,8 @@ fun PengaturanScreen(
   ) {
     Text(
       text = "Pengaturan",
-      style = StyledText.MobileLargeMedium
+      style = StyledText.MobileLargeMedium,
+      textAlign = TextAlign.Center
     )
     Column(
       verticalArrangement = Arrangement.spacedBy(16.dp)

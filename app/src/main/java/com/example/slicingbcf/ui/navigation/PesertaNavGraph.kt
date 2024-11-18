@@ -49,8 +49,12 @@ fun NavGraphBuilder.pesertaNavGraph(
       )
     }
     composable(Screen.Peserta.WorksheetPeserta.route) {
+      val onNavigateDetailWorksheetPeserta = { id : String ->
+        navController.navigate("worksheet-peserta/$id")
+      }
       WorksheetPesertaScreen(
         modifier = modifier,
+        onNavigateDetailWorksheetPeserta = onNavigateDetailWorksheetPeserta
       )
     }
     composable(
@@ -60,9 +64,8 @@ fun NavGraphBuilder.pesertaNavGraph(
       val id = backStackEntry.arguments?.getString("id") ?: ""
       if (id.isEmpty()) throw IllegalStateException("id must not be empty")
       DetailWorksheetPesertaScreen(
-        modifier = modifier.padding(
-          vertical = 16.dp
-        ), id = id
+        modifier = modifier,
+        id = id
       )
     }
   }

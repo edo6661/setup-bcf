@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
@@ -17,9 +18,8 @@ fun SecondaryButton(
   text : String,
   color : Color = ColorPalette.PrimaryColor700,
   borderColor : Color = ColorPalette.PrimaryColor700,
-
-
-  ) {
+  style : TextStyle = StyledText.MobileSmallRegular,
+) {
   OutlinedButton(
     onClick = onClick,
     colors = ButtonDefaults.outlinedButtonColors(
@@ -32,7 +32,7 @@ fun SecondaryButton(
   ) {
     Text(
       text = text,
-      style = StyledText.MobileSmallRegular,
+      style = style,
       color = ColorPalette.PrimaryColor700
     )
   }

@@ -76,6 +76,13 @@ fun dropdownItemsPeserta(
       },
       route = Screen.Peserta.Pengaturan.route
     ),
+    DropdownItem(
+      text = "Worksheet Peserta",
+      onClick = {
+        navigateAndCloseSideNav(Screen.Peserta.WorksheetPeserta.route)
+      },
+      route = Screen.Peserta.WorksheetPeserta.route
+    ),
   )
 }
 
@@ -96,7 +103,14 @@ fun dropdownItemsMentor(
         Log.d("SideNav", "Umpan Balik Mentor clicked")
       },
       route = null
-    )
+    ),
+    DropdownItem(
+      text = "Pitchdeck",
+      onClick = {
+        navigateAndCloseSideNav(Screen.Mentor.Pitchdeck.route)
+      },
+      route = Screen.Mentor.Pitchdeck.route
+    ),
   )
 }
 

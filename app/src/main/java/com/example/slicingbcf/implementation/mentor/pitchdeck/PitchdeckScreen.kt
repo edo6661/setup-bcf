@@ -1,4 +1,4 @@
-package com.example.slicingbcf.implementation.peserta.worksheet_peserta
+package com.example.slicingbcf.implementation.mentor.pitchdeck
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,18 +16,19 @@ import com.example.slicingbcf.data.local.worksheetsPeserta
 import com.example.slicingbcf.ui.shared.pitchdeck_worksheet.WorksheetItem
 
 @Composable
-fun WorksheetPesertaScreen(
+fun PitchdeckScreen(
   modifier : Modifier = Modifier,
-  onNavigateDetailWorksheetPeserta : (String) -> Unit
+  onNavigateDetailPitchdeck : (String) -> Unit
 ) {
   Column(
     verticalArrangement = Arrangement.spacedBy(32.dp),
     modifier = modifier.padding(
-      horizontal = 16.dp
+      horizontal = 16.dp,
+      vertical = 24.dp
     )
   ) {
     Text(
-      text = "Lembar Kerja",
+      text = "Pitch Deck",
       style = StyledText.MobileMediumMedium,
       color = ColorPalette.Black,
       textAlign = TextAlign.Center,
@@ -39,9 +40,7 @@ fun WorksheetPesertaScreen(
       items(worksheetsPeserta.size) { index ->
         WorksheetItem(
           worksheet = worksheetsPeserta[index],
-          onClick = {
-            onNavigateDetailWorksheetPeserta(worksheetsPeserta[index].title)
-          }
+          onClick = { onNavigateDetailPitchdeck(worksheetsPeserta[index].title) }
         )
       }
 

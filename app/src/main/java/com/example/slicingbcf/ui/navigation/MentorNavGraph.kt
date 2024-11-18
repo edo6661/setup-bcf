@@ -6,13 +6,16 @@ import androidx.navigation.compose.composable
 import com.example.slicingbcf.implementation.mentor.feedback_peserta.FeedbackPesertaScreen
 import com.example.slicingbcf.implementation.mentor.penilaian_peserta.DetailPenilaianPesertaScreen
 import com.example.slicingbcf.implementation.mentor.penilaian_peserta.PenilaianPesertaScreen
+import com.example.slicingbcf.implementation.mentor.pitchdeck.DetailPitchdeckScreen
+import com.example.slicingbcf.implementation.mentor.pitchdeck.MoreDetailPitchdeckScreen
+import com.example.slicingbcf.implementation.mentor.pitchdeck.PitchdeckScreen
 
 fun NavGraphBuilder.mentorNavGraph(
   modifier : Modifier,
   navController : NavHostController
 ) {
   navigation(
-    startDestination = Screen.Mentor.FeedbackPeserta.route, route = "mentor"
+    startDestination = Screen.Mentor.DetailPitchdeck("1").route, route = "mentor"
   ) {
     composable(
       route = Screen.Mentor.PenilaianPeserta.route
@@ -44,6 +47,46 @@ fun NavGraphBuilder.mentorNavGraph(
       FeedbackPesertaScreen(
         modifier = modifier
       )
+    }
+    composable(
+      route = Screen.Mentor.Pitchdeck.route
+    ) {
+
+      val onNavigateDetailPitchdeck = { id : String ->
+        navController.navigateSingleTop("pitchdeck/$id")
+      }
+
+      PitchdeckScreen(
+        modifier = modifier,
+        onNavigateDetailPitchdeck = onNavigateDetailPitchdeck
+      )
+    }
+    composable(
+      route = "pitchdeck/{id}",
+      arguments = listOf(navArgument("id") { type = NavType.StringType })
+    ) {
+
+      val onNavigateMoreDetailPitchdeck = { id : String ->
+        navController.navigateSingleTop("pitchdeck/$id/more")
+      }
+
+      DetailPitchdeckScreen(
+        modifier = modifier,
+        onNavigateMoreDetailPitchdeck = onNavigateMoreDetailPitchdeck,
+        id = it.arguments?.getString("id") ?: "1"
+      )
+    }
+
+    composable(
+      route = "pitchdeck/{id}/more",
+      arguments = listOf(navArgument("id") { type = NavType.StringType })
+    ) {
+      val id = it.arguments?.getString("id") ?: "1"
+
+      MoreDetailPitchdeckScreen(
+        modifier = modifier,
+
+        )
     }
   }
 
