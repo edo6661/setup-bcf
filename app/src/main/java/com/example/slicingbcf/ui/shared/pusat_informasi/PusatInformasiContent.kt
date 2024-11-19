@@ -1,5 +1,6 @@
 package com.example.slicingbcf.ui.shared.pusat_informasi
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,13 +17,16 @@ import com.example.slicingbcf.R
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
 import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextField
+import com.example.slicingbcf.ui.shared.textfield.OutlineTextFieldComment
 
 
 @Composable
 fun PusatInformasiContent(
   data : DataPusatInformasi,
   isCommentable : Boolean = true,
-  isEnabledTextField : Boolean = false
+  isEnabledTextField : Boolean = false,
+  onSubmitComment : () -> Unit = {},
+  onCancelComment : () -> Unit = {},
 ) {
   Column(
     verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -71,22 +75,17 @@ fun PusatInformasiContent(
       style = StyledText.MobileBaseRegular,
       color = ColorPalette.OnSurfaceVariant
     )
-    // TODO: kalo isEnabledTextField nya itu true, kalo di klik bakal muncul button batal dan kirim, more spesifically di figma prototype liat aja sendiri
     if (isCommentable) {
-      CustomOutlinedTextField(
+     
+      OutlineTextFieldComment(
         value = "",
         onValueChange = {},
+        onSubmit = { Log.d("submit", "submit") },
         label = "Tambah komentar",
         placeholder = "Tambah komentar",
-        rounded = 80,
-        labelDefaultColor = ColorPalette.Monochrome300,
-        labelFocusedColor = ColorPalette.Monochrome500,
-
-        modifier = Modifier.fillMaxWidth(),
         isEnabled = isEnabledTextField,
-        borderColor = ColorPalette.Outline,
+      )
 
-        )
     }
   }
 }

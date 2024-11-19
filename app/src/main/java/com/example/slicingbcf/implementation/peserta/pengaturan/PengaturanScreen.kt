@@ -113,7 +113,8 @@ private fun TextFieldWithTitle(
       isPassword = true,
       isPasswordVisible = isPasswordVisible,
       modifier = Modifier.fillMaxWidth(),
-      rounded = 40
-    )
+      rounded = 40,
+
+      )
   }
 }

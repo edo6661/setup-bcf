@@ -42,8 +42,9 @@ private fun BottomSection(
     verticalArrangement = Arrangement.spacedBy(20.dp)
   ) {
     CurrentPusatInformasi(
-      data = mockDataPusatInformasi[0]
-    )
+      data = mockDataPusatInformasi[0],
+
+      )
     mockDataPusatInformasi.forEach {
       CommentsPusatInformasi(
         data = it,
@@ -71,6 +72,8 @@ private fun TopSection(
 @Composable
 private fun CurrentPusatInformasi(
   data : DataPusatInformasi,
+  onSubmitComment : () -> Unit = {},
+  onCancelComment : () -> Unit = {},
 ) {
   Column(
     modifier = Modifier
@@ -88,7 +91,9 @@ private fun CurrentPusatInformasi(
     PusatInformasiContent(
       data,
       true,
-      true
+      true,
+      onSubmitComment,
+      onCancelComment
     )
   }
 }

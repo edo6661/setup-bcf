@@ -20,7 +20,7 @@ import com.example.slicingbcf.constant.StyledText
 import com.example.slicingbcf.ui.shared.pusat_informasi.DataPusatInformasi
 import com.example.slicingbcf.ui.shared.pusat_informasi.PusatInformasiContent
 import com.example.slicingbcf.ui.shared.pusat_informasi.mockDataPusatInformasi
-import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextField
+import com.example.slicingbcf.ui.shared.textfield.OutlineTextFieldComment
 import com.example.slicingbcf.ui.shared.textfield.SearchBarCustom
 
 @Composable
@@ -121,14 +121,13 @@ private fun TopSection(
           color = ColorPalette.PrimaryColor700,
         )
       }
-      CustomOutlinedTextField(
+      OutlineTextFieldComment(
         value = "",
         onValueChange = {},
-        label = "Tulis pertanyaanmu disini",
-        placeholder = "Tulis pertanyaanmu disini",
-        modifier = Modifier.fillMaxWidth(),
-        borderColor = ColorPalette.Monochrome400,
-        labelDefaultColor = ColorPalette.Monochrome400,
+        onSubmit = { Log.d("submit", "submit") },
+        label = "Buka Obrolan...",
+        placeholder = "Buka Obrolan...",
+        isEnabled = true
       )
     }
     HorizontalDivider(

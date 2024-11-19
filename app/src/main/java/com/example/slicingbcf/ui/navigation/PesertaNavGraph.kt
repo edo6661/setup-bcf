@@ -20,7 +20,7 @@ fun NavGraphBuilder.pesertaNavGraph(
   navController : NavHostController
 ) {
   navigation(
-    startDestination = Screen.Peserta.DetailPusatInformasi("1").route, route = "peserta"
+    startDestination = Screen.Peserta.PusatInformasi.route, route = "peserta"
   ) {
     composable(Screen.Peserta.DataPeserta.route) {
       DataPesertaScreen(
