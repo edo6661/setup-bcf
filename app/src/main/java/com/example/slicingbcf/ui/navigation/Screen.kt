@@ -29,6 +29,9 @@ sealed class Screen(val route : String) {
     object Pitchdeck : Mentor("pitchdeck")
     data class DetailPitchdeck(val id : String) : Mentor("pitchdeck/$id")
     data class MoreDetailPitchdeck(val id : String) : Mentor("pitchdeck/$id/more")
+    object ForumDiskusi : Mentor("forum-diskusi")
+    data class DetailForumDiskusi(val id : String) : Mentor("forum-diskusi/$id")
+    object DataPeserta : Mentor("data-peserta")
 
   }
 

@@ -118,6 +118,20 @@ fun dropdownItemsMentor(
       },
       route = Screen.Mentor.Pitchdeck.route
     ),
+    DropdownItem(
+      text = "Forum Diskusi",
+      onClick = {
+        navigateAndCloseSideNav(Screen.Mentor.ForumDiskusi.route)
+      },
+      route = Screen.Mentor.ForumDiskusi.route
+    ),
+    DropdownItem(
+      text = "Data Peserta",
+      onClick = {
+        navigateAndCloseSideNav(Screen.Mentor.DataPeserta.route)
+      },
+      route = Screen.Mentor.DataPeserta.route
+    ),
   )
 }
 

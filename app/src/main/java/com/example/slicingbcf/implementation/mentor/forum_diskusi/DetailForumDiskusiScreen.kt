@@ -1,4 +1,4 @@
-package com.example.slicingbcf.implementation.peserta.pusat_informasi
+package com.example.slicingbcf.implementation.mentor.forum_diskusi
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -17,11 +17,13 @@ import com.example.slicingbcf.ui.shared.pusat_informasi.DataPusatInformasi
 import com.example.slicingbcf.ui.shared.pusat_informasi.PusatInformasiContent
 import com.example.slicingbcf.ui.shared.pusat_informasi.mockDataPusatInformasi
 
+
 @Composable
-fun DetailPusatInformasiScreen(
+fun DetailForumDiskusiScreen(
   modifier : Modifier,
   id : String
 ) {
+
   DiscussionScaffold(
     onClick = { Log.d("discussion", "discussion") }
   ) { innerPadding ->

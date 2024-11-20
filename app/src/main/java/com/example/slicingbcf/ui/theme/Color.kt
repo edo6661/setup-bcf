@@ -3,7 +3,6 @@ package com.example.slicingbcf.ui.theme
 import androidx.compose.ui.graphics.Color
 
 
-// Define your Color variables
 val OnPrimary = Color(0xFFFFFFFF) // #FFFFFF
 val OnSurface = Color(0xFF1D1B20) // #1D1B20
 val OnSurfaceVariant = Color(0xFF49454F) // #49454F

@@ -62,6 +62,13 @@ fun scaffoldConfig(currentRoute : String?)
       )
     }
 
+    "forum-diskusi/{id}"             -> {
+      ScaffoldConfig(
+        showMainNav = false,
+        showBackNav = true,
+      )
+    }
+
     else                             -> ScaffoldConfig()
 
   }

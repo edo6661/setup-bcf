@@ -1,4 +1,4 @@
-package com.example.slicingbcf.implementation.peserta.pusat_informasi
+package com.example.slicingbcf.implementation.mentor.forum_diskusi
 
 import android.util.Log
 import androidx.compose.foundation.*
@@ -25,9 +25,9 @@ import com.example.slicingbcf.ui.shared.textfield.OutlineTextFieldComment
 import com.example.slicingbcf.ui.shared.textfield.SearchBarCustom
 
 @Composable
-fun PusatInformasiScreen(
-  modifier : Modifier = Modifier,
-  onNavigateDetailPusatInformasi : (String) -> Unit
+fun ForumDiskusiScreen(
+  modifier : Modifier,
+  onNavigateDetailForumDiskusi : (String) -> Unit
 ) {
   val scrollState = rememberScrollState()
 
@@ -38,13 +38,15 @@ fun PusatInformasiScreen(
       modifier = modifier
         .padding(innerPadding)
         .statusBarsPadding()
-        .padding(horizontal = 16.dp)
+        .padding(
+          horizontal = 16.dp,
+        )
         .verticalScroll(scrollState),
       verticalArrangement = Arrangement.spacedBy(28.dp)
     ) {
       TopSection()
       BottomSection(
-        onNavigateDetailPusatInformasi = onNavigateDetailPusatInformasi
+        onNavigateDetailForumDiskusi = onNavigateDetailForumDiskusi
       )
     }
   }
@@ -52,7 +54,7 @@ fun PusatInformasiScreen(
 
 @Composable
 private fun BottomSection(
-  onNavigateDetailPusatInformasi : (String) -> Unit
+  onNavigateDetailForumDiskusi : (String) -> Unit
 ) {
   Column(
     verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -60,7 +62,7 @@ private fun BottomSection(
     mockDataPusatInformasi.forEach {
       PusatInformasiItem(
         data = it,
-        onClick = { onNavigateDetailPusatInformasi(it.username ?: "") }
+        onClick = { onNavigateDetailForumDiskusi(it.username ?: "") }
       )
     }
   }
