@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
@@ -17,25 +18,30 @@ import com.example.slicingbcf.ui.shared.dropdown.DropdownText
 
 @Composable
 fun CustomOutlinedTextFieldDropdown(
+  modifier : Modifier = Modifier,
   value : String,
   onValueChange : (String) -> Unit,
   expanded : Boolean,
   onChangeExpanded : (Boolean) -> Unit,
   label : String,
   placeholder : String,
-  dropdownItems : List<String>
-) {
+  dropdownItems : List<String>,
+  labelDefaultColor : Color = ColorPalette.PrimaryColor700,
+  labelFocusedColor : Color = ColorPalette.PrimaryColor700,
+
+  ) {
 
   Column {
     CustomOutlinedTextField(
+      modifier = modifier.fillMaxWidth(),
       value = value,
       onValueChange = onValueChange,
       label = label,
       placeholder = placeholder,
       rounded = 40,
       readOnly = true,
-      labelFocusedColor = ColorPalette.PrimaryColor700,
-      labelDefaultColor = ColorPalette.PrimaryColor700,
+      labelFocusedColor = labelFocusedColor,
+      labelDefaultColor = labelDefaultColor,
       labelFocusedStyle = StyledText.MobileSmallMedium,
       trailingIcon = {
         Icon(
@@ -50,9 +56,8 @@ fun CustomOutlinedTextFieldDropdown(
             }
         )
       },
-      modifier = Modifier
-        .fillMaxWidth()
-    )
+
+      )
 
     DropdownText(
       expanded = expanded,

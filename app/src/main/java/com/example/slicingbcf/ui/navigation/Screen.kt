@@ -7,6 +7,7 @@ sealed class Screen(val route : String) {
   sealed class Auth(route : String) : Screen(route) {
     object Login : Auth("login")
     object ForgotPassword : Auth("forgot-password")
+    object Registrasi : Peserta("registrasi")
   }
 
   sealed class Peserta(route : String) : Screen(route) {
@@ -19,6 +20,8 @@ sealed class Screen(val route : String) {
     object Pengaturan : Peserta("pengaturan")
     object PusatInformasi : Mentor("pusat-informasi")
     data class DetailPusatInformasi(val id : String) : Mentor("pusat-informasi/$id")
+
+    object PenilaianPeserta : Peserta("penilaian-peserta")
 
   }
 

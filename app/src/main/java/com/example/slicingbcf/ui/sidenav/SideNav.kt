@@ -165,6 +165,12 @@ private fun BottomSideNav(
           navigateAndCloseSideNav(Screen.Auth.Login.route)
         }
       )
+      PrimaryButton(
+        text = "Daftar",
+        onClick = {
+          navigateAndCloseSideNav(Screen.Auth.Registrasi.route)
+        }
+      )
       SideNavDropdownGuest(
         navigateAndCloseSideNav,
         isActiveRoute

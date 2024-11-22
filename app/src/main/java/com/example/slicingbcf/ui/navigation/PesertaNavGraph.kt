@@ -9,6 +9,7 @@ import com.example.slicingbcf.implementation.peserta.kelompok_mentoring.Kelompok
 import com.example.slicingbcf.implementation.peserta.pengaturan.PengaturanScreen
 import com.example.slicingbcf.implementation.peserta.pengumuman_peserta.DetailPengumumanPesertaScreen
 import com.example.slicingbcf.implementation.peserta.pengumuman_peserta.PengumumanPesertaScreen
+import com.example.slicingbcf.implementation.peserta.penilaian_peserta.PenilaianPesertaScreen
 import com.example.slicingbcf.implementation.peserta.pusat_informasi.DetailPusatInformasiScreen
 import com.example.slicingbcf.implementation.peserta.pusat_informasi.PusatInformasiScreen
 import com.example.slicingbcf.implementation.peserta.worksheet_peserta.DetailWorksheetPesertaScreen
@@ -20,7 +21,7 @@ fun NavGraphBuilder.pesertaNavGraph(
   navController : NavHostController
 ) {
   navigation(
-    startDestination = Screen.Peserta.DataPeserta.route, route = "peserta"
+    startDestination = Screen.Peserta.PenilaianPeserta.route, route = "peserta"
   ) {
     composable(Screen.Peserta.DataPeserta.route) {
       DataPesertaScreen(
@@ -72,6 +73,13 @@ fun NavGraphBuilder.pesertaNavGraph(
       route = Screen.Peserta.Pengaturan.route,
     ) {
       PengaturanScreen(
+        modifier = modifier,
+      )
+    }
+    composable(
+      route = Screen.Peserta.PenilaianPeserta.route,
+    ) {
+      PenilaianPesertaScreen(
         modifier = modifier,
       )
     }
