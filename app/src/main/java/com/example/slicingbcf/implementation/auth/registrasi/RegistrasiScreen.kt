@@ -18,10 +18,14 @@ import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
 import com.example.slicingbcf.ui.animations.AnimatedContentSlide
 import com.example.slicingbcf.ui.shared.PrimaryButton
+import com.example.slicingbcf.ui.shared.message.SecondaryButton
 import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextField
 import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextFieldDropdown
 import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextFieldDropdownDate
 import com.example.slicingbcf.util.convertMillisToDate
+
+
+// TODO: build second screen - latest screen
 
 @Composable
 fun RegistrasiScreen(modifier : Modifier) {
@@ -130,6 +134,12 @@ private fun BottomSection(
   var expandedDate by remember { mutableStateOf(false) }
   var expandedLembagaSosial by remember { mutableStateOf(false) }
   var expandedFokusIsu by remember { mutableStateOf(false) }
+  var expandedPilihKota by remember { mutableStateOf(false) }
+  var expandedWilayahJangkauanProgram by remember { mutableStateOf(false) }
+  var expandedJangkauanProgram by remember { mutableStateOf(false) }
+  var expandedJenisKelamin by remember { mutableStateOf(false) }
+  var expandedPendidikan by remember { mutableStateOf(false) }
+
 
   val datePickerState = rememberDatePickerState()
   val selectedDate = datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: ""
@@ -176,9 +186,36 @@ private fun BottomSection(
 
           1 -> SecondScreen(
             prevIndicatorProgress = prevIndicatorProgress,
-            nextIndicatorProgress = nextIndicatorProgress
+            nextIndicatorProgress = nextIndicatorProgress,
+            expandedPilihKota = expandedPilihKota,
+            expandedJangkauanProgram = expandedJangkauanProgram,
+            expandedWilayahJangkauanProgram = expandedJangkauanProgram,
+            onExpandedJangkauanProgramChange = {
+              expandedJangkauanProgram = it
+            },
+            onExpandedPilihKotaChange = {
+              expandedPilihKota = it
+            },
+            onExpandedWilayahJangkauanProgramChange = {
+              expandedWilayahJangkauanProgram = it
+            }
+          )
+
+          2 -> ThirdScreen(
+            prevIndicatorProgress = prevIndicatorProgress,
+            nextIndicatorProgress = nextIndicatorProgress,
+            expandedPendidikan = expandedPendidikan,
+            expandedJenisKelamin = expandedJenisKelamin,
+            onExpandedPendidikanChange = {
+              expandedPendidikan = it
+            },
+            onExpandedJenisKelaminChange = {
+              expandedJenisKelamin = it
+            }
+
           )
         }
+
 
         LaunchedEffect(currentScreen) { onInitialScreenChange(currentScreen) }
       }
@@ -202,12 +239,8 @@ private fun FirstScreen(
   onExpandedLembagaSosialChange : (Boolean) -> Unit,
   expandedFokusIsu : Boolean,
   onExpandedFokusIsuChange : (Boolean) -> Unit,
-
-
   nextIndicatorProgress : () -> Unit,
-
-
-  ) {
+) {
 
   CustomOutlinedTextField(
     label = "Nama Lembaga",
@@ -319,19 +352,11 @@ private fun FirstScreen(
     labelDefaultColor = ColorPalette.Monochrome400,
     rounded = 40
   )
-  Box(
-    modifier = Modifier
-      .fillMaxWidth(),
-    contentAlignment = Alignment.CenterEnd
-  ) {
-    PrimaryButton(
-      text = "Lanjut",
-      onClick = {
-        nextIndicatorProgress()
-      }
-    )
-
-  }
+  // TODO: tambahin unggah proposal program dengan mitra pake dotten button, klik untuk unggah file
+  NextPrevButton(
+    nextIndicatorProgress = nextIndicatorProgress,
+    isPrevExist = false
+  )
 
 }
 
@@ -339,35 +364,377 @@ private fun FirstScreen(
 @Composable
 private fun SecondScreen(
   prevIndicatorProgress : () -> Unit,
-  nextIndicatorProgress : () -> Unit
+  nextIndicatorProgress : () -> Unit,
+  expandedJangkauanProgram : Boolean,
+  onExpandedJangkauanProgramChange : (Boolean) -> Unit,
+  expandedWilayahJangkauanProgram : Boolean,
+  onExpandedWilayahJangkauanProgramChange : (Boolean) -> Unit,
+  expandedPilihKota : Boolean,
+  onExpandedPilihKotaChange : (Boolean) -> Unit,
 ) {
+  CustomOutlinedTextFieldDropdown(
+    label = "Jangkauan Program",
+    value = "",
+    onValueChange = {},
+    placeholder = "Pilih Jangkauan Program",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    dropdownItems = provinsis,
+    expanded = expandedJangkauanProgram,
+    onChangeExpanded = {
+      onExpandedJangkauanProgramChange(it)
+    }
+  )
+  CustomOutlinedTextFieldDropdown(
+    label = "Wilayah Jangkauan Program",
+    value = "",
+    onValueChange = {},
+    placeholder = "Pilih Wilayah Jangkauan Program",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    dropdownItems = provinsis,
+    expanded = expandedWilayahJangkauanProgram,
+    onChangeExpanded = {
+      onExpandedWilayahJangkauanProgramChange(it)
+    }
+  )
   Column(
-    verticalArrangement = Arrangement.spacedBy(24.dp)
+    verticalArrangement = Arrangement.spacedBy(12.dp)
   ) {
     Text(
-      text = "Feedback Peserta",
-      style = StyledText.MobileLargeBold
+      text = "Jumlah Angka Penerimaan Manfaat*",
+      style = StyledText.MobileSmallMedium,
+      color = ColorPalette.PrimaryColor700
     )
-    Row(
-      modifier = Modifier
-        .fillMaxWidth(),
-      horizontalArrangement = Arrangement.End,
-      verticalAlignment = Alignment.CenterVertically
+    // TODO: benerin agar ada jumlah di sebelah pilih kota / kabupaten
+    Column(
+      verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-      PrimaryButton(
-        text = "Kembali",
-        onClick = {
-          prevIndicatorProgress()
-        }
+      Row(
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.fillMaxWidth()
+      ) {
+        CustomOutlinedTextFieldDropdown(
+          label = "DKI Jakarta",
+          value = "",
+          onValueChange = {},
+          placeholder = "Pilih kota/kabupaten",
+          modifier = Modifier
+            .fillMaxWidth(), labelDefaultColor = ColorPalette.Monochrome400,
+          dropdownItems = provinsis,
+          expanded = expandedPilihKota,
+          onChangeExpanded = {
+            onExpandedPilihKotaChange(it)
+          }
+        )
+//      CustomOutlinedTextField(
+//        modifier = Modifier
+//          .weight(0.3f),
+//        value = "",
+//        onValueChange = {},
+//        label = "Jumlah",
+//        placeholder = "Masukkan Jumlah"
+//      )
+      }
+      // TODO: tambahin agar ada trailing icon PLUS di kiri tambah
+      SecondaryButton(
+        onClick = {},
+        text = "Tambah"
       )
-      PrimaryButton(
-        text = "Lanjut",
-        onClick = {
-          nextIndicatorProgress()
-        }
-      )
-
     }
+  }
+  CustomOutlinedTextField(
+    label = "Target Utama Program",
+    value = "",
+    onValueChange = {},
+    placeholder = "Ketik target utama program",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    rounded = 40
+  )
+  // TODO: tambahin unggah proposal program dengan mitra pake dotten button, klik untuk unggah file
+
+  NextPrevButton(
+    nextIndicatorProgress = nextIndicatorProgress,
+    prevIndicatorProgress = prevIndicatorProgress,
+  )
+
+}
+
+@Composable
+private fun ThirdScreen(
+  prevIndicatorProgress : () -> Unit,
+  nextIndicatorProgress : () -> Unit,
+  expandedPendidikan : Boolean,
+  onExpandedPendidikanChange : (Boolean) -> Unit,
+  expandedJenisKelamin : Boolean,
+  onExpandedJenisKelaminChange : (Boolean) -> Unit,
+
+
+  ) {
+  CustomOutlinedTextField(
+    label = "Nama Lengkap Peserta",
+    value = "",
+    onValueChange = {},
+    placeholder = "Masukkan nama lengkap",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    rounded = 40
+  )
+  CustomOutlinedTextField(
+    label = "Posisi",
+    value = "",
+    onValueChange = {},
+    placeholder = "Masukkan posisi",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    rounded = 40
+  )
+
+  CustomOutlinedTextFieldDropdown(
+    label = "Pendidikan Terakhir",
+    value = "",
+    onValueChange = {},
+    placeholder = "Pilih Pendidikan Terakhir",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    dropdownItems = provinsis,
+    expanded = expandedPendidikan,
+    onChangeExpanded = {
+      onExpandedPendidikanChange(it)
+    }
+  )
+  CustomOutlinedTextField(
+    label = "Jurusan Pendidikan Terakhir",
+    value = "",
+    onValueChange = {},
+    placeholder = "Ketik jurusan pendidikan terakhir anda",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    rounded = 40
+  )
+
+  CustomOutlinedTextFieldDropdown(
+    label = "Jenis Kelamin",
+    value = "",
+    onValueChange = {},
+    placeholder = "Pilih jenis kelamin anda",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    dropdownItems = provinsis,
+    expanded = expandedJenisKelamin,
+    onChangeExpanded = {
+      onExpandedJenisKelaminChange(it)
+    }
+  )
+  CustomOutlinedTextField(
+    label = "Nomor Whatsapp Peserta",
+    value = "",
+    onValueChange = {},
+    placeholder = "Contoh: 08980861214",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    rounded = 40
+  )
+
+  CustomOutlinedTextField(
+    label = "Email Peserta",
+    value = "",
+    onValueChange = {},
+    placeholder = "Contoh: @gmail.com",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    rounded = 40
+  )
+  // TODO: tambahin unggah ktp, cv pake dotten button, klik untuk unggah file dan lain lain
+  NextPrevButton(
+    nextIndicatorProgress = nextIndicatorProgress,
+    prevIndicatorProgress = prevIndicatorProgress,
+  )
+
+
+}
+
+@Composable
+private fun ThirdScreen(
+  prevIndicatorProgress : () -> Unit,
+  nextIndicatorProgress : () -> Unit,
+  expandedPernahMengikutiPelatihan : Boolean,
+  onExpandedPernahMengikutiPelatihanChange : (Boolean) -> Unit
+
+) {
+  Column(
+    verticalArrangement = Arrangement.spacedBy(12.dp)
+  ) {
+    Text(
+      text = "Apakah anda pernah mengikuti pelatihan atau memiliki pengetahuan terkait desain program sebelum mendaftar LEAD Indonesia 2024",
+      style = StyledText.MobileSmallMedium,
+      color = ColorPalette.PrimaryColor700
+    )
+    CustomOutlinedTextFieldDropdown(
+      label = "Jenis Kelamin",
+      value = "",
+      onValueChange = {},
+      placeholder = "Pilih jenis kelamin anda",
+      modifier = Modifier.fillMaxWidth(),
+      labelDefaultColor = ColorPalette.Monochrome400,
+      dropdownItems = provinsis,
+      expanded = expandedPernahMengikutiPelatihan,
+      onChangeExpanded = {
+        onExpandedPernahMengikutiPelatihanChange(it)
+      }
+    )
+
+  }
+  Column(
+    verticalArrangement = Arrangement.spacedBy(12.dp)
+  ) {
+    Text(
+      text = "Apakah anda ketahui terkat desain program?",
+      style = StyledText.MobileSmallMedium,
+      color = ColorPalette.PrimaryColor700
+    )
+    CustomOutlinedTextField(
+      label = "Pengetahuanmu terkait LEAD Indonesia",
+      value = "",
+      onValueChange = {},
+      placeholder = "Ketik Pengetahuanmu terkait LEAD Indonesia",
+      modifier = Modifier.fillMaxWidth(),
+      labelDefaultColor = ColorPalette.Monochrome400,
+      rounded = 40
+    )
+
+
+  }
+  Column(
+    verticalArrangement = Arrangement.spacedBy(12.dp)
+  ) {
+    Text(
+      text = "Apakah yang anda ketahui terkait sustainability atau keberlanjutan?",
+      style = StyledText.MobileSmallMedium,
+      color = ColorPalette.PrimaryColor700
+    )
+    CustomOutlinedTextField(
+      label = "Pengetahuanmu terkait sustainability atau keberlanjutan",
+      value = "",
+      onValueChange = {},
+      placeholder = "Ketik Pengetahuanmu terkait sustainability atau keberlanjutan",
+      modifier = Modifier.fillMaxWidth(),
+      labelDefaultColor = ColorPalette.Monochrome400,
+      rounded = 40
+    )
+  }
+  Column(
+    verticalArrangement = Arrangement.spacedBy(12.dp)
+  ) {
+    Text(
+      text = "Apakah yang anda ketahui terkait social report atau laporan social?",
+      style = StyledText.MobileSmallMedium,
+      color = ColorPalette.PrimaryColor700
+    )
+    CustomOutlinedTextField(
+      label = "Pengetahuanmu terkait social report atau laporan social",
+      value = "",
+      onValueChange = {},
+      placeholder = "Ketik Pengetahuanmu terkait social report atau laporan social",
+      modifier = Modifier.fillMaxWidth(),
+      labelDefaultColor = ColorPalette.Monochrome400,
+      rounded = 40
+    )
+  }
+  // TODO: unggah laporan (dotted button)
+
+  Column(
+    verticalArrangement = Arrangement.spacedBy(12.dp)
+  ) {
+    Text(
+      text = "Jelaskan ekspetasi anda setelah mengikuti kegiatan LEAD Indonesia 2023?",
+      style = StyledText.MobileSmallMedium,
+      color = ColorPalette.PrimaryColor700
+    )
+    CustomOutlinedTextField(
+      label = "Ekspetasi anda",
+      value = "",
+      onValueChange = {},
+      placeholder = "Ketik ekspetasi anda",
+      modifier = Modifier.fillMaxWidth(),
+      labelDefaultColor = ColorPalette.Monochrome400,
+      rounded = 40
+    )
+  }
+  Column(
+    verticalArrangement = Arrangement.spacedBy(12.dp)
+  ) {
+    Text(
+      text = "Apakah ada hal lain yang ingin anda tanyakan atau sampaikan terkait LEAD Indonesia 2023?",
+      style = StyledText.MobileSmallMedium,
+      color = ColorPalette.PrimaryColor700
+    )
+    CustomOutlinedTextField(
+      label = "Pertanyaan anda",
+      value = "",
+      onValueChange = {},
+      placeholder = "Ketik pertanyaan anda disini",
+      modifier = Modifier.fillMaxWidth(),
+      labelDefaultColor = ColorPalette.Monochrome400,
+      rounded = 40
+    )
+  }
+}
+
+
+@Composable
+private fun NextPrevButton(
+  nextIndicatorProgress : () -> Unit,
+  prevIndicatorProgress : () -> Unit = {},
+  isPrevExist : Boolean = true,
+) {
+  Column(
+    modifier = Modifier.padding(
+      top = 24.dp
+    ),
+    verticalArrangement = Arrangement.spacedBy(24.dp)
+  ) {
+    HorizontalDivider(
+      modifier = Modifier.fillMaxWidth()
+    )
+
+    if (! isPrevExist) {
+      Box(
+        modifier = Modifier
+          .fillMaxWidth(),
+        contentAlignment = Alignment.CenterEnd
+      ) {
+        PrimaryButton(
+          text = "Berikutnya",
+          onClick = {
+            nextIndicatorProgress()
+          }
+        )
+      }
+    } else {
+      Row(
+        modifier = Modifier
+          .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        SecondaryButton(
+          text = "Sebelumnya",
+          onClick = {
+            prevIndicatorProgress()
+          },
+        )
+        PrimaryButton(
+          text = "Berikutnya",
+          onClick = {
+            nextIndicatorProgress()
+          }
+        )
+
+      }
+    }
+
 
   }
 }
