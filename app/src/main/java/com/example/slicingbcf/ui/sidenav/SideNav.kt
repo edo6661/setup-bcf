@@ -26,6 +26,7 @@ import androidx.navigation.NavHostController
 import com.example.slicingbcf.R
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
+import com.example.slicingbcf.data.local.model.User
 import com.example.slicingbcf.ui.navigation.Screen
 import com.example.slicingbcf.ui.navigation.navigateSingleTop
 import com.example.slicingbcf.ui.shared.PrimaryButton
@@ -72,8 +73,10 @@ fun SideNavContent(
   navController : NavHostController,
   closeSideNavVisible : () -> Unit,
   isActiveRoute : (String) -> Boolean,
+  logout : () -> Unit,
+  user : User?
 
-  ) {
+) {
   val navigateAndCloseSideNav : (String) -> Unit = { route ->
     closeSideNavVisible()
     navController.navigateSingleTop(route)
@@ -100,7 +103,10 @@ fun SideNavContent(
     ) {
       BottomSideNav(
         navigateAndCloseSideNav = navigateAndCloseSideNav,
-        isActiveRoute = isActiveRoute
+        isActiveRoute = isActiveRoute,
+        logout = logout,
+        closeSideNavVisible = closeSideNavVisible,
+        user = user
       )
     }
 
@@ -143,7 +149,10 @@ private fun TopSideNav() {
 @Composable
 private fun BottomSideNav(
   navigateAndCloseSideNav : (String) -> Unit,
-  isActiveRoute : (String) -> Boolean
+  isActiveRoute : (String) -> Boolean,
+  logout : () -> Unit,
+  closeSideNavVisible : () -> Unit,
+  user : User?
 ) {
 
   val scroll = rememberScrollState()
@@ -160,18 +169,20 @@ private fun BottomSideNav(
     Column(
       verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-      PrimaryButton(
-        text = "Masuk",
-        onClick = {
-          navigateAndCloseSideNav(Screen.Auth.Login.route)
-        }
-      )
-      PrimaryButton(
-        text = "Daftar",
-        onClick = {
-          navigateAndCloseSideNav(Screen.Auth.Registrasi.route)
-        }
-      )
+      if (user == null) {
+        PrimaryButton(
+          text = "Masuk",
+          onClick = {
+            navigateAndCloseSideNav(Screen.Auth.Login.route)
+          }
+        )
+        PrimaryButton(
+          text = "Daftar",
+          onClick = {
+            navigateAndCloseSideNav(Screen.Auth.Registrasi.route)
+          }
+        )
+      }
       SideNavDropdownGuest(
         navigateAndCloseSideNav,
         isActiveRoute
@@ -208,7 +219,10 @@ private fun BottomSideNav(
       confirmButtonText = "Keluar",
       dismissButtonText = "Batal",
       onConfirm = {
+        logout()
         showLogoutDialog = false
+        closeSideNavVisible()
+
       },
       onDismiss = {
         showLogoutDialog = false

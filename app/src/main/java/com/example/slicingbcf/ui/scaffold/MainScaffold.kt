@@ -22,6 +22,7 @@ import androidx.navigation.NavHostController
 import com.example.slicingbcf.R
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
+import com.example.slicingbcf.data.local.model.User
 import com.example.slicingbcf.ui.navigation.Screen
 import com.example.slicingbcf.ui.navigation.navigateSingleTop
 import com.example.slicingbcf.ui.sidenav.OverlayNav
@@ -34,6 +35,8 @@ fun MainScaffold(
   config : ScaffoldConfig,
   navController : NavHostController,
   isActiveRoute : (String) -> Boolean,
+  user : User?,
+  logout : () -> Unit,
   content : @Composable (PaddingValues) -> Unit,
 ) {
 
@@ -63,7 +66,8 @@ fun MainScaffold(
             onMenuClick = {
               isSideNavVisible = ! isSideNavVisible
             },
-            onNavigateHome = onNavigateHome
+            onNavigateHome = onNavigateHome,
+            nama = user?.namaPeserta
           )
 
           config.showBackNav -> BackNav(
@@ -94,7 +98,9 @@ fun MainScaffold(
       SideNavContent(
         navController = navController,
         closeSideNavVisible = closeSideNavVisible,
-        isActiveRoute = isActiveRoute
+        isActiveRoute = isActiveRoute,
+        logout = logout,
+        user = user
       )
     }
 
@@ -107,7 +113,8 @@ fun MainScaffold(
 @Composable
 fun PrimaryNav(
   onMenuClick : () -> Unit,
-  onNavigateHome : () -> Unit
+  onNavigateHome : () -> Unit,
+  nama : String?
 ) {
   TopAppBar(
     colors = TopAppBarDefaults.topAppBarColors(
@@ -132,14 +139,23 @@ fun PrimaryNav(
           }
       )
     },
+
     actions = {
-      IconButton(
-        onClick = onMenuClick
+      Row(
+        verticalAlignment = Alignment.CenterVertically
       ) {
-        Icon(
-          imageVector = Icons.Default.Menu,
-          contentDescription = "Menu"
-        )
+        nama?.let {
+          Text(nama)
+          
+        }
+        IconButton(
+          onClick = onMenuClick
+        ) {
+          Icon(
+            imageVector = Icons.Default.Menu,
+            contentDescription = "Menu"
+          )
+        }
       }
     }
   )
