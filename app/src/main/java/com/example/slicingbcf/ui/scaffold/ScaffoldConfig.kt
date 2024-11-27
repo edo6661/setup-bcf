@@ -26,6 +26,11 @@ fun scaffoldConfig(currentRoute : String?)
       showBackNav = true,
     )
 
+    "pengumuman-mentor/{id}"         -> ScaffoldConfig(
+      showMainNav = false,
+      showBackNav = true,
+    )
+
     "worksheet-peserta/{id}"         -> {
       Log.d("scaffoldConfig", "test")
       ScaffoldConfig(

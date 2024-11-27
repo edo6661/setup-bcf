@@ -72,7 +72,7 @@ fun DataPesertaMentorScreen(
 
 
 @Composable
-fun TopSection(
+private fun TopSection(
   onSearch : (String) -> Unit
 ) {
   Column(
@@ -125,7 +125,7 @@ fun TopSection(
 }
 
 @Composable
-fun BottomSection(
+private fun BottomSection(
   participants : List<Participant>,
   headers : List<Header>,
   currentPage : Int,

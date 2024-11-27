@@ -1,4 +1,4 @@
-package com.example.slicingbcf.implementation.peserta.kelompok_mentoring
+package com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -39,8 +39,8 @@ fun KelompokMentoringScreen(
     verticalArrangement = Arrangement.spacedBy(40.dp),
 
     ) {
-    com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.TopSection()
-    com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.BottomSection()
+    TopSection()
+    BottomSection()
   }
 }
 
@@ -95,7 +95,7 @@ fun TopSection() {
         )
     }
   }
-  com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.TabContent(currentTabIndex)
+  TabContent(currentTabIndex)
 
 }
 
@@ -145,7 +145,7 @@ fun TabContent(
 
 @Composable
 fun BottomSection() {
-  com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.ScrollableTable(kelompoksMentoring)
+  ScrollableTable(kelompoksMentoring)
 
 }
 
@@ -164,9 +164,9 @@ fun ScrollableTable(kelompoksMentoring : List<KelompokMentoring>) {
         .horizontalScroll(scrollState)
     ) {
       Column {
-        com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.HeaderRow()
+        HeaderRow()
         kelompoksMentoring.forEachIndexed { i, kelompokMentoring ->
-          com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.KelompokMentoringRow(
+          KelompokMentoringRow(
             kelompokMentoring = kelompokMentoring,
             i = i,
             isLastRow = i == kelompoksMentoring.size - 1
@@ -218,7 +218,7 @@ fun HeaderRow(
   ) {
     headerKelompokMentorings.forEach { header ->
 
-      com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.TableCell(
+      TableCell(
         text = header.name,
         isHeader = true,
         weight = header.weight,
@@ -295,7 +295,7 @@ fun KelompokMentoringRow(
       )
   ) {
     headerKelompokMentorings.forEach { header ->
-      com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.TableCell(
+      TableCell(
         text = when (header.name) {
           "No"             -> (i + 1).toString()
           "Nama Lembaga"   -> kelompokMentoring.namaLembaga

@@ -1,5 +1,6 @@
 package com.example.slicingbcf.ui.navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.*
 import androidx.navigation.compose.composable
@@ -7,6 +8,10 @@ import com.example.slicingbcf.implementation.mentor.data_peserta.DataPesertaMent
 import com.example.slicingbcf.implementation.mentor.feedback_peserta.FeedbackPesertaScreen
 import com.example.slicingbcf.implementation.mentor.forum_diskusi.DetailForumDiskusiScreen
 import com.example.slicingbcf.implementation.mentor.forum_diskusi.ForumDiskusiScreen
+import com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.KelompokMentoringScreen
+import com.example.slicingbcf.implementation.mentor.pengaturan_mentor.PengaturanScreen
+import com.example.slicingbcf.implementation.mentor.pengumuman_mentor.DetailPengumumanMentorScreen
+import com.example.slicingbcf.implementation.mentor.pengumuman_mentor.PengumumanMentorScreen
 import com.example.slicingbcf.implementation.mentor.penilaian_peserta.DetailPenilaianPesertaScreen
 import com.example.slicingbcf.implementation.mentor.penilaian_peserta.PenilaianPesertaScreen
 import com.example.slicingbcf.implementation.mentor.pitchdeck.DetailPitchdeckScreen
@@ -118,6 +123,44 @@ fun NavGraphBuilder.mentorNavGraph(
         modifier = modifier,
 
         )
+    }
+
+    composable(
+      route = Screen.Mentor.KelompokMentoring.route,
+    ) {
+      KelompokMentoringScreen(
+        modifier = modifier,
+      )
+    }
+    composable(
+      route = Screen.Mentor.Pengaturan.route,
+    ) {
+      PengaturanScreen(
+        modifier = modifier,
+      )
+    }
+
+    composable(
+      route = Screen.Mentor.Pengumuman.route
+    ) {
+      val onNavigateDetailPengumuman = { id : String ->
+        navController.navigateSingleTop("pengumuman-mentor/$id")
+      }
+      PengumumanMentorScreen(
+        modifier = modifier,
+        onNavigateDetailPengumuman = onNavigateDetailPengumuman
+      )
+    }
+    composable(
+      route = "pengumuman-mentor/{id}",
+      arguments = listOf(navArgument("id") { type = NavType.StringType })
+    ) { backStackEntry ->
+      val id = backStackEntry.arguments?.getString("id") ?: ""
+      if (id.isEmpty()) throw IllegalStateException("id must not be empty")
+      DetailPengumumanMentorScreen(
+        modifier = modifier.padding(
+        ), id = id
+      )
     }
   }
 

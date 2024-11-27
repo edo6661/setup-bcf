@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.*
 import androidx.navigation.compose.composable
+import com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.KelompokMentoringScreen
+import com.example.slicingbcf.implementation.mentor.pengaturan_mentor.PengaturanScreen
 import com.example.slicingbcf.implementation.peserta.data_peserta.DataPesertaScreen
 import com.example.slicingbcf.implementation.peserta.form_monthly_report.DetailFormMonthlyReportScreen
 import com.example.slicingbcf.implementation.peserta.form_monthly_report.FormMonthlyReportScreen
-import com.example.slicingbcf.implementation.peserta.kelompok_mentoring.KelompokMentoringScreen
-import com.example.slicingbcf.implementation.peserta.pengaturan.PengaturanScreen
 import com.example.slicingbcf.implementation.peserta.pengumuman_peserta.DetailPengumumanPesertaScreen
 import com.example.slicingbcf.implementation.peserta.pengumuman_peserta.PengumumanPesertaScreen
 import com.example.slicingbcf.implementation.peserta.penilaian_peserta.PenilaianPesertaScreen
@@ -36,8 +36,12 @@ fun NavGraphBuilder.pesertaNavGraph(
       )
     }
     composable(Screen.Peserta.PengumumanPeserta.route) {
+      val onNavigateDetailPengumuman = { id : String ->
+        navController.navigateSingleTop("pengumuman-peserta/$id")
+      }
       PengumumanPesertaScreen(
         modifier = modifier,
+        onNavigateDetailPengumuman = onNavigateDetailPengumuman
       )
     }
     composable(

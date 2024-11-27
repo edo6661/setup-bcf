@@ -10,7 +10,7 @@ import com.example.slicingbcf.implementation.LandingPageScreen
 @Composable
 fun NavGraph(
   navController : NavHostController,
-  startDestination : String = "peserta",
+  startDestination : String = Screen.Home.route,
   modifier : Modifier,
 ) {
   NavHost(navController = navController, startDestination = startDestination) {

@@ -148,6 +148,27 @@ fun dropdownItemsMentor(
       },
       route = Screen.Mentor.FeedbackPeserta.route
     ),
+    DropdownItem(
+      text = "Pengumuman",
+      onClick = {
+        navigateAndCloseSideNav(Screen.Mentor.Pengumuman.route)
+      },
+      route = Screen.Mentor.Pengumuman.route
+    ),
+    DropdownItem(
+      text = "Pengaturan",
+      onClick = {
+        navigateAndCloseSideNav(Screen.Mentor.Pengaturan.route)
+      },
+      route = Screen.Mentor.Pengaturan.route
+    ),
+    DropdownItem(
+      text = "Kelompok Mentoring",
+      onClick = {
+        navigateAndCloseSideNav(Screen.Mentor.KelompokMentoring.route)
+      },
+      route = Screen.Mentor.KelompokMentoring.route
+    ),
   )
 }
 

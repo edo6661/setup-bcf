@@ -1,4 +1,4 @@
-package com.example.slicingbcf.implementation.peserta.pengumuman_peserta
+package com.example.slicingbcf.implementation.mentor.pengumuman_mentor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,13 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
+import com.example.slicingbcf.implementation.peserta.pengumuman_peserta.Pengumuman
 import java.util.Date
 
-// TODO: LIAT LIAT DAN RAPIHIN
 
 @Composable
 @Preview(showSystemUi = true)
-fun PengumumanPesertaScreen(
+fun PengumumanMentorScreen(
   modifier : Modifier = Modifier,
   onNavigateDetailPengumuman : (String) -> Unit = {}
 ) {
@@ -44,8 +44,6 @@ fun PengumumanPesertaScreen(
     }
     BottomSection(
       onNavigateDetailPengumuman
-
-
     )
   }
 
@@ -78,7 +76,9 @@ fun PengumumanItem(
   Row(
     horizontalArrangement = Arrangement.spacedBy(28.dp),
     verticalAlignment = Alignment.CenterVertically,
-    modifier = Modifier.clickable { onNavigateDetailPengumuman(pengumuman.title) }
+    modifier = Modifier.clickable {
+      onNavigateDetailPengumuman(pengumuman.title)
+    }
   ) {
     Box(
       modifier = Modifier
