@@ -10,7 +10,6 @@ data class ScaffoldConfig(
 
 fun scaffoldConfig(currentRoute : String?)
   : ScaffoldConfig {
-  Log.d("scaffoldConfig", "currentRoute: $currentRoute")
   return when (currentRoute) {
     Screen.Auth.Login.route          -> ScaffoldConfig(
       showMainNav = false,

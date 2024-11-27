@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
 import com.example.slicingbcf.data.local.WilayahJangkauan
+import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.provinsis
 import com.example.slicingbcf.ui.animations.AnimatedContentSlide
 import com.example.slicingbcf.ui.shared.PrimaryButton
 import com.example.slicingbcf.ui.shared.message.SecondaryButton
@@ -1410,15 +1411,3 @@ private fun CustomOutlinedTextFieldJumlah(
   )
 }
 
-
-val provinsis = listOf(
-  "Aceh",
-  "Sumatera Utara",
-  "Sumatera Barat",
-  "Riau",
-  "Jambi",
-  "Sumatera Selatan",
-  "Bengkulu",
-  "Lampung",
-  "Kepulau"
-)
