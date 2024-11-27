@@ -22,5 +22,4 @@ data class Peserta(
 data class WilayahJangkauan(
   val provinsi : String,
   val jumlahPenerimaManfaat : Int,
-
-  )
+)

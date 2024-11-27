@@ -71,8 +71,9 @@ fun SideNav(
 fun SideNavContent(
   navController : NavHostController,
   closeSideNavVisible : () -> Unit,
-  isActiveRoute : (String) -> Boolean
-) {
+  isActiveRoute : (String) -> Boolean,
+
+  ) {
   val navigateAndCloseSideNav : (String) -> Unit = { route ->
     closeSideNavVisible()
     navController.navigateSingleTop(route)

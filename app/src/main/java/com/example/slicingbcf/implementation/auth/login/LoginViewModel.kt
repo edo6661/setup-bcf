@@ -57,6 +57,9 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 //      isSuccess = false,
 //      error = "Login Gagal! Akun Tidak Dikenal!"
 //    )
+    if (_uiState.value.email == "peserta@gmail.com" && _uiState.value.password == "peserta") {
+      
+    }
     _uiState.value = _uiState.value.copy(
       isSuccess = true,
       message = "Permintaan berhasil, silakan cek email Anda."

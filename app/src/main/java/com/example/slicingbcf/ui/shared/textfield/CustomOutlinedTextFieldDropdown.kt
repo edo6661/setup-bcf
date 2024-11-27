@@ -31,9 +31,12 @@ fun CustomOutlinedTextFieldDropdown(
 
   ) {
 
-  Column {
+  Column(
+    modifier = modifier
+      
+  ) {
     CustomOutlinedTextField(
-      modifier = modifier.fillMaxWidth(),
+      modifier = Modifier.fillMaxWidth(),
       value = value,
       onValueChange = onValueChange,
       label = label,

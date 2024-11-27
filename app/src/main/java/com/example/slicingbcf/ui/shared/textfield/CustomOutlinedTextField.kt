@@ -46,7 +46,7 @@ fun CustomOutlinedTextField(
   multiLine : Boolean = false,
   maxLines : Int = 1,
   isEnabled : Boolean = true,
-  labelFocusedColor : Color = ColorPalette.Black,
+  labelFocusedColor : Color = ColorPalette.Monochrome400,
   labelFocusedStyle : TextStyle = StyledText.MobileSmallRegular,
   labelDefaultColor : Color = ColorPalette.Monochrome300,
   trailingIcon : @Composable (() -> Unit)? = null,
@@ -55,16 +55,17 @@ fun CustomOutlinedTextField(
   bgColor : Color = Color.White,
   isFocused : Boolean? = null,
   onFocusChange : (Boolean) -> Unit = {},
-  borderFocusedColor : Color = ColorPalette.Black
+  borderFocusedColor : Color = ColorPalette.Monochrome400
 ) {
 
   Column {
     OutlinedTextField(
       value = value,
       onValueChange = onValueChange,
-      modifier = modifier.then(
-        if (isFocused != null) modifier.onFocusChanged { onFocusChange(it.isFocused) } else modifier
-      ),
+      modifier = modifier
+        .onFocusChanged { focusState ->
+          onFocusChange(focusState.isFocused)
+        },
       singleLine = ! multiLine,
       maxLines = if (multiLine) maxLines else 1,
       shape = RoundedCornerShape(rounded),
@@ -94,7 +95,6 @@ fun CustomOutlinedTextField(
           label = placeholder,
           error = error,
           isFocused = isFocused ?: false,
-          focusedColor = labelFocusedColor,
           styleFocused = labelFocusedStyle,
           defaultColor = labelDefaultColor,
           valueNotEmpty = value.isNotEmpty()
@@ -106,9 +106,7 @@ fun CustomOutlinedTextField(
         borderColor = borderColor,
         borderFocusedColor = borderFocusedColor,
         bgColor = bgColor,
-        labelFocusedColor = labelFocusedColor,
-
-        ),
+      ),
       enabled = isEnabled,
       readOnly = readOnly
     )
@@ -159,7 +157,7 @@ private fun TextLabel(
   label : String,
   error : String?,
   isFocused : Boolean,
-  focusedColor : Color = ColorPalette.Black,
+  focusedColor : Color = ColorPalette.Monochrome400,
   styleFocused : TextStyle = StyledText.MobileSmallRegular,
   defaultColor : Color = ColorPalette.Monochrome300,
   valueNotEmpty : Boolean
@@ -187,7 +185,6 @@ private fun getTextFieldColors(
   borderColor : Color,
   borderFocusedColor : Color,
   bgColor : Color,
-  labelFocusedColor : Color
 ) : TextFieldColors {
 
   return OutlinedTextFieldDefaults.colors(
@@ -197,9 +194,6 @@ private fun getTextFieldColors(
     unfocusedContainerColor = bgColor,
     focusedContainerColor = bgColor,
     disabledContainerColor = bgColor,
-    focusedTextColor = labelFocusedColor,
-
-
     errorBorderColor = ColorPalette.Error,
     errorLabelColor = ColorPalette.Error,
     errorLeadingIconColor = ColorPalette.Error,

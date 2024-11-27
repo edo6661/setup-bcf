@@ -36,7 +36,6 @@ fun DataPesertaMentorScreen(
   viewModel : DataPesertaViewModel = hiltViewModel(),
   modifier : Modifier = Modifier
 ) {
-  // Menggunakan collectAsState untuk mengamati perubahan uiState
   val uiState by viewModel.uiState.collectAsState()
 
   val currentPageItems = uiState.currentPageItems
