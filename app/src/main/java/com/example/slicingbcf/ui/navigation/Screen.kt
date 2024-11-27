@@ -22,6 +22,8 @@ sealed class Screen(val route : String) {
     data class DetailPusatInformasi(val id : String) : Mentor("pusat-informasi/$id")
 
     object PenilaianPeserta : Peserta("penilaian-peserta")
+    object FormMonthlyReport : Peserta("form-monthly-report")
+    data class DetailFormMonthlyReport(val id : String) : Peserta("form-monthly-report/$id")
 
   }
 

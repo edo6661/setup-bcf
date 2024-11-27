@@ -69,6 +69,13 @@ fun scaffoldConfig(currentRoute : String?)
       )
     }
 
+    "form-monthly-report/{id}"       -> {
+      ScaffoldConfig(
+        showMainNav = false,
+        showBackNav = true,
+      )
+    }
+
     else                             -> ScaffoldConfig()
 
   }

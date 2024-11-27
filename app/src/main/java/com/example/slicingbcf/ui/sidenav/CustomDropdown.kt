@@ -85,6 +85,13 @@ fun dropdownItemsPeserta(
       },
       route = Screen.Peserta.PenilaianPeserta.route
     ),
+    DropdownItem(
+      text = "Form Monthly Report",
+      onClick = {
+        navigateAndCloseSideNav(Screen.Peserta.FormMonthlyReport.route)
+      },
+      route = Screen.Peserta.FormMonthlyReport.route
+    ),
   )
 }
 

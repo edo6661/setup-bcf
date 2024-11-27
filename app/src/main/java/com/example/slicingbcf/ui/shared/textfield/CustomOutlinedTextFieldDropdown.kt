@@ -28,12 +28,13 @@ fun CustomOutlinedTextFieldDropdown(
   dropdownItems : List<String>,
   labelDefaultColor : Color = ColorPalette.PrimaryColor700,
   labelFocusedColor : Color = ColorPalette.PrimaryColor700,
+  size : Int = 48
 
-  ) {
+) {
 
   Column(
     modifier = modifier
-      
+
   ) {
     CustomOutlinedTextField(
       modifier = Modifier.fillMaxWidth(),

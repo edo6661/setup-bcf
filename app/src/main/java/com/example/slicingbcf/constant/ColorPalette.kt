@@ -13,6 +13,8 @@ object ColorPalette {
   val Surface = Color(0xFFFEF7FF) // #FEF7FF
   val SurfaceContainerLowest = Color(0xFFFFFFFF) // #FFFFFF
   val PrimaryColor700 = Color(0xFF0D4690) // #0D4690
+  val PrimaryColor200 = Color(0xFFA6C9F7) // #A6C9F7
+
   val Monochrome10 = Color(0xFFFFFFFF) // #FFFFFF
   val Monochrome100 = Color(0xFFFAFAFA) // #FAFAFA
   val Monochrome150 = Color(0xFFE3E3E3) // #E3E3E3
@@ -20,6 +22,7 @@ object ColorPalette {
   val Monochrome300 = Color(0xFFB8B8B8) // #B8B8B8
   val Monochrome400 = Color(0xFF9E9E9E) // #9E9E9E
   val Monochrome500 = Color(0xFF858585) // #858585
+  val Monochrome600 = Color(0xFF6B6B6B) // #6B6B6B
   val Monochrome700 = Color(0xFF525252) // #525252
   val Monochrome800 = Color(0xFF383838) // #383838
   val Monochrome900 = Color(0xFF1F1F1F) // #1F1F1F
@@ -55,6 +58,7 @@ object ColorPalette {
   val Shadow = Color(0x13000000)
   val PrimaryBorder = Color(0xFF333333) // #333333
   val PrimaryContainer = Color(0xFFEADDFF) // #EADDFF
+  val BgStatusSuccess2 = Color(0xFFD4F8D3) // #D4F8D3
 
   // keeping the original color from figma aswell
   val colors = mapOf(
@@ -73,6 +77,7 @@ object ColorPalette {
     "Monochrome 300" to "#B8B8B8",
     "Monochrome 400" to "#9E9E9E",
     "Monochrome 500" to "#858585",
+    "Monochrome 600" to "#6B6B6B",
     "Monochrome 700" to "#525252",
     "Monochrome 800" to "#383838",
     "Monochrome 900 (dark)" to "#1F1F1F",
@@ -82,6 +87,7 @@ object ColorPalette {
     "Primary Color 400" to "#4991EE",
     "Primary Color 10" to "#FAFCFF",
     "Primary Color 100" to "#ECF3FD",
+    "Primary Color 200" to "#A6C9F7",
     "Error" to "#B3261E",
     "On Error" to "#FFFFFF",
     "Secondary Color 400" to "#FFA73C",
@@ -100,6 +106,7 @@ object ColorPalette {
     "Danger 100" to "#FBE9EB",
     "Status Success" to "#28A745",
     "Bg Status Success" to "#B3F0D5C",
+    "Bg Status Success2" to "#D4F8D3",
     "Primary Border" to "#333333",
     "Success 500" to "#198754",
     "Primary Container" to "#EADDFF"

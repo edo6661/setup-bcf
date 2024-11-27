@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.example.slicingbcf.implementation.peserta.data_peserta.DataPesertaScreen
+import com.example.slicingbcf.implementation.peserta.form_monthly_report.DetailFormMonthlyReportScreen
+import com.example.slicingbcf.implementation.peserta.form_monthly_report.FormMonthlyReportScreen
 import com.example.slicingbcf.implementation.peserta.kelompok_mentoring.KelompokMentoringScreen
 import com.example.slicingbcf.implementation.peserta.pengaturan.PengaturanScreen
 import com.example.slicingbcf.implementation.peserta.pengumuman_peserta.DetailPengumumanPesertaScreen
@@ -21,7 +23,7 @@ fun NavGraphBuilder.pesertaNavGraph(
   navController : NavHostController
 ) {
   navigation(
-    startDestination = Screen.Peserta.PenilaianPeserta.route, route = "peserta"
+    startDestination = Screen.Peserta.FormMonthlyReport.route, route = "peserta"
   ) {
     composable(Screen.Peserta.DataPeserta.route) {
       DataPesertaScreen(
@@ -105,6 +107,30 @@ fun NavGraphBuilder.pesertaNavGraph(
         id = id
       )
     }
+
+    composable(
+      route = Screen.Peserta.FormMonthlyReport.route,
+    ) {
+      val onNavigateDetailFormMonthlyReport = { id : String ->
+        navController.navigateSingleTop("form-monthly-report/$id")
+      }
+      FormMonthlyReportScreen(
+        modifier = modifier,
+        onNavigateDetailFormMonthlyReport = onNavigateDetailFormMonthlyReport
+      )
+    }
+    composable(
+      route = "form-monthly-report/{id}",
+      arguments = listOf(navArgument("id") { type = NavType.StringType })
+    ) { backStackEntry ->
+      val id = backStackEntry.arguments?.getString("id") ?: ""
+      if (id.isEmpty()) throw IllegalStateException("id must not be empty")
+      DetailFormMonthlyReportScreen(
+        modifier = modifier,
+        id = id
+      )
+    }
+
   }
 
 

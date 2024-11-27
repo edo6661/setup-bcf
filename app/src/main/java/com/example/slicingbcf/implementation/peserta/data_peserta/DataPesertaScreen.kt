@@ -158,9 +158,10 @@ private fun Table(
         )
       }
     }
+
     rows.forEach {
       Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
       ) {
         TableRow {
           it.forEachIndexed { i, cell ->
