@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
 import com.example.slicingbcf.data.local.WilayahJangkauan
@@ -44,7 +45,11 @@ import com.example.slicingbcf.util.convertMillisToDate
 // TODO: build second screen - latest screen
 
 @Composable
-fun RegistrasiScreen(modifier : Modifier) {
+fun RegistrasiScreen(
+  modifier : Modifier,
+  viewModel : RegistrasiViewModel = hiltViewModel()
+) {
+
   var currentScreen by rememberSaveable { mutableIntStateOf(0) }
   var indicatorProgress by remember { mutableFloatStateOf(0.2f) }
   var initialState by remember { mutableIntStateOf(0) }
