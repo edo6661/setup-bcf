@@ -68,7 +68,11 @@ class RegistrasiViewModel @Inject constructor(
         pengalamanMendaftarLead = _uiState.value.halLainYangInginDisampaikan,
         role = Role.PESERTA.name
       )
-      Log.d("RegistrasiViewModel", "onSubmit: $user")
+      _uiState.update {
+        it.copy(
+          error = "Field yang wajib diisi tidak boleh kosong",
+        )
+      }
       return
     }
 
@@ -117,11 +121,17 @@ class RegistrasiViewModel @Inject constructor(
           pengalamanMendaftarLead = _uiState.value.halLainYangInginDisampaikan,
           role = Role.PESERTA.name
         )
-        Log.d("RegistrasiViewModel", "onSubmit: $user")
+        Log.d("RegistrasiViewModel", "onSubmit Success: $user")
 
-//        userRepository.insertUser(user)
+        userRepository.insertUser(user)
 
-        _uiState.update { it.copy(isSuccess = true, isLoading = false) }
+        _uiState.update {
+          it.copy(
+            isSuccess = true,
+            isLoading = false,
+            message = "Registrasi berhasil"
+          )
+        }
 
       } catch (e : Exception) {
         _uiState.update {

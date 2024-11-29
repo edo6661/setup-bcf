@@ -28,8 +28,12 @@ fun NavGraphBuilder.authNavGraph(
     }
 
     composable(Screen.Auth.Registrasi.route) {
+      val navigateToLogin = {
+        navController.navigateSingleTop(Screen.Auth.Login.route)
+      }
       RegistrasiScreen(
         modifier = modifier,
+        navigateToLogin = navigateToLogin
       )
     }
 

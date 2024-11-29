@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -44,6 +45,8 @@ import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.
 import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.provinsis
 import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.wilayahJangkauanPrograms
 import com.example.slicingbcf.ui.animations.AnimatedContentSlide
+import com.example.slicingbcf.ui.animations.AnimatedMessage
+import com.example.slicingbcf.ui.animations.MessageType
 import com.example.slicingbcf.ui.shared.PrimaryButton
 import com.example.slicingbcf.ui.shared.message.SecondaryButton
 import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextField
@@ -51,12 +54,14 @@ import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextFieldDropdow
 import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextFieldDropdownDate
 import com.example.slicingbcf.ui.upload.FileUploadSection
 import com.example.slicingbcf.util.convertMillisToDate
+import kotlinx.coroutines.delay
 
 
 @Composable
 fun RegistrasiScreen(
   modifier : Modifier,
-  viewModel : RegistrasiViewModel = hiltViewModel()
+  viewModel : RegistrasiViewModel = hiltViewModel(),
+  navigateToLogin : () -> Unit,
 ) {
 
   val state by viewModel.uiState.collectAsState()
@@ -89,25 +94,57 @@ fun RegistrasiScreen(
     else -> "Wrong Screen"
   }
 
-  Column(
+
+  LaunchedEffect(state.isSuccess) {
+    if (state.isSuccess) {
+      delay(1500)
+      navigateToLogin()
+      viewModel.onEvent(RegisterEvent.ClearState)
+
+    }
+  }
+
+  Box(
     modifier = modifier
-      .fillMaxWidth()
-      .padding(horizontal = 16.dp),
-    verticalArrangement = Arrangement.spacedBy(40.dp),
+      .background(ColorPalette.OnPrimary)
+      .statusBarsPadding()
+      .padding(horizontal = 16.dp)
   ) {
-    TopSection(
-      indicatorProgress = indicatorProgress,
-      titleBasedOnScreen = titleBasedOnScreen
+    AnimatedMessage(
+      isVisible = state.isSuccess,
+      message = state.message ?: "Register Success.",
+      messageType = MessageType.Success,
+      modifier = Modifier
+        .padding(top = 16.dp)
+        .align(Alignment.TopCenter)
     )
-    BottomSection(
-      nextIndicatorProgress = nextIndicatorProgress,
-      prevIndicatorProgress = prevIndicatorProgress,
-      initialState = initialState,
-      currentScreen = currentScreen,
-      onInitialScreenChange = { initialState = it },
-      state = state,
-      onEvent = { viewModel.onEvent(it) }
+
+    AnimatedMessage(
+      isVisible = state.error != null,
+      message = state.error ?: "",
+      messageType = MessageType.Error,
+      modifier = Modifier
+        .padding(top = 16.dp)
+        .align(Alignment.TopCenter)
     )
+    Column(
+      verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.Top),
+    ) {
+
+      TopSection(
+        indicatorProgress = indicatorProgress,
+        titleBasedOnScreen = titleBasedOnScreen
+      )
+      BottomSection(
+        nextIndicatorProgress = nextIndicatorProgress,
+        prevIndicatorProgress = prevIndicatorProgress,
+        initialState = initialState,
+        currentScreen = currentScreen,
+        onInitialScreenChange = { initialState = it },
+        state = state,
+        onEvent = { viewModel.onEvent(it) }
+      )
+    }
   }
 }
 
