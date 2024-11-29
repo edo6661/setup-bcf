@@ -28,7 +28,8 @@ fun CustomOutlinedTextFieldDropdown(
   dropdownItems : List<String>,
   labelDefaultColor : Color = ColorPalette.PrimaryColor700,
   labelFocusedColor : Color = ColorPalette.PrimaryColor700,
-  size : Int = 48
+  size : Int = 48,
+  error : String? = null
 
 ) {
 
@@ -44,6 +45,7 @@ fun CustomOutlinedTextFieldDropdown(
       placeholder = placeholder,
       rounded = 40,
       readOnly = true,
+      error = error,
       labelFocusedColor = labelFocusedColor,
       labelDefaultColor = labelDefaultColor,
       labelFocusedStyle = StyledText.MobileSmallMedium,

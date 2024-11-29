@@ -26,8 +26,9 @@ fun DropdownText(
   onExpandedChange : (Boolean) -> Unit,
   onItemSelected : (String) -> Unit,
   items : List<String>,
-  currentItem : String
-) {
+  currentItem : String,
+
+  ) {
 
   Box(
     modifier = Modifier

@@ -7,13 +7,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -48,6 +45,7 @@ import com.example.slicingbcf.ui.animations.AnimatedContentSlide
 import com.example.slicingbcf.ui.animations.AnimatedMessage
 import com.example.slicingbcf.ui.animations.MessageType
 import com.example.slicingbcf.ui.shared.PrimaryButton
+import com.example.slicingbcf.ui.shared.message.ErrorMessageTextField
 import com.example.slicingbcf.ui.shared.message.SecondaryButton
 import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextField
 import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextFieldDropdown
@@ -66,10 +64,13 @@ fun RegistrasiScreen(
 
   val state by viewModel.uiState.collectAsState()
 
+  val verticalScroll = rememberScrollState()
+
   var currentScreen by rememberSaveable { mutableIntStateOf(0) }
   var indicatorProgress by remember { mutableFloatStateOf(0.2f) }
   var initialState by remember { mutableIntStateOf(0) }
   val changeScreen : (Int) -> Unit = { screen -> currentScreen = screen }
+
 
   val resetScreenAndIndicator = {
     currentScreen = 0
@@ -90,6 +91,11 @@ fun RegistrasiScreen(
     }
   }
 
+  val gotoProfilPeserta = {
+    changeScreen(2)
+    indicatorProgress = 0.6f
+  }
+
   val titleBasedOnScreen = when (currentScreen) {
     0    -> "Profil Lembaga"
     1    -> "Program Lembaga"
@@ -99,7 +105,13 @@ fun RegistrasiScreen(
     else -> "Wrong Screen"
   }
 
-  LaunchedEffect(state.isSuccess, state.error) {
+  LaunchedEffect(currentScreen) {
+    verticalScroll.scrollTo(0)
+  }
+
+
+
+  LaunchedEffect(state.isSuccess, state.error != null) {
     when {
       state.isSuccess     -> {
         delay(4000)
@@ -142,7 +154,9 @@ fun RegistrasiScreen(
         currentScreen = currentScreen,
         onInitialScreenChange = { initialState = it },
         state = state,
-        onEvent = { viewModel.onEvent(it) }
+        onEvent = { viewModel.onEvent(it) },
+        verticalScroll = verticalScroll,
+        gotoProfilPeserta = gotoProfilPeserta
       )
     }
     AnimatedMessage(
@@ -215,9 +229,10 @@ private fun BottomSection(
   onInitialScreenChange : (Int) -> Unit,
   currentScreen : Int,
   state : RegistrasiState,
-  onEvent : (RegisterEvent) -> Unit
+  onEvent : (RegisterEvent) -> Unit,
+  verticalScroll : ScrollState,
+  gotoProfilPeserta : () -> Unit
 ) {
-  val verticalScroll = rememberScrollState()
 
   var expandedProvinsi by remember { mutableStateOf(false) }
   var expandedKota by remember { mutableStateOf(false) }
@@ -309,6 +324,7 @@ private fun BottomSection(
 
         }
       }
+
   ) {
 
 
@@ -322,6 +338,13 @@ private fun BottomSection(
           .verticalScroll(verticalScroll),
         verticalArrangement = Arrangement.spacedBy(24.dp)
       ) {
+        // TODO: FOR DEBUGGING, SOON TO BE REMOVED
+//        PrimaryButton(
+//          text = "Kirim",
+//          onClick = {
+//            onEvent(RegisterEvent.Submit)
+//          }
+//        )
         when (targetScreen) {
           0 -> FirstScreen(
             selectedDate = state.selectedDate,
@@ -400,7 +423,8 @@ private fun BottomSection(
           4 -> FifthScreen(
             prevIndicatorProgress = prevIndicatorProgress,
             state = state,
-            onEvent = onEvent
+            onEvent = onEvent,
+            gotoProfilPeserta = gotoProfilPeserta
 
           )
         }
@@ -466,7 +490,7 @@ private fun FirstScreen(
     expanded = expandedDate,
     onChangeExpanded = {
       onExpandedDateChange(it)
-    }
+    },
   )
   CustomOutlinedTextField(
     label = "Email Formal Lembaga",
@@ -506,8 +530,10 @@ private fun FirstScreen(
     expanded = expandedProvinsi,
     onChangeExpanded = {
       onExpandedProvinsiChange(it)
-    }
+    },
+    error = state.provinsiError
   )
+
   CustomOutlinedTextFieldDropdown(
     label = "Kota / Kabupaten",
     value = state.kota,
@@ -521,7 +547,8 @@ private fun FirstScreen(
     expanded = expandedKota,
     onChangeExpanded = {
       onExpandedKotaChange(it)
-    }
+    },
+    error = state.kotaError
   )
   CustomOutlinedTextFieldDropdown(
     label = "Jenis Lembaga Sosial",
@@ -536,7 +563,8 @@ private fun FirstScreen(
     onChangeExpanded = {
       onExpandedLembagaSosialChange(it)
     },
-    dropdownItems = lembagaSosials
+    dropdownItems = lembagaSosials,
+    error = state.jenisLembagaSosialError
   )
   CustomOutlinedTextFieldDropdown(
     label = "Jenis Cluster Lembaga Sosial",
@@ -551,7 +579,8 @@ private fun FirstScreen(
     onChangeExpanded = {
       onExpandedClusterLembagaSosialChange(it)
     },
-    dropdownItems = jenisClusterLembagaSosials
+    dropdownItems = jenisClusterLembagaSosials,
+    error = state.jenisClusterLembagaSosialError
   )
   CustomOutlinedTextFieldDropdown(
     label = "Fokus Isu",
@@ -566,7 +595,8 @@ private fun FirstScreen(
     expanded = expandedFokusIsu,
     onChangeExpanded = {
       onExpandedFokusIsuChange(it)
-    }
+    },
+    error = state.fokusIsuError
   )
   CustomOutlinedTextField(
     label = "Profil Singkat Lembaga",
@@ -579,8 +609,9 @@ private fun FirstScreen(
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
 
-    rounded = 40
-  )
+    rounded = 40,
+
+    )
   CustomOutlinedTextField(
     label = "Apa alasan anda mengikuti LEAD Indonesia 2023?",
     value = state.alasanKeikutsertaan,
@@ -591,14 +622,16 @@ private fun FirstScreen(
     placeholder = "Masukkan alasan anda mengikuti LEAD Indonesia 2023",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
-    rounded = 40
-  )
+    rounded = 40,
+
+    )
   FileUploadSection(
     title = "Dokumentasi sesi mentoring cluster",
     buttonText = "Klik untuk unggah file dokumentasi",
     onFileSelect = { filePickerLauncher.launch(arrayOf("image/*", "application/pdf")) },
     selectedFileUri = state.selectedFileUriDokumentasiSesiMentoringCluster,
-    deleteFile = deleteFile
+    deleteFile = deleteFile,
+    error = state.selectedFileUriDokumentasiSesiMentoringClusterError
   )
   NextPrevButton(
     nextIndicatorProgress = nextIndicatorProgress,
@@ -639,7 +672,8 @@ private fun SecondScreen(
       expanded = expandedJangkauanProgram,
       onChangeExpanded = {
         onExpandedJangkauanProgramChange(it)
-      }
+      },
+      error = state.jangkauanProgramError
     )
     CustomOutlinedTextFieldDropdown(
       label = "Wilayah Jangkauan Program",
@@ -654,7 +688,8 @@ private fun SecondScreen(
       expanded = expandedWilayahJangkauanProgram,
       onChangeExpanded = {
         onExpandedWilayahJangkauanProgramChange(it)
-      }
+      },
+      error = state.wilayahJangkauanProgramError
     )
     Column(
       verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -745,7 +780,8 @@ private fun SecondScreen(
       buttonText = "Klik untuk unggah file",
       onFileSelect = { filePickerLauncher.launch(arrayOf("image/*", "application/pdf")) },
       selectedFileUri = state.selectedFileUriProposalProgram,
-      deleteFile = deleteFile
+      deleteFile = deleteFile,
+      error = state.selectedFileUriProposalProgramError
     )
 
 
@@ -813,8 +849,9 @@ private fun ThirdScreen(
     onChangeExpanded = {
       onExpandedPendidikanChange(it)
     },
+    error = state.pendidikanTerakhirError
 
-    )
+  )
   CustomOutlinedTextField(
     label = "Jurusan Pendidikan Terakhir",
     value = state.jurusanPendidikanTerakhir,
@@ -842,7 +879,8 @@ private fun ThirdScreen(
     expanded = expandedJenisKelamin,
     onChangeExpanded = {
       onExpandedJenisKelaminChange(it)
-    }
+    },
+    error = state.jenisKelaminError
   )
   CustomOutlinedTextField(
     label = "Nomor Whatsapp Peserta",
@@ -854,7 +892,7 @@ private fun ThirdScreen(
     placeholder = "Contoh: 08980861214",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
-    rounded = 40
+    rounded = 40,
   )
 
   CustomOutlinedTextField(
@@ -875,14 +913,16 @@ private fun ThirdScreen(
     buttonText = "Klik untuk unggah file",
     onFileSelect = { filePickerLauncherKTP.launch(arrayOf("image/*", "application/pdf")) },
     selectedFileUri = selectedFileUriKTP,
-    deleteFile = deleteFileKTP
+    deleteFile = deleteFileKTP,
+    error = state.selectedFileUriKTPError
   )
   FileUploadSection(
     title = "Unggah Curriculum Vitae (CV)",
     buttonText = "Klik untuk unggah file",
     onFileSelect = { filePickerLauncherCV.launch(arrayOf("image/*", "application/pdf")) },
     selectedFileUri = selectedFileUriCV,
-    deleteFile = deleteFileCV
+    deleteFile = deleteFileCV,
+    error = state.selectedFileUriCVError
   )
 
   Column(
@@ -944,7 +984,8 @@ private fun ThirdScreen(
             )
           )
         },
-        text = "Saya bersedia mengikuti agenda Mini Training LEAD Indonesia yang akan dilakukan secara online selama 5 hari"
+        text = "Saya bersedia mengikuti agenda Mini Training LEAD Indonesia yang akan dilakukan secara online selama 5 hari",
+        error = state.miniTrainingCheckedError,
       )
       RowCheckboxButton(
         checked = state.initialMentoringChecked,
@@ -955,7 +996,8 @@ private fun ThirdScreen(
             )
           )
         },
-        text = "Saya bersedia mengikuti agenda Initial Mentoring LEAD Indonesia yang akan dilakukan secara online selama 5 hari"
+        text = "Saya bersedia mengikuti agenda Initial Mentoring LEAD Indonesia yang akan dilakukan secara online selama 5 hari",
+        error = state.initialMentoringCheckedError,
       )
       RowCheckboxButton(
         checked = state.pendampinganIntensifChecked,
@@ -966,7 +1008,8 @@ private fun ThirdScreen(
             )
           )
         },
-        text = "Saya bersedia mengikuti agenda Pendampingan Intensif bersama pada Mentor LEAD Indonesia yang akan dilakukan secara online minimal 2-3 kali setiap bulan"
+        text = "Saya bersedia mengikuti agenda Pendampingan Intensif bersama pada Mentor LEAD Indonesia yang akan dilakukan secara online minimal 2-3 kali setiap bulan",
+        error = state.pendampinganIntensifCheckedError,
       )
     }
 
@@ -1013,6 +1056,9 @@ fun RowRadioButton(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
       .fillMaxWidth()
+      .clickable {
+        onClick()
+      }
       .border(
         width = 1.dp,
         color = ColorPalette.Monochrome150,
@@ -1024,7 +1070,7 @@ fun RowRadioButton(
   ) {
     RadioButton(
       selected = selected,
-      onClick = onClick,
+      onClick = { },
       colors = RadioButtonDefaults.colors(
         selectedColor = ColorPalette.PrimaryColor700,
         unselectedColor = ColorPalette.Monochrome400
@@ -1043,32 +1089,42 @@ fun RowCheckboxButton(
   checked : Boolean,
   onCheckedChange : () -> Unit,
   text : String,
+  error : String? = null
 
-  ) {
-  Row(
-    horizontalArrangement = Arrangement.spacedBy(16.dp),
-    verticalAlignment = Alignment.CenterVertically,
-    modifier = Modifier
-      .fillMaxWidth()
+) {
+  Column {
+    Row(
+      horizontalArrangement = Arrangement.spacedBy(16.dp),
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier
+        .fillMaxWidth()
+        .clickable { onCheckedChange() }
 
-      .padding(
-        8.dp
+        .padding(
+          8.dp
+        )
+    ) {
+      Checkbox(
+        checked = checked,
+        onCheckedChange = { },
+        colors = CheckboxDefaults.colors(
+          checkedColor = ColorPalette.PrimaryColor700,
+          uncheckedColor = ColorPalette.Monochrome400
+        )
       )
-  ) {
-    Checkbox(
-      checked = checked,
-      onCheckedChange = { onCheckedChange() },
-      colors = CheckboxDefaults.colors(
-        checkedColor = ColorPalette.PrimaryColor700,
-        uncheckedColor = ColorPalette.Monochrome400
+      Text(
+        text = text,
+        style = StyledText.MobileSmallRegular,
+        color = ColorPalette.OnSurface
       )
-    )
-    Text(
-      text = text,
-      style = StyledText.MobileSmallRegular,
-      color = ColorPalette.OnSurface
-    )
+    }
+    AnimatedVisibility(visible = error != null) {
+      error?.let {
+        ErrorMessageTextField(it)
+      }
+    }
   }
+
 }
 
 @Composable
@@ -1116,8 +1172,8 @@ fun FourthScreen(
       expanded = expandedPendidikan,
       onChangeExpanded = {
         onExpandedPendidikanChange(it)
-
       },
+      error = state.pernahMengikutiPelatihanDesainProgramError
     )
   }
   Column(
@@ -1139,6 +1195,11 @@ fun FourthScreen(
           },
           text = sumber
         )
+      }
+      AnimatedVisibility(visible = state.errorSumberInformasiLEAD != null) {
+        state.errorSumberInformasiLEAD?.let {
+          ErrorMessageTextField(it)
+        }
       }
 
     }
@@ -1175,7 +1236,9 @@ fun FourthScreen(
       onEvent(RegisterEvent.PengetahuanSustainabilityChanged(it))
     },
     placeholder = "Ketik pengetahuanmu terkait sustainability atau keberlanjutan",
-    modifier = Modifier.fillMaxWidth()
+    modifier = Modifier.fillMaxWidth(),
+    error = state.pengetahuanSustainabilityError
+
   )
   ColumnTextField(
     label = "Apakah yang anda ketahui terkait social report atau laporan social?",
@@ -1185,14 +1248,16 @@ fun FourthScreen(
       onEvent(RegisterEvent.PengetahuanSocialReportChanged(it))
     },
     placeholder = "Ketik pengetahuanmu terkait social report atau laporan social",
-    modifier = Modifier.fillMaxWidth()
+    modifier = Modifier.fillMaxWidth(),
+    error = state.pengetahuanSocialReportError
   )
   FileUploadSection(
     title = "Unggah laporan akhir tahun atau laporan pertanggungjawaban pelaksanaan program instansi",
     buttonText = "Klik untuk unggah file",
     onFileSelect = { filePickerLauncher.launch(arrayOf("image/*", "application/pdf")) },
     selectedFileUri = selectedFileUri,
-    deleteFile = deleteFile
+    deleteFile = deleteFile,
+    error = state.selectedFileUriLaporanAkhirTahunError
   )
   ColumnTextField(
     label = "Jelaskan ekspetasi anda setelah mengikuti kegiatan LEAD Indonesia 2023?",
@@ -1202,7 +1267,8 @@ fun FourthScreen(
       onEvent(RegisterEvent.EkspetasiSetelahLEADChanged(it))
     },
     placeholder = "Ketik ekspetasi anda setelah mengikuti kegiatan LEAD Indonesia 2023",
-    modifier = Modifier.fillMaxWidth()
+    modifier = Modifier.fillMaxWidth(),
+    error = state.ekspetasiSetelahLEADError
   )
   ColumnTextField(
     label = "Apakah ada hal lain yang ingin anda tanyakan atau sampaikan terkait LEAD Indonesia 2023?",
@@ -1212,7 +1278,8 @@ fun FourthScreen(
       onEvent(RegisterEvent.HalLainYangInginDisampaikanChanged(it))
     },
     placeholder = "Ketik hal lain yang ingin anda tanyakan atau sampaikan terkait LEAD Indonesia 2023",
-    modifier = Modifier.fillMaxWidth()
+    modifier = Modifier.fillMaxWidth(),
+    error = state.halLainYangInginDisampaikanError
   )
 
 
@@ -1229,7 +1296,8 @@ fun FifthScreen(
 
   prevIndicatorProgress : () -> Unit,
   state : RegistrasiState,
-  onEvent : (RegisterEvent) -> Unit
+  onEvent : (RegisterEvent) -> Unit,
+  gotoProfilPeserta : () -> Unit
 ) {
   val headerTable = listOf("No", "Provinsi", "Jumlah Penerima Manfaaat", "Rincian")
   val columnWeights = listOf(
@@ -1255,35 +1323,43 @@ fun FifthScreen(
     )
     ColumnKeyValue(
       key = "Nama Lembaga",
-      value = state.namaLembaga
+      value = state.namaLembaga,
+      error = state.namaLembagaError
     )
     ColumnKeyValue(
       key = "Email Formal Lembaga",
-      value = state.emailLembaga
+      value = state.emailLembaga,
+      error = state.emailLembagaError
     )
     ColumnKeyValue(
       key = "Alamat Lengkap Lembaga",
-      value = state.alamatLembaga
+      value = state.alamatLembaga,
+      error = state.alamatLembagaError
     )
     ColumnKeyValue(
       key = "Jenis Lembaga",
-      value = state.jenisLembagaSosial
+      value = state.jenisLembagaSosial,
+      error = state.jenisLembagaSosialError
     )
     ColumnKeyValue(
       key = "Fokus Isu",
-      value = state.fokusIsu
+      value = state.fokusIsu,
+      error = state.fokusIsuError
     )
     ColumnKeyValue(
       key = "Alasan Mengikuti Program",
-      value = state.alasanKeikutsertaan
+      value = state.alasanKeikutsertaan,
+      error = state.alasanKeikutsertaanError
     )
     ColumnKeyValue(
       key = "Cakupan/Jangkauan Program",
-      value = state.jangkauanProgram
+      value = state.jangkauanProgram,
+      error = state.jangkauanProgramError
     )
     ColumnKeyValue(
       key = "Target Utama Program",
-      value = state.targetUtamaProgram
+      value = state.targetUtamaProgram,
+      error = state.targetUtamaProgramError
     )
     Text(
       text = "Wilayah Jangkauan Program",
@@ -1303,27 +1379,34 @@ fun FifthScreen(
     )
     ColumnKeyValue(
       key = "Nama Lengkap ",
-      value = state.namaLengkapPeserta
+      value = state.namaLengkapPeserta,
+      error = state.namaLengkapPesertaError
     )
     ColumnKeyValue(
       key = "Posisi",
-      value = state.posisiPeserta
+      value = state.posisiPeserta,
+      error = state.posisiPesertaError
     )
     ColumnKeyValue(
       key = "Pendidikan Terakhir",
-      value = state.pendidikanTerakhir
+      value = state.pendidikanTerakhir,
+      error = state.pendidikanTerakhirError
     )
     ColumnKeyValue(
       key = "Nomor Whatsapp",
-      value = state.nomorWhatsappPeserta
+      value = state.nomorWhatsappPeserta,
+      error = state.nomorWhatsappPesertaError
     )
     ColumnKeyValue(
       key = "Email",
-      value = state.emailPeserta
+      value = state.emailPeserta,
+      error = state.emailPesertaError
     )
     SecondaryButton(
       text = "Ubah Profil Peserta",
-      onClick = {},
+      onClick = {
+        gotoProfilPeserta()
+      },
     )
     HorizontalDivider(
       modifier = Modifier.fillMaxWidth()
@@ -1334,14 +1417,16 @@ fun FifthScreen(
         checked = state.readAndUnderstandChecked,
         onCheckedChange = {
           onEvent(RegisterEvent.ReadAndUnderstandCheckedChanged(! state.readAndUnderstandChecked))
-        }
+        },
+        error = state.readAndUnderstandError
       )
       RowCheckboxButton(
         text = "Saya mengkonfirmasi bahwa seluruh informasi yang saya berikan di atas adalah akurat dan terkini",
         checked = state.confirmInformationChecked,
         onCheckedChange = {
           onEvent(RegisterEvent.ConfirmInformationCheckedChanged(! state.confirmInformationChecked))
-        }
+        },
+        error = state.confirmInformationError
       )
     }
   }
@@ -1469,7 +1554,8 @@ private fun Title(
 @Composable
 private fun ColumnKeyValue(
   key : String,
-  value : String
+  value : String,
+  error : String? = null
 ) {
   Column(
     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -1479,12 +1565,21 @@ private fun ColumnKeyValue(
       style = StyledText.MobileSmallSemibold,
       color = ColorPalette.Monochrome800
     )
+    AnimatedVisibility(visible = error != null) {
+      error?.let {
+        ErrorMessageTextField(
+          it,
+          paddingStart = 0.dp
+        )
+      }
+    }
+  }
+  if (value.isNotEmpty()) {
     Text(
       text = value,
       style = StyledText.MobileSmallRegular,
       color = ColorPalette.Monochrome800
     )
-
   }
 }
 
@@ -1555,7 +1650,8 @@ private fun ColumnTextField(
   text : String,
   onValueChange : (String) -> Unit,
   placeholder : String,
-  modifier : Modifier = Modifier
+  modifier : Modifier = Modifier,
+  error : String? = null
 ) {
   Column(
     verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -1573,7 +1669,8 @@ private fun ColumnTextField(
       placeholder = placeholder,
       modifier = Modifier.fillMaxWidth(),
       labelDefaultColor = ColorPalette.Monochrome400,
-      rounded = 40
+      rounded = 40,
+      error = error
     )
   }
 }

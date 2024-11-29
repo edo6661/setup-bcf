@@ -58,6 +58,7 @@ fun CustomOutlinedTextFieldDropdownDate(
         placeholder = placeholder,
         rounded = 40,
         readOnly = true,
+
         error = error,
         labelFocusedColor = labelFocusedColor,
         labelDefaultColor = labelDefaultColor,

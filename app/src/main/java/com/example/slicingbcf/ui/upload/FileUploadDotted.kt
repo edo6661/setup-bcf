@@ -1,6 +1,7 @@
 package com.example.slicingbcf.ui.upload
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
+import com.example.slicingbcf.ui.shared.message.ErrorMessageTextField
 
 @Composable
 fun FileUploadSection(
@@ -31,8 +33,12 @@ fun FileUploadSection(
   buttonText : String,
   onFileSelect : () -> Unit,
   selectedFileUri : Uri?,
-  deleteFile : () -> Unit
+  deleteFile : () -> Unit,
+  error : String? = null
 ) {
+  val color = if (error != null) ColorPalette.Error else ColorPalette.PrimaryColor400
+
+  Log.d("FileUploadSection", "error $title: $error")
   Column(
     verticalArrangement = Arrangement.spacedBy(12.dp),
     modifier = Modifier.animateContentSize()
@@ -108,7 +114,7 @@ fun FileUploadSection(
           )
 
           drawRoundRect(
-            color = ColorPalette.PrimaryColor400,
+            color = color,
             size = size,
             cornerRadius = CornerRadius(12.dp.toPx()),
             style = stroke
@@ -125,6 +131,11 @@ fun FileUploadSection(
         textAlign = TextAlign.Center,
         color = ColorPalette.PrimaryColor400
       )
+    }
+    AnimatedVisibility(visible = error != null) {
+      error?.let {
+        ErrorMessageTextField(it)
+      }
     }
 
   }

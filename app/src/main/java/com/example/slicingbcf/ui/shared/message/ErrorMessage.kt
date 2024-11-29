@@ -10,32 +10,37 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
 
 
 @Composable
-fun ErrorMessageTextField(errorMessage : String) {
+fun ErrorMessageTextField(
+  errorMessage : String,
+  paddingStart : Dp = 16.dp
+) {
   Text(
     text = errorMessage,
     color = ColorPalette.Error,
     style = StyledText.Mobile2xsRegular,
-    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+    modifier = Modifier.padding(start = paddingStart, top = 4.dp)
   )
 }
 
 @Composable
 fun ErrorMessage(
   message : String,
-  modifier : Modifier = Modifier
+  modifier : Modifier = Modifier,
+  padding : PaddingValues = PaddingValues(16.dp)
 ) {
 
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier
       .fillMaxWidth()
-      .padding(16.dp)
+      .padding(padding)
       .background(ColorPalette.Danger100, shape = RoundedCornerShape(14.dp))
       .padding(16.dp),
     horizontalArrangement = Arrangement.spacedBy(8.dp)

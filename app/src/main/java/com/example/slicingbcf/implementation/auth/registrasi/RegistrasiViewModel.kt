@@ -1,7 +1,6 @@
 package com.example.slicingbcf.implementation.auth.registrasi
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.slicingbcf.data.local.model.Role
@@ -29,53 +28,12 @@ class RegistrasiViewModel @Inject constructor(
 
 
   private fun onSubmit() {
+    // ! debugging purposes, soon removed
     if (! validate()) {
-      // ! debugging purposes, soon removed
-      val user = User(
-        namaLembaga = _uiState.value.namaLembaga,
-        emailLembaga = _uiState.value.emailLembaga,
-        alamatLembaga = _uiState.value.alamatLembaga,
-        provinsi = _uiState.value.provinsi,
-        kota = _uiState.value.kota,
-        tanggalBerdiri = _uiState.value.selectedDate,
-        jenisLembagaSosial = _uiState.value.jenisLembagaSosial,
-        jenisClusterLembagaSosial = _uiState.value.jenisLembagaSosial,
-        fokusIsu = _uiState.value.fokusIsu,
-        profilSingkatLembaga = _uiState.value.profilLembaga,
-        alasanMengikutiLead = _uiState.value.alasanKeikutsertaan,
-        dokumenProfilPerusahaan = _uiState.value.selectedFileUriLaporanAkhirTahun.toString(),
-        jangkauanProgram = _uiState.value.jangkauanProgram,
-        wilayahJangkauanProgram = _uiState.value.wilayahJangkauanProgram,
-        jumlahAngkaPenerimaanManfaat = _uiState.value.jumlahAngkaPenerimaanManfaat,
-        targetUtamaProgram = _uiState.value.targetUtamaProgram,
-        proposalProgramMitra = _uiState.value.selectedFileUriProposalProgram.toString(),
-        namaPeserta = _uiState.value.namaLengkapPeserta,
-        posisi = _uiState.value.posisiPeserta,
-        pendidikanTerakhir = _uiState.value.pendidikanTerakhir,
-        jenisKelamin = _uiState.value.jenisKelamin,
-        nomorWhatsapp = _uiState.value.nomorWhatsappPeserta,
-        emailPeserta = _uiState.value.emailPeserta,
-        password = _uiState.value.namaLengkapPeserta + "123",
-        ktp = _uiState.value.selectedFileUriKTP.toString(),
-        cv = _uiState.value.selectedFileUriCV.toString(),
-        adaPengurusLainYangAkanDiikutSertakanSebagaiPeserta = _uiState.value.adaPengurusLain,
-        alasanMengikutiAgenda = _uiState.value.alasanTidakMengikutiAgenda,
-        pernahMengikutiPelatihan = _uiState.value.pernahMengikutiPelatihanDesainProgram == "Sudah",
-        darimanaMengetahuiLead = _uiState.value.sumberInformasiLEADAsString,
-        yangDiketahuiTerkaitDesainProgram = _uiState.value.pengetahuanDesainProgram,
-        yangDiketahuiTerkaitKeberlanjutan = _uiState.value.pengetahuanSustainability,
-        yangDiketahuiTerkaitLaporanSosial = _uiState.value.pengetahuanSocialReport,
-        laporanAkhirTahun = _uiState.value.selectedFileUriLaporanAkhirTahun.toString(),
-        ekspetasiMengikutiLead = _uiState.value.ekspetasiSetelahLEAD,
-        halYangInginDitanyakanKeLead = _uiState.value.halLainYangInginDisampaikan,
-        umpanBalik = _uiState.value.halLainYangInginDisampaikan,
-        pengalamanMendaftarLead = _uiState.value.halLainYangInginDisampaikan,
-        role = Role.PESERTA.name
-      )
-      Log.d("RegistrasiViewModel", "onSubmit failed cause validate: $user")
+
       _uiState.update {
         it.copy(
-          error = "Mohon isi semua field yang wajib diisi dan pastikan email valid",
+          error = "Mohon isi semua field yang wajib diisi dan dengan format yang benar",
         )
       }
       return
@@ -135,7 +93,7 @@ class RegistrasiViewModel @Inject constructor(
               error = "Email sudah terdaftar"
             )
           }
-          return@launch // ngehentiin eksekusi
+          return@launch
         }
 
 
@@ -362,10 +320,11 @@ class RegistrasiViewModel @Inject constructor(
     _uiState.value = RegistrasiState()
   }
 
+  @Suppress("t")
   private fun validate() : Boolean {
     val state = _uiState.value
 
-    val validations = listOf(
+    val validationsString = listOf(
       state.namaLembaga to "Nama lembaga tidak boleh kosong",
       state.emailLembaga to "Email lembaga tidak boleh kosong",
       state.alamatLembaga to "Alamat lembaga tidak boleh kosong",
@@ -386,37 +345,92 @@ class RegistrasiViewModel @Inject constructor(
       state.nomorWhatsappPeserta to "Nomor WhatsApp peserta tidak boleh kosong",
       state.emailPeserta to "Email peserta tidak boleh kosong",
       state.alasanTidakMengikutiAgenda to "Alasan tidak mengikuti agenda tidak boleh kosong",
-      state.ekspetasiSetelahLEAD to "Ekspetasi setelah LEAD tidak boleh kosong"
+      state.ekspetasiSetelahLEAD to "Ekspetasi setelah LEAD tidak boleh kosong",
+      state.selectedDate to "Tanggal berdiri tidak boleh kosong",
+      state.pernahMengikutiPelatihanDesainProgram to "Pernah mengikuti pelatihan desain program tidak boleh kosong",
+      state.sumberInformasiLEADAsString to "Sumber informasi LEAD tidak boleh kosong",
+      state.pengetahuanSustainability to "Pengetahuan sustainability tidak boleh kosong",
+      state.pengetahuanSocialReport to "Pengetahuan social report tidak boleh kosong",
+      state.ekspetasiSetelahLEAD to "Ekspetasi setelah LEAD tidak boleh kosong",
+      state.halLainYangInginDisampaikan to "Hal lain yang ingin disampaikan tidak boleh kosong",
+      state.jenisClusterLembagaSosial to "Jenis cluster lembaga sosial tidak boleh kosong",
+      state.pengetahuanDesainProgram to "Pengetahuan desain program tidak boleh kosong",
+
+
+      )
+    val validationsBoolean = listOf(
+      state.readAndUnderstandChecked to "Mohon centang bahwa anda telah membaca dan memahami informasi",
+      state.confirmInformationChecked to "Mohon centang bahwa informasi yang anda berikan adalah benar",
+      state.miniTrainingCheckedError to "Mohon centang bahwa anda telah membaca dan memahami informasi",
+      state.initialMentoringCheckedError to "Mohon centang bahwa anda telah membaca dan memahami informasi",
+      state.pendampinganIntensifCheckedError to "Mohon centang bahwa anda telah membaca dan memahami informasi",
+
+      )
+    val validationsUri = listOf(
+      state.selectedFileUriDokumentasiSesiMentoringCluster to "Dokumentasi sesi mentoring cluster tidak boleh kosong",
+      state.selectedFileUriProposalProgram to "Proposal program mitra tidak boleh kosong",
+      state.selectedFileUriKTP to "KTP tidak boleh kosong",
+      state.selectedFileUriCV to "CV tidak boleh kosong",
+      state.selectedFileUriLaporanAkhirTahun to "Laporan akhir tahun tidak boleh kosong",
     )
 
-    val errorMap = validations.mapNotNull { (field, errorMessage) ->
+    val errorMapString = validationsString.mapNotNull { (field, errorMessage) ->
       if (field.isBlankOrEmpty()) errorMessage else null
     }
+    val errorMapBoolean = validationsBoolean.mapNotNull { (field, errorMessage) ->
+      if (field == false) errorMessage else null
+    }
+
+    val errorMapUri = validationsUri.mapNotNull { (field, errorMessage) ->
+      if (field == null) errorMessage else null
+    }
+
+    val allErrorsMap = errorMapString + errorMapBoolean + errorMapUri
+
 
     _uiState.update { it ->
       it.copy(
-        namaLembagaError = errorMap.find { it == "Nama lembaga tidak boleh kosong" },
-        emailLembagaError = errorMap.find { it == "Email lembaga tidak boleh kosong" },
-        alamatLembagaError = errorMap.find { it == "Alamat lembaga tidak boleh kosong" },
-        provinsiError = errorMap.find { it == "Provinsi tidak boleh kosong" },
-        kotaError = errorMap.find { it == "Kota tidak boleh kosong" },
-        jenisLembagaSosialError = errorMap.find { it == "Jenis lembaga sosial tidak boleh kosong" },
-        fokusIsuError = errorMap.find { it == "Fokus isu tidak boleh kosong" },
-        profilLembagaError = errorMap.find { it == "Profil lembaga tidak boleh kosong" },
-        alasanKeikutsertaanError = errorMap.find { it == "Alasan keikutsertaan tidak boleh kosong" },
-        jangkauanProgramError = errorMap.find { it == "Jangkauan program tidak boleh kosong" },
-        wilayahJangkauanProgramError = errorMap.find { it == "Wilayah jangkauan program tidak boleh kosong" },
-        targetUtamaProgramError = errorMap.find { it == "Target utama program tidak boleh kosong" },
-        namaLengkapPesertaError = errorMap.find { it == "Nama lengkap peserta tidak boleh kosong" },
-        posisiPesertaError = errorMap.find { it == "Posisi peserta tidak boleh kosong" },
-        pendidikanTerakhirError = errorMap.find { it == "Pendidikan terakhir tidak boleh kosong" },
-        jurusanPendidikanTerakhirError = errorMap.find { it == "Jurusan pendidikan terakhir tidak boleh kosong" },
-        jenisKelaminError = errorMap.find { it == "Jenis kelamin tidak boleh kosong" },
-        nomorWhatsappPesertaError = errorMap.find { it == "Nomor WhatsApp peserta tidak boleh kosong" },
-        emailPesertaError = errorMap.find { it == "Email peserta tidak boleh kosong" },
-        alasanTidakMengikutiAgendaError = errorMap.find { it == "Alasan tidak mengikuti agenda tidak boleh kosong" },
-        ekspetasiSetelahLEADError = errorMap.find { it == "Ekspetasi setelah LEAD tidak boleh kosong" }
-      )
+        namaLembagaError = errorMapString.find { it == "Nama lembaga tidak boleh kosong" },
+        emailLembagaError = errorMapString.find { it == "Email lembaga tidak boleh kosong" },
+        alamatLembagaError = errorMapString.find { it == "Alamat lembaga tidak boleh kosong" },
+        provinsiError = errorMapString.find { it == "Provinsi tidak boleh kosong" },
+        kotaError = errorMapString.find { it == "Kota tidak boleh kosong" },
+        jenisLembagaSosialError = errorMapString.find { it == "Jenis lembaga sosial tidak boleh kosong" },
+        fokusIsuError = errorMapString.find { it == "Fokus isu tidak boleh kosong" },
+        profilLembagaError = errorMapString.find { it == "Profil lembaga tidak boleh kosong" },
+        alasanKeikutsertaanError = errorMapString.find { it == "Alasan keikutsertaan tidak boleh kosong" },
+        jangkauanProgramError = errorMapString.find { it == "Jangkauan program tidak boleh kosong" },
+        wilayahJangkauanProgramError = errorMapString.find { it == "Wilayah jangkauan program tidak boleh kosong" },
+        targetUtamaProgramError = errorMapString.find { it == "Target utama program tidak boleh kosong" },
+        namaLengkapPesertaError = errorMapString.find { it == "Nama lengkap peserta tidak boleh kosong" },
+        posisiPesertaError = errorMapString.find { it == "Posisi peserta tidak boleh kosong" },
+        pendidikanTerakhirError = errorMapString.find { it == "Pendidikan terakhir tidak boleh kosong" },
+        jurusanPendidikanTerakhirError = errorMapString.find { it == "Jurusan pendidikan terakhir tidak boleh kosong" },
+        jenisKelaminError = errorMapString.find { it == "Jenis kelamin tidak boleh kosong" },
+        nomorWhatsappPesertaError = errorMapString.find { it == "Nomor WhatsApp peserta tidak boleh kosong" },
+        emailPesertaError = errorMapString.find { it == "Email peserta tidak boleh kosong" },
+        alasanTidakMengikutiAgendaError = errorMapString.find { it == "Alasan tidak mengikuti agenda tidak boleh kosong" },
+        ekspetasiSetelahLEADError = errorMapString.find { it == "Ekspetasi setelah LEAD tidak boleh kosong" },
+        selectedDateError = errorMapString.find { it == "Tanggal berdiri tidak boleh kosong" },
+        pernahMengikutiPelatihanDesainProgramError = errorMapString.find { it == "Pernah mengikuti pelatihan desain program tidak boleh kosong" },
+        errorSumberInformasiLEAD = errorMapString.find { it == "Sumber informasi LEAD tidak boleh kosong" },
+        pengetahuanSustainabilityError = errorMapString.find { it == "Pengetahuan sustainability tidak boleh kosong" },
+        pengetahuanSocialReportError = errorMapString.find { it == "Pengetahuan social report tidak boleh kosong" },
+        halLainYangInginDisampaikanError = errorMapString.find { it == "Hal lain yang ingin disampaikan tidak boleh kosong" },
+        jenisClusterLembagaSosialError = errorMapString.find { it == "Jenis cluster lembaga sosial tidak boleh kosong" },
+        readAndUnderstandError = errorMapBoolean.find { it == "Mohon centang bahwa anda telah membaca dan memahami informasi" },
+        confirmInformationError = errorMapBoolean.find { it == "Mohon centang bahwa informasi yang anda berikan adalah benar" },
+        miniTrainingCheckedError = errorMapBoolean.find { it == "Mohon centang bahwa anda telah membaca dan memahami informasi" },
+        initialMentoringCheckedError = errorMapBoolean.find { it == "Mohon centang bahwa anda telah membaca dan memahami informasi" },
+        pendampinganIntensifCheckedError = errorMapBoolean.find { it == "Mohon centang bahwa anda telah membaca dan memahami informasi" },
+        pengetahuanDesainProgramError = errorMapString.find { it == "Pengetahuan desain program tidak boleh kosong" },
+        selectedFileUriDokumentasiSesiMentoringClusterError = errorMapUri.find { it == "Dokumentasi sesi mentoring cluster tidak boleh kosong" },
+        selectedFileUriProposalProgramError = errorMapUri.find { it == "Proposal program mitra tidak boleh kosong" },
+        selectedFileUriKTPError = errorMapUri.find { it == "KTP tidak boleh kosong" },
+        selectedFileUriCVError = errorMapUri.find { it == "CV tidak boleh kosong" },
+        selectedFileUriLaporanAkhirTahunError = errorMapUri.find { it == "Laporan akhir tahun tidak boleh kosong" },
+
+        )
     }
 
     val emailPesertaValidationResult = state.emailPeserta.validateEmail()
@@ -430,7 +444,7 @@ class RegistrasiViewModel @Inject constructor(
 
 
 
-    return errorMap.isEmpty() && emailPesertaValidationResult is ValidationResult.Valid && emailLembagaValidationResult is ValidationResult.Valid
+    return emailPesertaValidationResult is ValidationResult.Valid && emailLembagaValidationResult is ValidationResult.Valid && allErrorsMap.isEmpty()
 
   }
 
