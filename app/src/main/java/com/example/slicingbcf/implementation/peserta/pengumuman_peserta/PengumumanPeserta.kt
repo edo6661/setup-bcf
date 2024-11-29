@@ -64,7 +64,8 @@ fun BottomSection(
     items(pengumumans.size) { index ->
       PengumumanItem(
         pengumuman = pengumumans[index],
-        onNavigateDetailPengumuman
+        onNavigateDetailPengumuman,
+        i = index
       )
     }
   }
@@ -73,7 +74,8 @@ fun BottomSection(
 @Composable
 fun PengumumanItem(
   pengumuman : Pengumuman,
-  onNavigateDetailPengumuman : (String) -> Unit
+  onNavigateDetailPengumuman : (String) -> Unit,
+  i : Int
 ) {
   Row(
     horizontalArrangement = Arrangement.spacedBy(28.dp),
@@ -92,19 +94,21 @@ fun PengumumanItem(
         modifier = Modifier.size(20.dp),
         tint = ColorPalette.PrimaryColor400
       )
-      Badge(
-        modifier = Modifier
-          .size(16.dp)
-          .align(Alignment.TopEnd),
-        contentColor = ColorPalette.OnError,
-      ) {
-        val badgeNumber = ""
-        Text(
-          badgeNumber,
-          modifier = Modifier.semantics {
-            contentDescription = "$badgeNumber new notifications"
-          }
-        )
+      if (i == 0) {
+        Badge(
+          modifier = Modifier
+            .size(16.dp)
+            .align(Alignment.TopEnd),
+          contentColor = ColorPalette.OnError,
+        ) {
+          val badgeNumber = ""
+          Text(
+            badgeNumber,
+            modifier = Modifier.semantics {
+              contentDescription = "$badgeNumber new notifications"
+            }
+          )
+        }
       }
     }
     Column(

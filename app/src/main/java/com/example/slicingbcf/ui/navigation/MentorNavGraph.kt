@@ -30,7 +30,7 @@ fun NavGraphBuilder.mentorNavGraph(
     ) {
 
       val onNavigateDetailPenilaianPeserta = { id : String ->
-        navController.navigate("penilaian-peserta/$id")
+        navController.navigate("penilaian-peserta-mentor/$id")
       }
 
       PenilaianPesertaScreen(
@@ -39,7 +39,7 @@ fun NavGraphBuilder.mentorNavGraph(
       )
     }
     composable(
-      route = "penilaian-peserta/{id}",
+      route = "penilaian-peserta-mentor/{id}",
       arguments = listOf(navArgument("id") { type = NavType.StringType })
     ) {
 

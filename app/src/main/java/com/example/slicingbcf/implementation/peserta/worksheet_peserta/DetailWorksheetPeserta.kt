@@ -49,12 +49,12 @@ fun DetailWorksheetPesertaScreen(
       verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
       Text(
-        text = "Judul Lembar Kerja",
+        text = "Deskripsi Lembar Kerja",
         style = StyledText.MobileBaseSemibold,
         color = ColorPalette.PrimaryColor700
       )
       Text(
-        text = "[Capacity Building] Hari Ke-4 Lembar Kerja - Topik: Sustainability and Sustainable Development Kerja",
+        text = "Lembar kerja ini akan membahas seputar media sosial, sasaran, persona , dan strategi yang dapat diaplikasikan dalam melakukan pemasaran sosial program.",
         style = StyledText.MobileBaseRegular,
       )
     }

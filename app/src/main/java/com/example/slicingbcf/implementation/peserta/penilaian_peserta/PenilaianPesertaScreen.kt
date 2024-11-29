@@ -1,5 +1,6 @@
 package com.example.slicingbcf.implementation.peserta.penilaian_peserta
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -199,6 +200,7 @@ fun Table(
   rows : List<List<String>>
 ) {
   Column(
+    modifier = Modifier.background(ColorPalette.Shade1)
   ) {
     TableRow {
       headers.forEachIndexed { index, header ->

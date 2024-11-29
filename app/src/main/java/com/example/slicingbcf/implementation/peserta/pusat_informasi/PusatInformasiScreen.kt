@@ -129,7 +129,7 @@ private fun TopSection(
         value = "",
         onValueChange = {},
         onSubmit = { Log.d("submit", "submit") },
-        label = "Buka Obrolan...",
+        label = "Ketik disini untuk membuka obrolan...",
         placeholder = "Buka Obrolan...",
         isEnabled = true
       )

@@ -45,6 +45,20 @@ fun scaffoldConfig(currentRoute : String?)
       )
     }
 
+    "data-peserta-mentor/{id}"       -> {
+      ScaffoldConfig(
+        showMainNav = false,
+        showBackNav = true,
+      )
+    }
+
+    "penilaian-peserta-mentor/{id}"  -> {
+      ScaffoldConfig(
+        showMainNav = false,
+        showBackNav = true,
+      )
+    }
+
     "pitchdeck/{id}"                 -> {
       ScaffoldConfig(
         showMainNav = false,
