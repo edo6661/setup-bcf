@@ -48,6 +48,7 @@ fun CustomOutlinedTextField(
   isEnabled : Boolean = true,
   labelFocusedColor : Color = ColorPalette.Monochrome400,
   labelFocusedStyle : TextStyle = StyledText.MobileSmallRegular,
+  labelDefaultStyle : TextStyle = StyledText.MobileSmallRegular,
   labelDefaultColor : Color = ColorPalette.Monochrome300,
   trailingIcon : @Composable (() -> Unit)? = null,
   readOnly : Boolean = false,
@@ -85,6 +86,7 @@ fun CustomOutlinedTextField(
           isFocused = isFocused ?: false,
           focusedColor = labelFocusedColor,
           styleFocused = labelFocusedStyle,
+          labelDefaultStyle = labelDefaultStyle,
           defaultColor = labelDefaultColor,
           valueNotEmpty = value.isNotEmpty()
 
@@ -97,7 +99,8 @@ fun CustomOutlinedTextField(
           isFocused = isFocused ?: false,
           styleFocused = labelFocusedStyle,
           defaultColor = labelDefaultColor,
-          valueNotEmpty = value.isNotEmpty()
+          valueNotEmpty = value.isNotEmpty(),
+          labelDefaultStyle = labelDefaultStyle
         )
       },
       textStyle = StyledText.MobileSmallRegular,
@@ -160,7 +163,8 @@ private fun TextLabel(
   focusedColor : Color = ColorPalette.Monochrome400,
   styleFocused : TextStyle = StyledText.MobileSmallRegular,
   defaultColor : Color = ColorPalette.Monochrome300,
-  valueNotEmpty : Boolean
+  valueNotEmpty : Boolean,
+  labelDefaultStyle : TextStyle
 ) {
   val color = when {
     error != null -> ColorPalette.Error
@@ -168,9 +172,10 @@ private fun TextLabel(
     else          -> defaultColor
   }
   val fontWeight = if (isFocused || valueNotEmpty) FontWeight.Medium else FontWeight.Normal
+  val style = if (isFocused) styleFocused else labelDefaultStyle
   Text(
     text = label,
-    style = styleFocused,
+    style = style,
     color = color,
     modifier = Modifier.padding(
       horizontal = 4.dp,

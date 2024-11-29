@@ -110,7 +110,8 @@ fun TopSection() {
     )
     Text(
       text = "Masukkan email akun yang sudah didaftarkan",
-      style = StyledText.MobileSmallRegular
+      style = StyledText.MobileSmallRegular,
+      color = ColorPalette.Black
     )
 
   }
@@ -133,11 +134,17 @@ fun BottomSection(
       .padding(horizontal = 16.dp),
 
     ) {
+    var isFocusedEmail by remember { mutableStateOf(false) }
 
     CustomOutlinedTextField(
       value = email,
       onValueChange = { onChange(it) },
       label = "Email Peserta",
+      isFocused = isFocusedEmail,
+      onFocusChange = { isFocusedEmail = it },
+      labelDefaultColor = ColorPalette.OnSurfaceVariant,
+      labelFocusedStyle = StyledText.MobileSmallSemibold,
+
       placeholder = "contoh: @gmail.com",
       keyboardType = KeyboardType.Email,
       error = emailError,
