@@ -8,10 +8,13 @@ import com.example.slicingbcf.data.local.model.Role
 import com.example.slicingbcf.data.local.model.User
 import com.example.slicingbcf.data.repo.user.UserRepository
 import com.example.slicingbcf.domain.model.JangkauanPenerimaManfaat
+import com.example.slicingbcf.domain.validator.ValidationResult
 import com.example.slicingbcf.domain.validator.isBlankOrEmpty
+import com.example.slicingbcf.domain.validator.validateEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +30,7 @@ class RegistrasiViewModel @Inject constructor(
 
   private fun onSubmit() {
     if (! validate()) {
+      // ! debugging purposes, soon removed
       val user = User(
         namaLembaga = _uiState.value.namaLembaga,
         emailLembaga = _uiState.value.emailLembaga,
@@ -68,9 +72,10 @@ class RegistrasiViewModel @Inject constructor(
         pengalamanMendaftarLead = _uiState.value.halLainYangInginDisampaikan,
         role = Role.PESERTA.name
       )
+      Log.d("RegistrasiViewModel", "onSubmit failed cause validate: $user")
       _uiState.update {
         it.copy(
-          error = "Field yang wajib diisi tidak boleh kosong",
+          error = "Mohon isi semua field yang wajib diisi dan pastikan email valid",
         )
       }
       return
@@ -121,7 +126,18 @@ class RegistrasiViewModel @Inject constructor(
           pengalamanMendaftarLead = _uiState.value.halLainYangInginDisampaikan,
           role = Role.PESERTA.name
         )
-        Log.d("RegistrasiViewModel", "onSubmit Success: $user")
+
+        val isEmailExist = isEmailAlreadyExist(user.emailPeserta !!)
+        if (isEmailExist) {
+          _uiState.update {
+            it.copy(
+              isLoading = false,
+              error = "Email sudah terdaftar"
+            )
+          }
+          return@launch // ngehentiin eksekusi
+        }
+
 
         userRepository.insertUser(user)
 
@@ -144,11 +160,20 @@ class RegistrasiViewModel @Inject constructor(
     }
   }
 
+  private suspend fun isEmailAlreadyExist(email : String) : Boolean {
+    return userRepository.isEmailExist(email).first()
+  }
+
+
   fun onEvent(event : RegisterEvent) {
     when (event) {
       is RegisterEvent.NamaLembagaChanged                                    -> onChangeNamaLembaga(
         event.namaLembaga
       )
+
+      is RegisterEvent.ClearError                                            -> {
+        _uiState.update { it.copy(error = null) }
+      }
 
 
       is RegisterEvent.ReadAndUnderstandCheckedChanged                       -> onReadAndUnderstandCheckedChanged(
@@ -394,7 +419,19 @@ class RegistrasiViewModel @Inject constructor(
       )
     }
 
-    return errorMap.isEmpty()
+    val emailPesertaValidationResult = state.emailPeserta.validateEmail()
+    val emailLembagaValidationResult = state.emailLembaga.validateEmail()
+    _uiState.update {
+      it.copy(
+        emailPesertaError = if (emailPesertaValidationResult is ValidationResult.Invalid) emailPesertaValidationResult.message else null,
+        emailLembagaError = if (emailLembagaValidationResult is ValidationResult.Invalid) emailLembagaValidationResult.message else null
+      )
+    }
+
+
+
+    return errorMap.isEmpty() && emailPesertaValidationResult is ValidationResult.Valid && emailLembagaValidationResult is ValidationResult.Valid
+
   }
 
 

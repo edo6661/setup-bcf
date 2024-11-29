@@ -71,6 +71,11 @@ fun RegistrasiScreen(
   var initialState by remember { mutableIntStateOf(0) }
   val changeScreen : (Int) -> Unit = { screen -> currentScreen = screen }
 
+  val resetScreenAndIndicator = {
+    currentScreen = 0
+    indicatorProgress = 0.2f
+  }
+
   val nextIndicatorProgress = {
     if (indicatorProgress < 1f) {
       indicatorProgress += 0.2f
@@ -86,23 +91,34 @@ fun RegistrasiScreen(
   }
 
   val titleBasedOnScreen = when (currentScreen) {
-    0 -> "Profil Lembaga"
-    1 -> "Program Lembaga"
-    2 -> "Pendaftaran Peserta"
-    3 -> "Pertanyaan Umum"
-    4 -> "Ringkasan Data Pendaftaran"
+    0    -> "Profil Lembaga"
+    1    -> "Program Lembaga"
+    2    -> "Pendaftaran Peserta"
+    3    -> "Pertanyaan Umum"
+    4    -> "Ringkasan Data Pendaftaran"
     else -> "Wrong Screen"
   }
 
+  LaunchedEffect(state.isSuccess, state.error) {
+    when {
+      state.isSuccess     -> {
+        delay(4000)
+        resetScreenAndIndicator()
+        viewModel.onEvent(RegisterEvent.ClearState)
+        navigateToLogin()
 
-  LaunchedEffect(state.isSuccess) {
-    if (state.isSuccess) {
-      delay(1500)
-      navigateToLogin()
-      viewModel.onEvent(RegisterEvent.ClearState)
 
+      }
+
+      state.error != null -> {
+        delay(4000)
+        viewModel.onEvent(RegisterEvent.ClearError)
+      }
     }
   }
+
+
+
 
   Box(
     modifier = modifier
@@ -110,23 +126,7 @@ fun RegistrasiScreen(
       .statusBarsPadding()
       .padding(horizontal = 16.dp)
   ) {
-    AnimatedMessage(
-      isVisible = state.isSuccess,
-      message = state.message ?: "Register Success.",
-      messageType = MessageType.Success,
-      modifier = Modifier
-        .padding(top = 16.dp)
-        .align(Alignment.TopCenter)
-    )
 
-    AnimatedMessage(
-      isVisible = state.error != null,
-      message = state.error ?: "",
-      messageType = MessageType.Error,
-      modifier = Modifier
-        .padding(top = 16.dp)
-        .align(Alignment.TopCenter)
-    )
     Column(
       verticalArrangement = Arrangement.spacedBy(32.dp, Alignment.Top),
     ) {
@@ -145,6 +145,23 @@ fun RegistrasiScreen(
         onEvent = { viewModel.onEvent(it) }
       )
     }
+    AnimatedMessage(
+      isVisible = state.isSuccess,
+      message = state.message ?: "Register Success.",
+      messageType = MessageType.Success,
+      modifier = Modifier
+        .padding(top = 16.dp)
+        .align(Alignment.TopCenter)
+    )
+
+    AnimatedMessage(
+      isVisible = state.error != null,
+      message = state.error ?: "",
+      messageType = MessageType.Error,
+      modifier = Modifier
+        .padding(top = 16.dp)
+        .align(Alignment.TopCenter)
+    )
   }
 }
 
@@ -280,6 +297,15 @@ private fun BottomSection(
         detectTapGestures {
           expandedDate = false
           expandedProvinsi = false
+          expandedKota = false
+          expandedLembagaSosial = false
+          expandedClusterLembagaSosial = false
+          expandedFokusIsu = false
+          expandedWilayahJangkauanProgram = false
+          expandedJangkauanProgram = false
+          expandedJenisKelamin = false
+          expandedPendidikan = false
+
 
         }
       }
@@ -295,7 +321,6 @@ private fun BottomSection(
         modifier = Modifier
           .verticalScroll(verticalScroll),
         verticalArrangement = Arrangement.spacedBy(24.dp)
-        // TODO state dan onchange first screen udah, lanjut second screen
       ) {
         when (targetScreen) {
           0 -> FirstScreen(
@@ -673,12 +698,10 @@ private fun SecondScreen(
         )
       }
 
-      // Tombol Tambah dan Hapus
       Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
       ) {
-        // Tombol Tambah
         SecondaryButton(
           onClick = {
             onEvent(
@@ -689,7 +712,6 @@ private fun SecondScreen(
           },
           text = "Tambah"
         )
-        // Tombol Hapus
         AnimatedVisibility(
           visible = state.jumlahAngkaPenerimaanManfaat.size > 1,
           enter = fadeIn(),
@@ -734,7 +756,6 @@ private fun SecondScreen(
   }
 }
 
-// TODO : KERJAIN YANG RADIO DAN CHECKBOX
 @Composable
 private fun ThirdScreen(
   state : RegistrasiState,
@@ -791,8 +812,9 @@ private fun ThirdScreen(
     expanded = expandedPendidikan,
     onChangeExpanded = {
       onExpandedPendidikanChange(it)
-    }
-  )
+    },
+
+    )
   CustomOutlinedTextField(
     label = "Jurusan Pendidikan Terakhir",
     value = state.jurusanPendidikanTerakhir,
@@ -967,6 +989,7 @@ private fun ThirdScreen(
       placeholder = "Ketik alasan anda tidak bersedia mengikuti agenda tersebut",
       labelDefaultColor = ColorPalette.Monochrome400,
       modifier = Modifier.fillMaxWidth(),
+      rounded = 40
     )
 
   }
@@ -1094,7 +1117,7 @@ fun FourthScreen(
       onChangeExpanded = {
         onExpandedPendidikanChange(it)
 
-      }
+      },
     )
   }
   Column(
@@ -1106,7 +1129,6 @@ fun FourthScreen(
       color = ColorPalette.PrimaryColor700
     )
 
-    // TODO: kurang field ini di state
     Column {
       sumberInformasiOptions.forEach { sumber ->
         RowCheckboxButton(
@@ -1141,6 +1163,7 @@ fun FourthScreen(
       error = state.pengetahuanDesainProgramError,
       placeholder = "Ketik pengetahuanmu terkait Desain Program",
       modifier = Modifier.fillMaxWidth(),
+      rounded = 40
     )
   }
   ColumnTextField(
@@ -1550,6 +1573,7 @@ private fun ColumnTextField(
       placeholder = placeholder,
       modifier = Modifier.fillMaxWidth(),
       labelDefaultColor = ColorPalette.Monochrome400,
+      rounded = 40
     )
   }
 }
@@ -1632,7 +1656,8 @@ private fun CustomOutlinedTextFieldJumlah(
       unfocusedLabelColor = borderColor,
       focusedLabelColor = focusedBorderColor
     ),
-    singleLine = true
-  )
+    singleLine = true,
+
+    )
 }
 

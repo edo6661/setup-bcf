@@ -25,5 +25,8 @@ interface UserDao {
   @Query("SELECT * FROM users WHERE emailPeserta = :email AND password = :password")
   fun getUserIfExist(email : String, password : String) : Flow<User?>
 
+  @Query("SELECT COUNT(*) > 0 FROM users WHERE emailPeserta = :email")
+  fun isEmailExist(email : String) : Flow<Boolean>
+
 
 }

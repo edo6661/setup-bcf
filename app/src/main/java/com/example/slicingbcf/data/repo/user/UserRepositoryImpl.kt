@@ -9,6 +9,7 @@ class UserRepositoryImpl @Inject constructor(
   private val userDao : UserDao
 ) : UserRepository {
 
+
   override suspend fun insertUser(user : User) {
     userDao.insertUser(user)
   }
@@ -33,5 +34,9 @@ class UserRepositoryImpl @Inject constructor(
 
   override fun getUserIfExist(email : String, password : String) : Flow<User?> {
     return userDao.getUserIfExist(email, password)
+  }
+
+  override fun isEmailExist(email : String) : Flow<Boolean> {
+    return userDao.isEmailExist(email)
   }
 }

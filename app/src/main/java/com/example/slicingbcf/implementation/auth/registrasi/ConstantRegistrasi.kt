@@ -80,4 +80,34 @@ class ConstantRegistrasi {
 
 
   }
+
 }
+
+object RegistrasiValidationMessages {
+
+  const val NAMA_LEMBAGA_REQUIRED = "Nama lembaga tidak boleh kosong"
+  const val EMAIL_LEMBAGA_REQUIRED = "Email lembaga tidak boleh kosong"
+  const val ALAMAT_LEMBAGA_REQUIRED = "Alamat lembaga tidak boleh kosong"
+  const val PROVINSI_REQUIRED = "Provinsi tidak boleh kosong"
+  const val KOTA_REQUIRED = "Kota tidak boleh kosong"
+  const val JENIS_LEMBAGA_SOSIAL_REQUIRED = "Jenis lembaga sosial tidak boleh kosong"
+  const val FOKUS_ISU_REQUIRED = "Fokus isu tidak boleh kosong"
+  const val PROFIL_LEMBAGA_REQUIRED = "Profil lembaga tidak boleh kosong"
+  const val ALASAN_KEIKUTSERTAAN_REQUIRED = "Alasan keikutsertaan tidak boleh kosong"
+  const val JANGKAUAN_PROGRAM_REQUIRED = "Jangkauan program tidak boleh kosong"
+  const val WILAYAH_JANGKAUAN_PROGRAM_REQUIRED = "Wilayah jangkauan program tidak boleh kosong"
+  const val TARGET_UTAMA_PROGRAM_REQUIRED = "Target utama program tidak boleh kosong"
+  const val NAMA_LENGKAP_PESERTA_REQUIRED = "Nama lengkap peserta tidak boleh kosong"
+  const val POSISI_PESERTA_REQUIRED = "Posisi peserta tidak boleh kosong"
+  const val PENDIDIKAN_TERAKHIR_REQUIRED = "Pendidikan terakhir tidak boleh kosong"
+  const val JURUSAN_PENDIDIKAN_TERAKHIR_REQUIRED = "Jurusan pendidikan terakhir tidak boleh kosong"
+  const val JENIS_KELAMIN_REQUIRED = "Jenis kelamin tidak boleh kosong"
+  const val NOMOR_WHATSAPP_PESERTA_REQUIRED = "Nomor WhatsApp peserta tidak boleh kosong"
+  const val EMAIL_PESERTA_REQUIRED = "Email peserta tidak boleh kosong"
+  const val ALASAN_TIDAK_MENGIKUTI_AGENDA_REQUIRED =
+    "Alasan tidak mengikuti agenda tidak boleh kosong"
+  const val EKSPETASI_SETELAH_LEAD_REQUIRED = "Ekspetasi setelah LEAD tidak boleh kosong"
+
+
+}
+

@@ -153,4 +153,5 @@ sealed class RegisterEvent {
   data class HalLainYangInginDisampaikanChanged(val halLain : String) : RegisterEvent()
   object Submit : RegisterEvent()
   object ClearState : RegisterEvent()
+  object ClearError : RegisterEvent()
 }
