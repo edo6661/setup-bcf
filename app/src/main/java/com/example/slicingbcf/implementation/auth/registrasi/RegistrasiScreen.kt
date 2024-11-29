@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -30,8 +32,17 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
-import com.example.slicingbcf.data.local.WilayahJangkauan
+import com.example.slicingbcf.domain.model.JangkauanPenerimaManfaat
+import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.fokusIsus
+import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.jangkauanPrograms
+import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.jenisClusterLembagaSosials
+import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.jenisKelamins
+import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.kotas
+import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.lembagaSosials
+import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.pendidikanTerakhirs
+import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.pernahs
 import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.provinsis
+import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.Companion.wilayahJangkauanPrograms
 import com.example.slicingbcf.ui.animations.AnimatedContentSlide
 import com.example.slicingbcf.ui.shared.PrimaryButton
 import com.example.slicingbcf.ui.shared.message.SecondaryButton
@@ -158,8 +169,8 @@ private fun BottomSection(
   var expandedKota by remember { mutableStateOf(false) }
   var expandedDate by remember { mutableStateOf(false) }
   var expandedLembagaSosial by remember { mutableStateOf(false) }
+  var expandedClusterLembagaSosial by remember { mutableStateOf(false) }
   var expandedFokusIsu by remember { mutableStateOf(false) }
-  var expandedPilihKota by remember { mutableStateOf(false) }
   var expandedWilayahJangkauanProgram by remember { mutableStateOf(false) }
   var expandedJangkauanProgram by remember { mutableStateOf(false) }
   var expandedJenisKelamin by remember { mutableStateOf(false) }
@@ -261,6 +272,8 @@ private fun BottomSection(
             onExpandedKotaChange = { expandedKota = it },
             expandedLembagaSosial = expandedLembagaSosial,
             onExpandedLembagaSosialChange = { expandedLembagaSosial = it },
+            expandedClusterLembagaSosial = expandedClusterLembagaSosial,
+            onExpandedClusterLembagaSosialChange = { expandedClusterLembagaSosial = it },
             expandedFokusIsu = expandedFokusIsu,
             onExpandedFokusIsuChange = { expandedFokusIsu = it },
             nextIndicatorProgress = nextIndicatorProgress,
@@ -273,21 +286,18 @@ private fun BottomSection(
           1 -> SecondScreen(
             prevIndicatorProgress = prevIndicatorProgress,
             nextIndicatorProgress = nextIndicatorProgress,
-            expandedPilihKota = expandedPilihKota,
             expandedJangkauanProgram = expandedJangkauanProgram,
             expandedWilayahJangkauanProgram = expandedWilayahJangkauanProgram,
             onExpandedJangkauanProgramChange = {
               expandedJangkauanProgram = it
             },
-            onExpandedPilihKotaChange = {
-              expandedPilihKota = it
-            },
             onExpandedWilayahJangkauanProgramChange = {
               expandedWilayahJangkauanProgram = it
             },
-            selectedFileUri = state.selectedFileUriProposalProgram,
             filePickerLauncher = filePickerLauncherProposalMitra,
-            deleteFile = deleteFileProposalMitra
+            deleteFile = deleteFileProposalMitra,
+            state = state,
+            onEvent = onEvent
           )
 
           2 -> ThirdScreen(
@@ -306,7 +316,9 @@ private fun BottomSection(
             deleteFileKTP = deleteFileKTP,
             filePickerLauncherCV = filePickerLauncherCV,
             selectedFileUriCV = state.selectedFileUriCV,
-            deleteFileCV = deleteFileCV
+            deleteFileCV = deleteFileCV,
+            state = state,
+            onEvent = onEvent
 
 
           )
@@ -316,13 +328,19 @@ private fun BottomSection(
             nextIndicatorProgress = nextIndicatorProgress,
             selectedFileUri = state.selectedFileUriLaporanAkhirTahun,
             filePickerLauncher = filePickerLauncherLaporanAkhirTahun,
-            deleteFile = deleteFileLaporanAkhirTahun
+            deleteFile = deleteFileLaporanAkhirTahun,
+            state = state,
+            onEvent = onEvent,
+            expandedPendidikan = expandedPendidikan,
+            onExpandedPendidikanChange = { expandedPendidikan = it }
           )
 
           4 -> FifthScreen(
             prevIndicatorProgress = prevIndicatorProgress,
+            state = state,
+            onEvent = onEvent
 
-            )
+          )
         }
         LaunchedEffect(currentScreen) { onInitialScreenChange(currentScreen) }
       }
@@ -343,6 +361,8 @@ private fun FirstScreen(
   expandedKota : Boolean,
   onExpandedKotaChange : (Boolean) -> Unit,
   expandedLembagaSosial : Boolean,
+  expandedClusterLembagaSosial : Boolean,
+  onExpandedClusterLembagaSosialChange : (Boolean) -> Unit,
   onExpandedLembagaSosialChange : (Boolean) -> Unit,
   expandedFokusIsu : Boolean,
   onExpandedFokusIsuChange : (Boolean) -> Unit,
@@ -350,8 +370,9 @@ private fun FirstScreen(
   filePickerLauncher : ManagedActivityResultLauncher<Array<String>, Uri?>,
   deleteFile : () -> Unit,
   state : RegistrasiState,
-  onEvent : (RegisterEvent) -> Unit
-) {
+  onEvent : (RegisterEvent) -> Unit,
+
+  ) {
 
   var isFocusedNamaLembaga by remember { mutableStateOf(false) }
 
@@ -391,6 +412,7 @@ private fun FirstScreen(
     onValueChange = {
       onEvent(RegisterEvent.EmailLembagaChanged(it))
     },
+    error = state.emailLembagaError,
     placeholder = "contoh@bcf.or.id",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -433,7 +455,7 @@ private fun FirstScreen(
     placeholder = "Pilih kota/kabupaten",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
-    dropdownItems = provinsis,
+    dropdownItems = kotas,
     expanded = expandedKota,
     onChangeExpanded = {
       onExpandedKotaChange(it)
@@ -445,14 +467,29 @@ private fun FirstScreen(
     onValueChange = {
       onEvent(RegisterEvent.JenisLembagaSosialChanged(it))
     },
-    placeholder = "Pilih jenis cluster lembaga sosial",
+    placeholder = "Pilih jenis lembaga sosial",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
     expanded = expandedLembagaSosial,
     onChangeExpanded = {
       onExpandedLembagaSosialChange(it)
     },
-    dropdownItems = provinsis
+    dropdownItems = lembagaSosials
+  )
+  CustomOutlinedTextFieldDropdown(
+    label = "Jenis Cluster Lembaga Sosial",
+    value = state.jenisClusterLembagaSosial,
+    onValueChange = {
+      onEvent(RegisterEvent.JenisClusterLembagaSosialChanged(it))
+    },
+    placeholder = "Pilih jenis cluster lembaga sosial",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    expanded = expandedClusterLembagaSosial,
+    onChangeExpanded = {
+      onExpandedClusterLembagaSosialChange(it)
+    },
+    dropdownItems = jenisClusterLembagaSosials
   )
   CustomOutlinedTextFieldDropdown(
     label = "Fokus Isu",
@@ -463,7 +500,7 @@ private fun FirstScreen(
     placeholder = "Pilih fokus isu",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
-    dropdownItems = provinsis,
+    dropdownItems = fokusIsus,
     expanded = expandedFokusIsu,
     onChangeExpanded = {
       onExpandedFokusIsuChange(it)
@@ -475,6 +512,7 @@ private fun FirstScreen(
     onValueChange = {
       onEvent(RegisterEvent.ProfilLembagaChanged(it))
     },
+    error = state.profilLembagaError,
     placeholder = "Masukkan profil singkat lembaga",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -487,6 +525,7 @@ private fun FirstScreen(
     onValueChange = {
       onEvent(RegisterEvent.AlasanKeikutsertaanChanged(it))
     },
+    error = state.alasanKeikutsertaanError,
     placeholder = "Masukkan alasan anda mengikuti LEAD Indonesia 2023",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -508,19 +547,18 @@ private fun FirstScreen(
 
 @Composable
 private fun SecondScreen(
+  state : RegistrasiState,
+  onEvent : (RegisterEvent) -> Unit,
   prevIndicatorProgress : () -> Unit,
   nextIndicatorProgress : () -> Unit,
   expandedJangkauanProgram : Boolean,
   onExpandedJangkauanProgramChange : (Boolean) -> Unit,
   expandedWilayahJangkauanProgram : Boolean,
   onExpandedWilayahJangkauanProgramChange : (Boolean) -> Unit,
-  expandedPilihKota : Boolean,
-  onExpandedPilihKotaChange : (Boolean) -> Unit,
-  selectedFileUri : Uri?,
   filePickerLauncher : ManagedActivityResultLauncher<Array<String>, Uri?>,
   deleteFile : () -> Unit
 ) {
-  var fields by remember { mutableStateOf(listOf(Pair("", ""))) }
+
 
   Column(
     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -528,12 +566,14 @@ private fun SecondScreen(
   ) {
     CustomOutlinedTextFieldDropdown(
       label = "Jangkauan Program",
-      value = "",
-      onValueChange = {},
+      value = state.jangkauanProgram,
+      onValueChange = {
+        onEvent(RegisterEvent.JangkauanProgramChanged(it))
+      },
       placeholder = "Pilih Jangkauan Program",
       modifier = Modifier.fillMaxWidth(),
       labelDefaultColor = ColorPalette.Monochrome400,
-      dropdownItems = provinsis,
+      dropdownItems = jangkauanPrograms,
       expanded = expandedJangkauanProgram,
       onChangeExpanded = {
         onExpandedJangkauanProgramChange(it)
@@ -541,18 +581,19 @@ private fun SecondScreen(
     )
     CustomOutlinedTextFieldDropdown(
       label = "Wilayah Jangkauan Program",
-      value = "",
-      onValueChange = {},
+      value = state.wilayahJangkauanProgram,
+      onValueChange = {
+        onEvent(RegisterEvent.WilayahJangkauanProgramChanged(it))
+      },
       placeholder = "Pilih Wilayah Jangkauan Program",
       modifier = Modifier.fillMaxWidth(),
       labelDefaultColor = ColorPalette.Monochrome400,
-      dropdownItems = provinsis,
+      dropdownItems = wilayahJangkauanPrograms,
       expanded = expandedWilayahJangkauanProgram,
       onChangeExpanded = {
         onExpandedWilayahJangkauanProgramChange(it)
       }
     )
-
     Column(
       verticalArrangement = Arrangement.spacedBy(12.dp),
       modifier = Modifier.animateContentSize()
@@ -563,60 +604,77 @@ private fun SecondScreen(
         color = ColorPalette.PrimaryColor700
       )
 
-      fields.forEachIndexed { index, field ->
+      state.jumlahAngkaPenerimaanManfaat.forEachIndexed { index, field ->
+        var expandedPilihKota by remember { mutableStateOf(false) }
+
         CustomRowWithFields(
-          dropdownLabel = "DKI Jakarta",
-          dropdownValue = field.first,
+          dropdownLabel = "Pilih Kota/Kabupaten",
+          dropdownValue = field.kota,
           onDropdownValueChange = { newValue ->
-            fields = fields.toMutableList().apply {
-              this[index] = this[index].copy(first = newValue)
-            }
+            onEvent(
+              RegisterEvent.UpdateJumlahAngkaPenerimaanManfaat(
+                index,
+                field.copy(kota = newValue)
+              )
+            )
           },
-          dropdownPlaceholder = "Pilih kota/kabupaten",
-          dropdownItems = provinsis,
+          dropdownPlaceholder = "",
+          dropdownItems = kotas,
           expanded = expandedPilihKota,
-          onExpandedChange = {
-            onExpandedPilihKotaChange(it)
-          },
-          jumlahValue = field.second,
+          onExpandedChange = { expandedPilihKota = it },
+          jumlahValue = if (field.jumlah == 0) "" else field.jumlah.toString(),
           onJumlahValueChange = { newValue ->
-            fields = fields.toMutableList().apply {
-              this[index] = this[index].copy(second = newValue)
-            }
+            onEvent(
+              RegisterEvent.UpdateJumlahAngkaPenerimaanManfaat(
+                index,
+                field.copy(
+                  jumlah = newValue.toIntOrNull() ?: 0
+                )
+              )
+            )
           }
         )
       }
 
+      // Tombol Tambah dan Hapus
       Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
       ) {
+        // Tombol Tambah
         SecondaryButton(
           onClick = {
-            fields = fields + Pair("", "")
+            onEvent(
+              RegisterEvent.AddJumlahAngkaPenerimaanManfaat(
+                JangkauanPenerimaManfaat(kota = "", jumlah = 0)
+              )
+            )
           },
           text = "Tambah"
         )
+        // Tombol Hapus
         AnimatedVisibility(
-          visible = fields.size > 1,
+          visible = state.jumlahAngkaPenerimaanManfaat.size > 1,
           enter = fadeIn(),
           exit = fadeOut()
         ) {
           SecondaryButton(
             onClick = {
-              fields = fields.dropLast(1)
+              onEvent(RegisterEvent.RemoveLastJumlahAngkaPenerimaanManfaat)
             },
             text = "Hapus"
           )
         }
-
       }
     }
 
     CustomOutlinedTextField(
       label = "Target Utama Program",
-      value = "",
-      onValueChange = {},
+      value = state.targetUtamaProgram,
+      onValueChange = {
+        onEvent(RegisterEvent.TargetUtamaProgramChanged(it))
+      },
+      error = state.targetUtamaProgramError,
       placeholder = "Ketik target utama program",
       modifier = Modifier.fillMaxWidth(),
       labelDefaultColor = ColorPalette.Monochrome400,
@@ -627,7 +685,7 @@ private fun SecondScreen(
       title = "Unggah Proposal Program Dengan Mitra",
       buttonText = "Klik untuk unggah file",
       onFileSelect = { filePickerLauncher.launch(arrayOf("image/*", "application/pdf")) },
-      selectedFileUri = selectedFileUri,
+      selectedFileUri = state.selectedFileUriProposalProgram,
       deleteFile = deleteFile
     )
 
@@ -639,8 +697,11 @@ private fun SecondScreen(
   }
 }
 
+// TODO : KERJAIN YANG RADIO DAN CHECKBOX
 @Composable
 private fun ThirdScreen(
+  state : RegistrasiState,
+  onEvent : (RegisterEvent) -> Unit,
   prevIndicatorProgress : () -> Unit,
   nextIndicatorProgress : () -> Unit,
   expandedPendidikan : Boolean,
@@ -656,17 +717,24 @@ private fun ThirdScreen(
 ) {
   CustomOutlinedTextField(
     label = "Nama Lengkap Peserta",
-    value = "",
-    onValueChange = {},
+    value = state.namaLengkapPeserta,
     placeholder = "Masukkan nama lengkap",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
-    rounded = 40
+    error = state.namaLengkapPesertaError,
+    rounded = 40,
+    onValueChange = {
+      onEvent(RegisterEvent.NamaLengkapPesertaChanged(it))
+    }
   )
   CustomOutlinedTextField(
     label = "Posisi",
-    value = "",
-    onValueChange = {},
+    value = state.posisiPeserta,
+    onValueChange = {
+      onEvent(RegisterEvent.PosisiPesertaChanged(it))
+    },
+
+    error = state.posisiPesertaError,
     placeholder = "Masukkan posisi",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -675,12 +743,14 @@ private fun ThirdScreen(
 
   CustomOutlinedTextFieldDropdown(
     label = "Pendidikan Terakhir",
-    value = "",
-    onValueChange = {},
+    value = state.pendidikanTerakhir,
+    onValueChange = {
+      onEvent(RegisterEvent.PendidikanTerakhirChanged(it))
+    },
     placeholder = "Pilih Pendidikan Terakhir",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
-    dropdownItems = provinsis,
+    dropdownItems = pendidikanTerakhirs,
     expanded = expandedPendidikan,
     onChangeExpanded = {
       onExpandedPendidikanChange(it)
@@ -688,8 +758,12 @@ private fun ThirdScreen(
   )
   CustomOutlinedTextField(
     label = "Jurusan Pendidikan Terakhir",
-    value = "",
-    onValueChange = {},
+    value = state.jurusanPendidikanTerakhir,
+    onValueChange = {
+      onEvent(RegisterEvent.JurusanPendidikanTerakhirChanged(it))
+    },
+
+    error = state.jurusanPendidikanTerakhirError,
     placeholder = "Ketik jurusan pendidikan terakhir anda",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -698,12 +772,14 @@ private fun ThirdScreen(
 
   CustomOutlinedTextFieldDropdown(
     label = "Jenis Kelamin",
-    value = "",
-    onValueChange = {},
+    value = state.jenisKelamin,
+    onValueChange = {
+      onEvent(RegisterEvent.JenisKelaminChanged(it))
+    },
     placeholder = "Pilih jenis kelamin anda",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
-    dropdownItems = provinsis,
+    dropdownItems = jenisKelamins,
     expanded = expandedJenisKelamin,
     onChangeExpanded = {
       onExpandedJenisKelaminChange(it)
@@ -711,8 +787,11 @@ private fun ThirdScreen(
   )
   CustomOutlinedTextField(
     label = "Nomor Whatsapp Peserta",
-    value = "",
-    onValueChange = {},
+    value = state.nomorWhatsappPeserta,
+    onValueChange = {
+      onEvent(RegisterEvent.NomorWhatsappPesertaChanged(it))
+    },
+    error = state.nomorWhatsappPesertaError,
     placeholder = "Contoh: 08980861214",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -721,8 +800,12 @@ private fun ThirdScreen(
 
   CustomOutlinedTextField(
     label = "Email Peserta",
-    value = "",
-    onValueChange = {},
+    value = state.emailPeserta,
+    onValueChange = {
+      onEvent(RegisterEvent.EmailPesertaChanged(it))
+    },
+
+    error = state.emailPesertaError,
     placeholder = "Contoh: @gmail.com",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -764,13 +847,17 @@ private fun ThirdScreen(
       verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
       RowRadioButton(
-        selected = true,
-        onClick = {},
+        selected = state.adaPengurusLain,
+        onClick = {
+          onEvent(RegisterEvent.AdaPengurusLainChanged(true))
+        },
         text = "Ya, terdapat rekan saya sebagai peserta 2"
       )
       RowRadioButton(
-        selected = false,
-        onClick = {},
+        selected = ! state.adaPengurusLain,
+        onClick = {
+          onEvent(RegisterEvent.AdaPengurusLainChanged(false))
+        },
         text = "Tidak, hanya saya sendiri sebagai penanggung jawab utama"
       )
     }
@@ -790,21 +877,40 @@ private fun ThirdScreen(
       verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
       RowCheckboxButton(
-        checked = true,
-        onCheckedChange = {},
+        checked = state.miniTrainingChecked,
+        onCheckedChange = {
+          onEvent(
+            RegisterEvent.MiniTrainingCheckedChanged(
+              ! state.miniTrainingChecked
+            )
+          )
+        },
         text = "Saya bersedia mengikuti agenda Mini Training LEAD Indonesia yang akan dilakukan secara online selama 5 hari"
       )
       RowCheckboxButton(
-        checked = false,
-        onCheckedChange = {},
+        checked = state.initialMentoringChecked,
+        onCheckedChange = {
+          onEvent(
+            RegisterEvent.InitialMentoringCheckedChanged(
+              ! state.initialMentoringChecked
+            )
+          )
+        },
         text = "Saya bersedia mengikuti agenda Initial Mentoring LEAD Indonesia yang akan dilakukan secara online selama 5 hari"
       )
       RowCheckboxButton(
-        checked = false,
-        onCheckedChange = {},
+        checked = state.pendampinganIntensifChecked,
+        onCheckedChange = {
+          onEvent(
+            RegisterEvent.PendampinganIntensifCheckedChanged(
+              ! state.pendampinganIntensifChecked
+            )
+          )
+        },
         text = "Saya bersedia mengikuti agenda Pendampingan Intensif bersama pada Mentor LEAD Indonesia yang akan dilakukan secara online minimal 2-3 kali setiap bulan"
       )
     }
+
   }
   Column(
     verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -816,8 +922,11 @@ private fun ThirdScreen(
     )
     CustomOutlinedTextField(
       label = "Masukkan alasan anda tidak bersedia mengikuti agenda tersebut",
-      value = "",
-      onValueChange = {},
+      value = state.alasanTidakMengikutiAgenda,
+      error = state.alasanTidakMengikutiAgendaError,
+      onValueChange = {
+        onEvent(RegisterEvent.AlasanTidakMengikutiAgendaChanged(it))
+      },
       placeholder = "Ketik alasan anda tidak bersedia mengikuti agenda tersebut",
       labelDefaultColor = ColorPalette.Monochrome400,
       modifier = Modifier.fillMaxWidth(),
@@ -908,8 +1017,22 @@ fun FourthScreen(
   nextIndicatorProgress : () -> Unit,
   filePickerLauncher : ManagedActivityResultLauncher<Array<String>, Uri?>,
   selectedFileUri : Uri?,
-  deleteFile : () -> Unit
+  deleteFile : () -> Unit,
+  state : RegistrasiState,
+  onEvent : (RegisterEvent) -> Unit,
+  expandedPendidikan : Boolean,
+  onExpandedPendidikanChange : (Boolean) -> Unit
 ) {
+  val sumberInformasiOptions = listOf(
+    "Instagram @leadindonesia",
+    "Facebook @leadindonesia",
+    "Youtube @leadindonesia",
+    "Website Bakrie Center Foundation (http://bcr.or.id)",
+    "Teman atau rekan kerja",
+    "Alumni LEAD Indonesia",
+    "Yang lain"
+  )
+
   Column(
     verticalArrangement = Arrangement.spacedBy(12.dp)
   ) {
@@ -922,14 +1045,19 @@ fun FourthScreen(
 
     CustomOutlinedTextFieldDropdown(
       label = "Pilih Jawaban",
-      value = "",
-      onValueChange = {},
+      value = state.pernahMengikutiPelatihanDesainProgram,
+      onValueChange = {
+        onEvent(RegisterEvent.PernahMengikutiPelatihanDesainProgramChanged(it))
+      },
       placeholder = "Pilih Jawaban",
       modifier = Modifier.fillMaxWidth(),
       labelDefaultColor = ColorPalette.Monochrome400,
-      dropdownItems = provinsis,
-      expanded = false,
-      onChangeExpanded = {}
+      dropdownItems = pernahs,
+      expanded = expandedPendidikan,
+      onChangeExpanded = {
+        onExpandedPendidikanChange(it)
+
+      }
     )
   }
   Column(
@@ -940,37 +1068,20 @@ fun FourthScreen(
       style = StyledText.MobileSmallMedium,
       color = ColorPalette.PrimaryColor700
     )
+
+    // TODO: kurang field ini di state
     Column {
-      RowCheckboxButton(
-        checked = true,
-        onCheckedChange = {},
-        text = "Instagram @bakriecenter"
-      )
-      RowCheckboxButton(
-        checked = false,
-        onCheckedChange = {},
-        text = "Youtube @bakriecenter"
-      )
-      RowCheckboxButton(
-        checked = false,
-        onCheckedChange = {},
-        text = "Website Bakrie Center Foundation (http//bcr.or.id)"
-      )
-      RowCheckboxButton(
-        checked = false,
-        onCheckedChange = {},
-        text = "Teman atau rekan kerja"
-      )
-      RowCheckboxButton(
-        checked = false,
-        onCheckedChange = {},
-        text = "Alumni LEAD Indonesia"
-      )
-      RowCheckboxButton(
-        checked = false,
-        onCheckedChange = {},
-        text = "Yang lain: _____________"
-      )
+      sumberInformasiOptions.forEach { sumber ->
+        RowCheckboxButton(
+          checked = state.sumberInformasiLEAD.contains(sumber),
+          onCheckedChange = {
+            val isChecked = ! state.sumberInformasiLEAD.contains(sumber)
+            onEvent(RegisterEvent.SumberInformasiLEADChanged(sumber, isChecked))
+          },
+          text = sumber
+        )
+      }
+
     }
 
   }
@@ -985,26 +1096,34 @@ fun FourthScreen(
     )
 
     CustomOutlinedTextField(
-      label = "Jelaskan pengetahuan mu terkait LEAD Indonesia",
-      value = "",
-      onValueChange = {},
-      placeholder = "Ketik pengetahuanmu terkait LEAD Indonesia",
+      label = "Jelaskan pengetahuan mu terkait Desain Program",
+      value = state.pengetahuanDesainProgram,
+      onValueChange = {
+        onEvent(RegisterEvent.PengetahuanDesainProgramChanged(it))
+      },
+      error = state.pengetahuanDesainProgramError,
+      placeholder = "Ketik pengetahuanmu terkait Desain Program",
       modifier = Modifier.fillMaxWidth(),
     )
   }
   ColumnTextField(
     label = "Apakah yang anda ketahui terkait sustainability atau keberlanjutan?",
-    value = "",
+    value = state.pengetahuanSustainability,
     text = "Jelaskan pengetahuanmu terkait sustainability atau keberlanjutan",
-    onValueChange = {},
+    onValueChange = {
+
+      onEvent(RegisterEvent.PengetahuanSustainabilityChanged(it))
+    },
     placeholder = "Ketik pengetahuanmu terkait sustainability atau keberlanjutan",
     modifier = Modifier.fillMaxWidth()
   )
   ColumnTextField(
     label = "Apakah yang anda ketahui terkait social report atau laporan social?",
-    value = "",
+    value = state.pengetahuanSocialReport,
     text = "Jelaskan pengetahuanmu terkait social report atau laporan social",
-    onValueChange = {},
+    onValueChange = {
+      onEvent(RegisterEvent.PengetahuanSocialReportChanged(it))
+    },
     placeholder = "Ketik pengetahuanmu terkait social report atau laporan social",
     modifier = Modifier.fillMaxWidth()
   )
@@ -1017,17 +1136,21 @@ fun FourthScreen(
   )
   ColumnTextField(
     label = "Jelaskan ekspetasi anda setelah mengikuti kegiatan LEAD Indonesia 2023?",
-    value = "",
+    value = state.ekspetasiSetelahLEAD,
     text = "Jelaskan ekspetasi anda setelah mengikuti kegiatan LEAD Indonesia 2023",
-    onValueChange = {},
+    onValueChange = {
+      onEvent(RegisterEvent.EkspetasiSetelahLEADChanged(it))
+    },
     placeholder = "Ketik ekspetasi anda setelah mengikuti kegiatan LEAD Indonesia 2023",
     modifier = Modifier.fillMaxWidth()
   )
   ColumnTextField(
     label = "Apakah ada hal lain yang ingin anda tanyakan atau sampaikan terkait LEAD Indonesia 2023?",
-    value = "",
+    value = state.halLainYangInginDisampaikan,
     text = "Jelaskan hal lain yang ingin anda tanyakan atau sampaikan terkait LEAD Indonesia 2023",
-    onValueChange = {},
+    onValueChange = {
+      onEvent(RegisterEvent.HalLainYangInginDisampaikanChanged(it))
+    },
     placeholder = "Ketik hal lain yang ingin anda tanyakan atau sampaikan terkait LEAD Indonesia 2023",
     modifier = Modifier.fillMaxWidth()
   )
@@ -1045,6 +1168,8 @@ fun FourthScreen(
 fun FifthScreen(
 
   prevIndicatorProgress : () -> Unit,
+  state : RegistrasiState,
+  onEvent : (RegisterEvent) -> Unit
 ) {
   val headerTable = listOf("No", "Provinsi", "Jumlah Penerima Manfaaat", "Rincian")
   val columnWeights = listOf(
@@ -1053,23 +1178,15 @@ fun FifthScreen(
     1f,
     1f
   )
-  val rowsJangkauanProgram = listOf(
-    WilayahJangkauan(
-      provinsi = "DKI Jakarta",
-      jumlahPenerimaManfaat = 100,
-    ),
-    WilayahJangkauan(
-      provinsi = "Jawa Barat",
-      jumlahPenerimaManfaat = 200,
-    ),
-  ).mapIndexed { index, wilayahJangkauan ->
-    listOf(
-      (index + 1).toString(),
-      wilayahJangkauan.provinsi,
-      wilayahJangkauan.jumlahPenerimaManfaat.toString(),
-      "Rincian"
-    )
-  }
+  val rowsJangkauanProgram =
+    state.jumlahAngkaPenerimaanManfaat.mapIndexed { index, wilayahJangkauan ->
+      listOf(
+        (index + 1).toString(),
+        wilayahJangkauan.kota,
+        wilayahJangkauan.jumlah.toString(),
+        "Rincian"
+      )
+    }
   Column(
     verticalArrangement = Arrangement.spacedBy(20.dp)
   ) {
@@ -1078,35 +1195,35 @@ fun FifthScreen(
     )
     ColumnKeyValue(
       key = "Nama Lembaga",
-      value = "Bakrie Center Foundation"
+      value = state.namaLembaga
     )
     ColumnKeyValue(
       key = "Email Formal Lembaga",
-      value = "bcf@gmail.com",
+      value = state.emailLembaga
     )
     ColumnKeyValue(
       key = "Alamat Lengkap Lembaga",
-      value = "Jl. Jend. Sudirman No. 1, Jakarta Pusat",
+      value = state.alamatLembaga
     )
     ColumnKeyValue(
       key = "Jenis Lembaga",
-      value = "Gerakan",
+      value = state.jenisLembagaSosial
     )
     ColumnKeyValue(
       key = "Fokus Isu",
-      value = "Pendidikan",
+      value = state.fokusIsu
     )
     ColumnKeyValue(
       key = "Alasan Mengikuti Program",
-      value = "Karena ingin mengembangkan komunitas"
+      value = state.alasanKeikutsertaan
     )
     ColumnKeyValue(
       key = "Cakupan/Jangkauan Program",
-      value = "Provinsi"
+      value = state.jangkauanProgram
     )
     ColumnKeyValue(
       key = "Target Utama Program",
-      value = "Kepala Keluarga, Anak Jalanan, Pasien TBC"
+      value = state.targetUtamaProgram
     )
     Text(
       text = "Wilayah Jangkauan Program",
@@ -1126,27 +1243,23 @@ fun FifthScreen(
     )
     ColumnKeyValue(
       key = "Nama Lengkap ",
-      value = "Budi Santoso"
+      value = state.namaLengkapPeserta
     )
     ColumnKeyValue(
       key = "Posisi",
-      value = "Ketua Instansi"
-    )
-    ColumnKeyValue(
-      key = "Pendidiakn Terakhir",
-      value = "S1"
+      value = state.posisiPeserta
     )
     ColumnKeyValue(
       key = "Pendidikan Terakhir",
-      value = "S1 - Teknik Informatika"
+      value = state.pendidikanTerakhir
     )
     ColumnKeyValue(
       key = "Nomor Whatsapp",
-      value = "08980861214"
+      value = state.nomorWhatsappPeserta
     )
     ColumnKeyValue(
       key = "Email",
-      value = "aurel@gmail.com"
+      value = state.emailPeserta
     )
     SecondaryButton(
       text = "Ubah Profil Peserta",
@@ -1158,13 +1271,17 @@ fun FifthScreen(
     Column {
       RowCheckboxButton(
         text = "Saya sudah membaca dan memahami https://bit.ly/LEADBCF-2023",
-        checked = true,
-        onCheckedChange = {}
+        checked = state.readAndUnderstandChecked,
+        onCheckedChange = {
+          onEvent(RegisterEvent.ReadAndUnderstandCheckedChanged(! state.readAndUnderstandChecked))
+        }
       )
       RowCheckboxButton(
         text = "Saya mengkonfirmasi bahwa seluruh informasi yang saya berikan di atas adalah akurat dan terkini",
-        checked = false,
-        onCheckedChange = {}
+        checked = state.confirmInformationChecked,
+        onCheckedChange = {
+          onEvent(RegisterEvent.ConfirmInformationCheckedChanged(! state.confirmInformationChecked))
+        }
       )
     }
   }
@@ -1180,7 +1297,9 @@ fun FifthScreen(
     )
     PrimaryButton(
       text = "Kirim",
-      onClick = { }
+      onClick = {
+        onEvent(RegisterEvent.Submit)
+      }
     )
   }
 }
@@ -1191,8 +1310,7 @@ fun Table(
   columnWeights : List<Float>,
   rows : List<List<String>>
 ) {
-  Column(
-  ) {
+  Column {
     TableRow {
       headers.forEachIndexed { index, header ->
         TableCell(
@@ -1206,10 +1324,23 @@ fun Table(
     rows.forEach { row ->
       TableRow {
         row.forEachIndexed { index, cell ->
-          TableCell(
-            text = cell,
-            modifier = Modifier.weight(columnWeights.getOrElse(index) { 1f })
-          )
+          if (cell == "Rincian") {
+            IconButton(
+              onClick = { },
+              modifier = Modifier.size(24.dp)
+            ) {
+              Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Rincian",
+                tint = ColorPalette.PrimaryColor700
+              )
+            }
+          } else {
+            TableCell(
+              text = cell,
+              modifier = Modifier.weight(columnWeights.getOrElse(index) { 1f })
+            )
+          }
         }
       }
     }

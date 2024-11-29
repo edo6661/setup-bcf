@@ -60,6 +60,18 @@ class ConstantRegistrasi {
       "Internasional",
       "Kelurahan"
     )
+    val wilayahJangkauanPrograms = listOf(
+      "DKI Jakarta",
+      "Jawa Barat",
+      "Jawa Tengah",
+      "Jawa Timur",
+      "Bali",
+    )
+
+    val jenisKelamins = listOf(
+      "Pria",
+      "Wanita"
+    )
 
     val pernahs = listOf(
       "Sudah",

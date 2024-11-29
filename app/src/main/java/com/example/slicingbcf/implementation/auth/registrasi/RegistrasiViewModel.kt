@@ -1,6 +1,7 @@
 package com.example.slicingbcf.implementation.auth.registrasi
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.slicingbcf.data.local.model.Role
@@ -26,6 +27,48 @@ class RegistrasiViewModel @Inject constructor(
 
   private fun onSubmit() {
     if (! validate()) {
+      val user = User(
+        namaLembaga = _uiState.value.namaLembaga,
+        emailLembaga = _uiState.value.emailLembaga,
+        alamatLembaga = _uiState.value.alamatLembaga,
+        provinsi = _uiState.value.provinsi,
+        kota = _uiState.value.kota,
+        tanggalBerdiri = _uiState.value.selectedDate,
+        jenisLembagaSosial = _uiState.value.jenisLembagaSosial,
+        jenisClusterLembagaSosial = _uiState.value.jenisLembagaSosial,
+        fokusIsu = _uiState.value.fokusIsu,
+        profilSingkatLembaga = _uiState.value.profilLembaga,
+        alasanMengikutiLead = _uiState.value.alasanKeikutsertaan,
+        dokumenProfilPerusahaan = _uiState.value.selectedFileUriLaporanAkhirTahun.toString(),
+        jangkauanProgram = _uiState.value.jangkauanProgram,
+        wilayahJangkauanProgram = _uiState.value.wilayahJangkauanProgram,
+        jumlahAngkaPenerimaanManfaat = _uiState.value.jumlahAngkaPenerimaanManfaat,
+        targetUtamaProgram = _uiState.value.targetUtamaProgram,
+        proposalProgramMitra = _uiState.value.selectedFileUriProposalProgram.toString(),
+        namaPeserta = _uiState.value.namaLengkapPeserta,
+        posisi = _uiState.value.posisiPeserta,
+        pendidikanTerakhir = _uiState.value.pendidikanTerakhir,
+        jenisKelamin = _uiState.value.jenisKelamin,
+        nomorWhatsapp = _uiState.value.nomorWhatsappPeserta,
+        emailPeserta = _uiState.value.emailPeserta,
+        password = _uiState.value.namaLengkapPeserta + "123",
+        ktp = _uiState.value.selectedFileUriKTP.toString(),
+        cv = _uiState.value.selectedFileUriCV.toString(),
+        adaPengurusLainYangAkanDiikutSertakanSebagaiPeserta = _uiState.value.adaPengurusLain,
+        alasanMengikutiAgenda = _uiState.value.alasanTidakMengikutiAgenda,
+        pernahMengikutiPelatihan = _uiState.value.pernahMengikutiPelatihanDesainProgram == "Sudah",
+        darimanaMengetahuiLead = _uiState.value.sumberInformasiLEADAsString,
+        yangDiketahuiTerkaitDesainProgram = _uiState.value.pengetahuanDesainProgram,
+        yangDiketahuiTerkaitKeberlanjutan = _uiState.value.pengetahuanSustainability,
+        yangDiketahuiTerkaitLaporanSosial = _uiState.value.pengetahuanSocialReport,
+        laporanAkhirTahun = _uiState.value.selectedFileUriLaporanAkhirTahun.toString(),
+        ekspetasiMengikutiLead = _uiState.value.ekspetasiSetelahLEAD,
+        halYangInginDitanyakanKeLead = _uiState.value.halLainYangInginDisampaikan,
+        umpanBalik = _uiState.value.halLainYangInginDisampaikan,
+        pengalamanMendaftarLead = _uiState.value.halLainYangInginDisampaikan,
+        role = Role.PESERTA.name
+      )
+      Log.d("RegistrasiViewModel", "onSubmit: $user")
       return
     }
 
@@ -60,10 +103,10 @@ class RegistrasiViewModel @Inject constructor(
           password = _uiState.value.namaLengkapPeserta + "123",
           ktp = _uiState.value.selectedFileUriKTP.toString(),
           cv = _uiState.value.selectedFileUriCV.toString(),
-          adaPengurusLainYangAkanDiikutSertakanSebagaiPeserta = _uiState.value.pernahMengikutiPelatihanDesainProgram,
+          adaPengurusLainYangAkanDiikutSertakanSebagaiPeserta = _uiState.value.adaPengurusLain,
           alasanMengikutiAgenda = _uiState.value.alasanTidakMengikutiAgenda,
-          pernahMengikutiPelatihan = _uiState.value.pernahMengikutiPelatihanDesainProgram,
-          darimanaMengetahuiLead = _uiState.value.sumberInformasiLEAD,
+          pernahMengikutiPelatihan = _uiState.value.pernahMengikutiPelatihanDesainProgram == "Sudah",
+          darimanaMengetahuiLead = _uiState.value.sumberInformasiLEAD.toString(),
           yangDiketahuiTerkaitDesainProgram = _uiState.value.pengetahuanDesainProgram,
           yangDiketahuiTerkaitKeberlanjutan = _uiState.value.pengetahuanSustainability,
           yangDiketahuiTerkaitLaporanSosial = _uiState.value.pengetahuanSocialReport,
@@ -74,8 +117,9 @@ class RegistrasiViewModel @Inject constructor(
           pengalamanMendaftarLead = _uiState.value.halLainYangInginDisampaikan,
           role = Role.PESERTA.name
         )
+        Log.d("RegistrasiViewModel", "onSubmit: $user")
 
-        userRepository.insertUser(user)
+//        userRepository.insertUser(user)
 
         _uiState.update { it.copy(isSuccess = true, isLoading = false) }
 
@@ -96,6 +140,27 @@ class RegistrasiViewModel @Inject constructor(
         event.namaLembaga
       )
 
+
+      is RegisterEvent.ReadAndUnderstandCheckedChanged                       -> onReadAndUnderstandCheckedChanged(
+        event.isChecked
+      )
+
+      is RegisterEvent.ConfirmInformationCheckedChanged                      -> onConfirmInformationCheckedChanged(
+        event.isChecked
+      )
+
+      is RegisterEvent.MiniTrainingCheckedChanged                            -> onMiniTrainingCheckedChanged(
+        event.isChecked
+      )
+
+      is RegisterEvent.InitialMentoringCheckedChanged                        -> onInitialMentoringCheckedChanged(
+        event.isChecked
+      )
+
+      is RegisterEvent.PendampinganIntensifCheckedChanged                    -> onPendampinganIntensifCheckedChanged(
+        event.isChecked
+      )
+
       is RegisterEvent.SelectedDateChanged                                   -> onChangeSelectedDate(
         event.selectedDate
       )
@@ -114,6 +179,10 @@ class RegistrasiViewModel @Inject constructor(
 
       is RegisterEvent.KotaChanged                                           -> onChangeKota(event.kota)
       is RegisterEvent.JenisLembagaSosialChanged                             -> onChangeJenisLembagaSosial(
+        event.jenisLembagaSosial
+      )
+
+      is RegisterEvent.JenisClusterLembagaSosialChanged                      -> onChangeClusterJenisLembagaSosial(
         event.jenisLembagaSosial
       )
 
@@ -141,9 +210,19 @@ class RegistrasiViewModel @Inject constructor(
         event.wilayahJangkauanProgram
       )
 
-      is RegisterEvent.JumlahAngkaPenerimaanManfaatChanged                   -> onChangeJumlahAngkaPenerimaanManfaat(
-        event.jumlahAngka
-      )
+
+      is RegisterEvent.UpdateJumlahAngkaPenerimaanManfaat                    -> {
+        onChangeJumlahAngkaPenerimaanManfaat(event.index, event.field)
+      }
+
+      is RegisterEvent.RemoveLastJumlahAngkaPenerimaanManfaat                -> {
+        onRemoveLastJumlahAngkaPenerimaanManfaat()
+      }
+
+      is RegisterEvent.AddJumlahAngkaPenerimaanManfaat                       -> {
+        onAddJumlahAngkaPenerimaanManfaat(event.newField)
+      }
+
 
       is RegisterEvent.TargetUtamaProgramChanged                             -> onChangeTargetUtamaProgram(
         event.targetUtamaProgram
@@ -206,7 +285,12 @@ class RegistrasiViewModel @Inject constructor(
       )
 
       is RegisterEvent.SumberInformasiLEADChanged                            -> onChangeSumberInformasiLEAD(
-        event.sumberInformasi
+        event.sumber,
+        event.isChecked
+      )
+
+      is RegisterEvent.PengetahuanLeadChanged                                -> onChangePengetahuanLead(
+        event.pengetahuan
       )
 
       is RegisterEvent.PengetahuanDesainProgramChanged                       -> onChangePengetahuanDesainProgram(
@@ -274,7 +358,7 @@ class RegistrasiViewModel @Inject constructor(
       if (field.isBlankOrEmpty()) errorMessage else null
     }
 
-    _uiState.update {
+    _uiState.update { it ->
       it.copy(
         namaLembagaError = errorMap.find { it == "Nama lembaga tidak boleh kosong" },
         emailLembagaError = errorMap.find { it == "Email lembaga tidak boleh kosong" },
@@ -308,6 +392,26 @@ class RegistrasiViewModel @Inject constructor(
     _uiState.update { it.copy(namaLembaga = namaLembaga) }
   }
 
+  private fun onReadAndUnderstandCheckedChanged(isChecked : Boolean) {
+    _uiState.update { it.copy(readAndUnderstandChecked = isChecked) }
+  }
+
+  private fun onConfirmInformationCheckedChanged(isChecked : Boolean) {
+    _uiState.update { it.copy(confirmInformationChecked = isChecked) }
+  }
+
+  private fun onMiniTrainingCheckedChanged(isChecked : Boolean) {
+    _uiState.update { it.copy(miniTrainingChecked = isChecked) }
+  }
+
+  private fun onInitialMentoringCheckedChanged(isChecked : Boolean) {
+    _uiState.update { it.copy(initialMentoringChecked = isChecked) }
+  }
+
+  private fun onPendampinganIntensifCheckedChanged(isChecked : Boolean) {
+    _uiState.update { it.copy(pendampinganIntensifChecked = isChecked) }
+  }
+
   private fun onChangeSelectedDate(selectedDate : String) {
     _uiState.update { it.copy(selectedDate = selectedDate) }
   }
@@ -330,6 +434,10 @@ class RegistrasiViewModel @Inject constructor(
 
   private fun onChangeJenisLembagaSosial(jenisLembagaSosial : String) {
     _uiState.update { it.copy(jenisLembagaSosial = jenisLembagaSosial) }
+  }
+
+  private fun onChangeClusterJenisLembagaSosial(jenisClusterLembagaSosial : String) {
+    _uiState.update { it.copy(jenisClusterLembagaSosial = jenisClusterLembagaSosial) }
   }
 
   private fun onChangeFokusIsu(fokusIsu : String) {
@@ -356,9 +464,39 @@ class RegistrasiViewModel @Inject constructor(
     _uiState.update { it.copy(wilayahJangkauanProgram = wilayahJangkauanProgram) }
   }
 
-  private fun onChangeJumlahAngkaPenerimaanManfaat(jumlahAngka : List<JangkauanPenerimaManfaat>) {
-    _uiState.update { it.copy(jumlahAngkaPenerimaanManfaat = jumlahAngka) }
+  private fun onChangeJumlahAngkaPenerimaanManfaat(
+    index : Int,
+    updatedField : JangkauanPenerimaManfaat
+  ) {
+    _uiState.update { currentState ->
+      currentState.copy(
+        jumlahAngkaPenerimaanManfaat = currentState.jumlahAngkaPenerimaanManfaat.mapIndexed { i, field ->
+          if (i == index) updatedField else field
+        }
+      )
+    }
   }
+
+
+  private fun onRemoveLastJumlahAngkaPenerimaanManfaat() {
+    _uiState.update { currentState ->
+      currentState.copy(
+        jumlahAngkaPenerimaanManfaat = currentState.jumlahAngkaPenerimaanManfaat.dropLast(1)
+      )
+    }
+  }
+
+  private fun onAddJumlahAngkaPenerimaanManfaat(
+    newField : JangkauanPenerimaManfaat
+  ) {
+    _uiState.update { currentState ->
+      currentState.copy(
+        jumlahAngkaPenerimaanManfaat = currentState.jumlahAngkaPenerimaanManfaat + newField
+      )
+    }
+
+  }
+
 
   private fun onChangeTargetUtamaProgram(targetUtamaProgram : String) {
     _uiState.update { it.copy(targetUtamaProgram = targetUtamaProgram) }
@@ -416,16 +554,26 @@ class RegistrasiViewModel @Inject constructor(
     _uiState.update { it.copy(bersediaMengikutiAgenda = bersedia) }
   }
 
-  private fun onChangePernahMengikutiPelatihanDesainProgram(pelatihan : Boolean) {
+  private fun onChangePernahMengikutiPelatihanDesainProgram(pelatihan : String) {
     _uiState.update { it.copy(pernahMengikutiPelatihanDesainProgram = pelatihan) }
   }
 
-  private fun onChangeSumberInformasiLEAD(sumberInformasi : String) {
-    _uiState.update { it.copy(sumberInformasiLEAD = sumberInformasi) }
+  private fun onChangeSumberInformasiLEAD(sumber : String, isChecked : Boolean) {
+    val updatedSumberInformasiLEAD = if (isChecked) {
+      _uiState.value.sumberInformasiLEAD + sumber
+    } else {
+      _uiState.value.sumberInformasiLEAD - sumber
+    }
+    _uiState.value = _uiState.value.copy(sumberInformasiLEAD = updatedSumberInformasiLEAD)
+
   }
 
   private fun onChangePengetahuanDesainProgram(pengetahuan : String) {
     _uiState.update { it.copy(pengetahuanDesainProgram = pengetahuan) }
+  }
+
+  private fun onChangePengetahuanLead(pengetahuan : String) {
+    _uiState.update { it.copy(pengetahuanLead = pengetahuan) }
   }
 
   private fun onChangePengetahuanSustainability(pengetahuan : String) {

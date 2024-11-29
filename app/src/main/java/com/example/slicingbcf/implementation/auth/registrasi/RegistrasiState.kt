@@ -18,6 +18,8 @@ data class RegistrasiState(
   val kotaError : String? = null,
   val jenisLembagaSosial : String = "",
   val jenisLembagaSosialError : String? = null,
+  val jenisClusterLembagaSosial : String = "",
+  val jenisClusterLembagaSosialError : String? = null,
   val fokusIsu : String = "",
   val fokusIsuError : String? = null,
   val profilLembaga : String = "",
@@ -29,7 +31,9 @@ data class RegistrasiState(
   val jangkauanProgramError : String? = null,
   val wilayahJangkauanProgram : String = "",
   val wilayahJangkauanProgramError : String? = null,
-  val jumlahAngkaPenerimaanManfaat : List<JangkauanPenerimaManfaat> = emptyList(),
+  val jumlahAngkaPenerimaanManfaat : List<JangkauanPenerimaManfaat> = listOf(
+    JangkauanPenerimaManfaat(kota = "", jumlah = 0)
+  ),
   val jumlahAngkaPenerimaanManfaatError : String? = null,
   val targetUtamaProgram : String = "",
   val targetUtamaProgramError : String? = null,
@@ -57,10 +61,11 @@ data class RegistrasiState(
   val alasanTidakMengikutiAgenda : String = "",
   val alasanTidakMengikutiAgendaError : String? = null,
   val bersediaMengikutiAgenda : Boolean = false,
-  val pernahMengikutiPelatihanDesainProgram : Boolean = false,
+  val pernahMengikutiPelatihanDesainProgram : String = "",
   val pernahMengikutiPelatihanDesainProgramError : String? = null,
-  val sumberInformasiLEAD : String = "",
-  val sumberInformasiLEADError : String? = null,
+  val sumberInformasiLEAD : Set<String> = emptySet(),
+  val pengetahuanLead : String = "",
+  val pengetahuanLeadError : String? = null,
   val pengetahuanDesainProgram : String = "",
   val pengetahuanDesainProgramError : String? = null,
   val pengetahuanSustainability : String = "",
@@ -73,13 +78,27 @@ data class RegistrasiState(
   val ekspetasiSetelahLEADError : String? = null,
   val halLainYangInginDisampaikan : String = "",
   val halLainYangInginDisampaikanError : String? = null,
+  val miniTrainingChecked : Boolean = false,
+  val initialMentoringChecked : Boolean = false,
+  val pendampinganIntensifChecked : Boolean = false,
+  val readAndUnderstandChecked : Boolean = false,
+  val confirmInformationChecked : Boolean = false,
 
   val isLoading : Boolean = false,
   val error : String? = null,
   val isSuccess : Boolean = false
-)
+) {
+
+  val sumberInformasiLEADAsString : String
+    get() = sumberInformasiLEAD.joinToString(", ")
+}
 
 sealed class RegisterEvent {
+  data class ReadAndUnderstandCheckedChanged(val isChecked : Boolean) : RegisterEvent()
+  data class ConfirmInformationCheckedChanged(val isChecked : Boolean) : RegisterEvent()
+  data class MiniTrainingCheckedChanged(val isChecked : Boolean) : RegisterEvent()
+  data class InitialMentoringCheckedChanged(val isChecked : Boolean) : RegisterEvent()
+  data class PendampinganIntensifCheckedChanged(val isChecked : Boolean) : RegisterEvent()
   data class NamaLembagaChanged(val namaLembaga : String) : RegisterEvent()
   data class SelectedDateChanged(val selectedDate : String) : RegisterEvent()
   data class EmailLembagaChanged(val emailLembaga : String) : RegisterEvent()
@@ -87,14 +106,24 @@ sealed class RegisterEvent {
   data class ProvinsiChanged(val provinsi : String) : RegisterEvent()
   data class KotaChanged(val kota : String) : RegisterEvent()
   data class JenisLembagaSosialChanged(val jenisLembagaSosial : String) : RegisterEvent()
+  data class JenisClusterLembagaSosialChanged(val jenisLembagaSosial : String) : RegisterEvent()
   data class FokusIsuChanged(val fokusIsu : String) : RegisterEvent()
   data class ProfilLembagaChanged(val profilLembaga : String) : RegisterEvent()
   data class AlasanKeikutsertaanChanged(val alasanKeikutsertaan : String) : RegisterEvent()
   data class SelectedFileUriDokumentasiSesiMentoringClusterChanged(val uri : Uri?) : RegisterEvent()
   data class JangkauanProgramChanged(val jangkauanProgram : String) : RegisterEvent()
   data class WilayahJangkauanProgramChanged(val wilayahJangkauanProgram : String) : RegisterEvent()
-  data class JumlahAngkaPenerimaanManfaatChanged(val jumlahAngka : List<JangkauanPenerimaManfaat>) :
-    RegisterEvent()
+  data class UpdateJumlahAngkaPenerimaanManfaat(
+    val index : Int,
+    val field : JangkauanPenerimaManfaat
+  ) : RegisterEvent()
+
+  data class AddJumlahAngkaPenerimaanManfaat(
+    val newField : JangkauanPenerimaManfaat
+  ) : RegisterEvent()
+
+  object RemoveLastJumlahAngkaPenerimaanManfaat : RegisterEvent()
+
 
   data class TargetUtamaProgramChanged(val targetUtamaProgram : String) : RegisterEvent()
   data class SelectedFileUriProposalProgramChanged(val uri : Uri?) : RegisterEvent()
@@ -110,9 +139,12 @@ sealed class RegisterEvent {
   data class AdaPengurusLainChanged(val adaPengurusLain : Boolean) : RegisterEvent()
   data class AlasanTidakMengikutiAgendaChanged(val alasan : String) : RegisterEvent()
   data class BersediaMengikutiAgendaChanged(val bersedia : Boolean) : RegisterEvent()
-  data class PernahMengikutiPelatihanDesainProgramChanged(val pelatihan : Boolean) : RegisterEvent()
-  data class SumberInformasiLEADChanged(val sumberInformasi : String) : RegisterEvent()
+  data class PernahMengikutiPelatihanDesainProgramChanged(val pelatihan : String) : RegisterEvent()
+  data class SumberInformasiLEADChanged(val sumber : String, val isChecked : Boolean) :
+    RegisterEvent()
+
   data class PengetahuanDesainProgramChanged(val pengetahuan : String) : RegisterEvent()
+  data class PengetahuanLeadChanged(val pengetahuan : String) : RegisterEvent()
   data class PengetahuanSustainabilityChanged(val pengetahuan : String) : RegisterEvent()
   data class PengetahuanSocialReportChanged(val pengetahuan : String) : RegisterEvent()
   data class SelectedFileUriLaporanAkhirTahunChanged(val uri : Uri?) : RegisterEvent()
