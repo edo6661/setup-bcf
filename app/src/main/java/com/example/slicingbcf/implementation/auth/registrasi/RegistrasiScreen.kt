@@ -42,13 +42,13 @@ import com.example.slicingbcf.ui.upload.FileUploadSection
 import com.example.slicingbcf.util.convertMillisToDate
 
 
-// TODO: build second screen - latest screen
-
 @Composable
 fun RegistrasiScreen(
   modifier : Modifier,
   viewModel : RegistrasiViewModel = hiltViewModel()
 ) {
+
+  val state by viewModel.uiState.collectAsState()
 
   var currentScreen by rememberSaveable { mutableIntStateOf(0) }
   var indicatorProgress by remember { mutableFloatStateOf(0.2f) }
@@ -93,7 +93,9 @@ fun RegistrasiScreen(
       prevIndicatorProgress = prevIndicatorProgress,
       initialState = initialState,
       currentScreen = currentScreen,
-      onInitialScreenChange = { initialState = it }
+      onInitialScreenChange = { initialState = it },
+      state = state,
+      onEvent = { viewModel.onEvent(it) }
     )
   }
 }
@@ -146,7 +148,9 @@ private fun BottomSection(
   prevIndicatorProgress : () -> Unit,
   initialState : Int,
   onInitialScreenChange : (Int) -> Unit,
-  currentScreen : Int
+  currentScreen : Int,
+  state : RegistrasiState,
+  onEvent : (RegisterEvent) -> Unit
 ) {
   val verticalScroll = rememberScrollState()
 
@@ -160,41 +164,66 @@ private fun BottomSection(
   var expandedJangkauanProgram by remember { mutableStateOf(false) }
   var expandedJenisKelamin by remember { mutableStateOf(false) }
   var expandedPendidikan by remember { mutableStateOf(false) }
-  var selectedFileUriProfilPerusahaan by remember { mutableStateOf<Uri?>(null) }
-  val filePickerLauncherProfilPerusahaan = rememberLauncherForActivityResult(
+  val filePickerLauncherDokumentasiSesiMentoringCluster = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.OpenDocument(),
-    onResult = { uri -> selectedFileUriProfilPerusahaan = uri }
+    onResult = { uri ->
+      onEvent(
+        RegisterEvent.SelectedFileUriDokumentasiSesiMentoringClusterChanged(
+          uri
+        )
+      )
+    }
   )
-  val deleteFileProfilPerusahaan = { selectedFileUriProfilPerusahaan = null }
-  var selectedFileUriProposalMitra by remember { mutableStateOf<Uri?>(null) }
+  val deleteFileDokumentasiSesiMentoringCluster = {
+    onEvent(RegisterEvent.SelectedFileUriDokumentasiSesiMentoringClusterChanged(null))
+  }
   val filePickerLauncherProposalMitra = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.OpenDocument(),
-    onResult = { uri -> selectedFileUriProposalMitra = uri }
+    onResult = { uri -> onEvent(RegisterEvent.SelectedFileUriProposalProgramChanged(uri)) }
   )
-  val deleteFileProposalMitra = { selectedFileUriProposalMitra = null }
+  val deleteFileProposalMitra = {
+    onEvent(RegisterEvent.SelectedFileUriProposalProgramChanged(null))
+  }
 
-  var selectedFileUriKTP by remember { mutableStateOf<Uri?>(null) }
   val filePickerLauncherKTP = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.OpenDocument(),
-    onResult = { uri -> selectedFileUriKTP = uri }
+    onResult = { uri ->
+      onEvent(RegisterEvent.SelectedFileUriKTPChanged(uri))
+    }
   )
-  val deleteFileKTP = { selectedFileUriKTP = null }
-  var selectedFileUriCV by remember { mutableStateOf<Uri?>(null) }
+  val deleteFileKTP = {
+    onEvent(RegisterEvent.SelectedFileUriKTPChanged(null))
+  }
   val filePickerLauncherCV = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.OpenDocument(),
-    onResult = { uri -> selectedFileUriCV = uri }
+    onResult = { uri ->
+      onEvent(RegisterEvent.SelectedFileUriCVChanged(uri))
+    }
   )
-  val deleteFileCV = { selectedFileUriCV = null }
-  var selectedFileUriLaporanAkhirTahun by remember { mutableStateOf<Uri?>(null) }
+  val deleteFileCV = {
+    onEvent(RegisterEvent.SelectedFileUriCVChanged(null))
+  }
   val filePickerLauncherLaporanAkhirTahun = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.OpenDocument(),
-    onResult = { uri -> selectedFileUriLaporanAkhirTahun = uri }
+    onResult = { uri ->
+      onEvent(RegisterEvent.SelectedFileUriLaporanAkhirTahunChanged(uri))
+    }
   )
-  val deleteFileLaporanAkhirTahun = { selectedFileUriLaporanAkhirTahun = null }
+  val deleteFileLaporanAkhirTahun = {
+    onEvent(RegisterEvent.SelectedFileUriLaporanAkhirTahunChanged(null))
+  }
 
 
   val datePickerState = rememberDatePickerState()
-  val selectedDate = datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: ""
+  LaunchedEffect(datePickerState.selectedDateMillis) {
+    datePickerState.selectedDateMillis?.let { millis ->
+      val formattedDate = convertMillisToDate(millis)
+      if (formattedDate != state.selectedDate) {
+        onEvent(RegisterEvent.SelectedDateChanged(formattedDate))
+      }
+    }
+  }
+
 
   Box(
     modifier = Modifier
@@ -203,6 +232,7 @@ private fun BottomSection(
         detectTapGestures {
           expandedDate = false
           expandedProvinsi = false
+
         }
       }
   ) {
@@ -217,11 +247,11 @@ private fun BottomSection(
         modifier = Modifier
           .verticalScroll(verticalScroll),
         verticalArrangement = Arrangement.spacedBy(24.dp)
-
+        // TODO state dan onchange first screen udah, lanjut second screen
       ) {
         when (targetScreen) {
           0 -> FirstScreen(
-            selectedDate = selectedDate,
+            selectedDate = state.selectedDate,
             datePickerState = datePickerState,
             expandedDate = expandedDate,
             onExpandedDateChange = { expandedDate = it },
@@ -234,9 +264,10 @@ private fun BottomSection(
             expandedFokusIsu = expandedFokusIsu,
             onExpandedFokusIsuChange = { expandedFokusIsu = it },
             nextIndicatorProgress = nextIndicatorProgress,
-            filePickerLauncher = filePickerLauncherProfilPerusahaan,
-            selectedFileUri = selectedFileUriProfilPerusahaan,
-            deleteFile = deleteFileProfilPerusahaan
+            filePickerLauncher = filePickerLauncherDokumentasiSesiMentoringCluster,
+            deleteFile = deleteFileDokumentasiSesiMentoringCluster,
+            state = state,
+            onEvent = onEvent
           )
 
           1 -> SecondScreen(
@@ -244,7 +275,7 @@ private fun BottomSection(
             nextIndicatorProgress = nextIndicatorProgress,
             expandedPilihKota = expandedPilihKota,
             expandedJangkauanProgram = expandedJangkauanProgram,
-            expandedWilayahJangkauanProgram = expandedJangkauanProgram,
+            expandedWilayahJangkauanProgram = expandedWilayahJangkauanProgram,
             onExpandedJangkauanProgramChange = {
               expandedJangkauanProgram = it
             },
@@ -254,7 +285,7 @@ private fun BottomSection(
             onExpandedWilayahJangkauanProgramChange = {
               expandedWilayahJangkauanProgram = it
             },
-            selectedFileUri = selectedFileUriProposalMitra,
+            selectedFileUri = state.selectedFileUriProposalProgram,
             filePickerLauncher = filePickerLauncherProposalMitra,
             deleteFile = deleteFileProposalMitra
           )
@@ -271,10 +302,10 @@ private fun BottomSection(
               expandedJenisKelamin = it
             },
             filePickerLauncherKTP = filePickerLauncherKTP,
-            selectedFileUriKTP = selectedFileUriKTP,
+            selectedFileUriKTP = state.selectedFileUriKTP,
             deleteFileKTP = deleteFileKTP,
             filePickerLauncherCV = filePickerLauncherCV,
-            selectedFileUriCV = selectedFileUriCV,
+            selectedFileUriCV = state.selectedFileUriCV,
             deleteFileCV = deleteFileCV
 
 
@@ -283,7 +314,7 @@ private fun BottomSection(
           3 -> FourthScreen(
             prevIndicatorProgress = prevIndicatorProgress,
             nextIndicatorProgress = nextIndicatorProgress,
-            selectedFileUri = selectedFileUriLaporanAkhirTahun,
+            selectedFileUri = state.selectedFileUriLaporanAkhirTahun,
             filePickerLauncher = filePickerLauncherLaporanAkhirTahun,
             deleteFile = deleteFileLaporanAkhirTahun
           )
@@ -317,17 +348,20 @@ private fun FirstScreen(
   onExpandedFokusIsuChange : (Boolean) -> Unit,
   nextIndicatorProgress : () -> Unit,
   filePickerLauncher : ManagedActivityResultLauncher<Array<String>, Uri?>,
-  selectedFileUri : Uri?,
-  deleteFile : () -> Unit
+  deleteFile : () -> Unit,
+  state : RegistrasiState,
+  onEvent : (RegisterEvent) -> Unit
 ) {
 
   var isFocusedNamaLembaga by remember { mutableStateOf(false) }
-  var namaLembaga by remember { mutableStateOf("") }
 
   CustomOutlinedTextField(
     label = "Nama Lembaga",
-    value = namaLembaga,
-    onValueChange = { namaLembaga = it },
+    value = state.namaLembaga,
+    error = state.namaLembagaError,
+    onValueChange = {
+      onEvent(RegisterEvent.NamaLembagaChanged(it))
+    },
     placeholder = "Masukkan nama lembaga",
     modifier = Modifier.fillMaxWidth(),
     isFocused = isFocusedNamaLembaga,
@@ -345,6 +379,7 @@ private fun FirstScreen(
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
     datePickerState = datePickerState,
+    error = state.selectedDateError,
     expanded = expandedDate,
     onChangeExpanded = {
       onExpandedDateChange(it)
@@ -352,8 +387,10 @@ private fun FirstScreen(
   )
   CustomOutlinedTextField(
     label = "Email Formal Lembaga",
-    value = "",
-    onValueChange = {},
+    value = state.emailLembaga,
+    onValueChange = {
+      onEvent(RegisterEvent.EmailLembagaChanged(it))
+    },
     placeholder = "contoh@bcf.or.id",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -361,8 +398,11 @@ private fun FirstScreen(
   )
   CustomOutlinedTextField(
     label = "Masukkan alamat lengkap lembaga",
-    value = "",
-    onValueChange = {},
+    value = state.alamatLembaga,
+    onValueChange = {
+      onEvent(RegisterEvent.AlamatLembagaChanged(it))
+    },
+    error = state.alamatLembagaError,
     placeholder = "contoh@bcf.or.id",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -371,8 +411,10 @@ private fun FirstScreen(
   )
   CustomOutlinedTextFieldDropdown(
     label = "Provinsi",
-    value = "",
-    onValueChange = {},
+    value = state.provinsi,
+    onValueChange = {
+      onEvent(RegisterEvent.ProvinsiChanged(it))
+    },
     placeholder = "Pilih Provinsi",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -384,8 +426,10 @@ private fun FirstScreen(
   )
   CustomOutlinedTextFieldDropdown(
     label = "Kota / Kabupaten",
-    value = "",
-    onValueChange = {},
+    value = state.kota,
+    onValueChange = {
+      onEvent(RegisterEvent.KotaChanged(it))
+    },
     placeholder = "Pilih kota/kabupaten",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -397,8 +441,10 @@ private fun FirstScreen(
   )
   CustomOutlinedTextFieldDropdown(
     label = "Jenis Lembaga Sosial",
-    value = "",
-    onValueChange = {},
+    value = state.jenisLembagaSosial,
+    onValueChange = {
+      onEvent(RegisterEvent.JenisLembagaSosialChanged(it))
+    },
     placeholder = "Pilih jenis cluster lembaga sosial",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -410,8 +456,10 @@ private fun FirstScreen(
   )
   CustomOutlinedTextFieldDropdown(
     label = "Fokus Isu",
-    value = "",
-    onValueChange = {},
+    value = state.fokusIsu,
+    onValueChange = {
+      onEvent(RegisterEvent.FokusIsuChanged(it))
+    },
     placeholder = "Pilih fokus isu",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -423,8 +471,10 @@ private fun FirstScreen(
   )
   CustomOutlinedTextField(
     label = "Profil Singkat Lembaga",
-    value = "",
-    onValueChange = {},
+    value = state.profilLembaga,
+    onValueChange = {
+      onEvent(RegisterEvent.ProfilLembagaChanged(it))
+    },
     placeholder = "Masukkan profil singkat lembaga",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -433,8 +483,10 @@ private fun FirstScreen(
   )
   CustomOutlinedTextField(
     label = "Apa alasan anda mengikuti LEAD Indonesia 2023?",
-    value = "",
-    onValueChange = {},
+    value = state.alasanKeikutsertaan,
+    onValueChange = {
+      onEvent(RegisterEvent.AlasanKeikutsertaanChanged(it))
+    },
     placeholder = "Masukkan alasan anda mengikuti LEAD Indonesia 2023",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -444,7 +496,7 @@ private fun FirstScreen(
     title = "Dokumentasi sesi mentoring cluster",
     buttonText = "Klik untuk unggah file dokumentasi",
     onFileSelect = { filePickerLauncher.launch(arrayOf("image/*", "application/pdf")) },
-    selectedFileUri = selectedFileUri,
+    selectedFileUri = state.selectedFileUriDokumentasiSesiMentoringCluster,
     deleteFile = deleteFile
   )
   NextPrevButton(
