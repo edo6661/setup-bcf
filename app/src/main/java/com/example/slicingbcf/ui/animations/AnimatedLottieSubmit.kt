@@ -32,6 +32,7 @@ fun SubmitLoadingIndicator(
       composition,
       iterations = LottieConstants.IterateForever
     )
+    
 
     if (isLoading) {
       Dialog(onDismissRequest = { }) {

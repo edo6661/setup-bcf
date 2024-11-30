@@ -6,6 +6,7 @@ import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.KelompokMentoringScreen
 import com.example.slicingbcf.implementation.mentor.pengaturan_mentor.PengaturanScreen
+import com.example.slicingbcf.implementation.peserta.check_status_registrasi.CheckStatusRegistrasiScreen
 import com.example.slicingbcf.implementation.peserta.data_peserta.DataPesertaScreen
 import com.example.slicingbcf.implementation.peserta.form_monthly_report.DetailFormMonthlyReportScreen
 import com.example.slicingbcf.implementation.peserta.form_monthly_report.FormMonthlyReportScreen
@@ -23,7 +24,7 @@ fun NavGraphBuilder.pesertaNavGraph(
   navController : NavHostController
 ) {
   navigation(
-    startDestination = Screen.Peserta.FormMonthlyReport.route, route = "peserta"
+    startDestination = Screen.Peserta.CheckStatusRegistrasi.route, route = "peserta"
   ) {
     composable(Screen.Peserta.DataPeserta.route) {
       DataPesertaScreen(
@@ -86,6 +87,13 @@ fun NavGraphBuilder.pesertaNavGraph(
       route = Screen.Peserta.PenilaianPeserta.route,
     ) {
       PenilaianPesertaScreen(
+        modifier = modifier,
+      )
+    }
+    composable(
+      route = Screen.Peserta.CheckStatusRegistrasi.route,
+    ) {
+      CheckStatusRegistrasiScreen(
         modifier = modifier,
       )
     }

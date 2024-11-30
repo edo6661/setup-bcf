@@ -16,7 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.R
 import com.example.slicingbcf.constant.ColorPalette
@@ -25,7 +24,6 @@ import com.example.slicingbcf.data.local.KelompokMentoring
 import com.example.slicingbcf.data.local.headerKelompokMentorings
 import com.example.slicingbcf.data.local.kelompoksMentoring
 
-@Preview(showSystemUi = true)
 @Composable
 fun KelompokMentoringScreen(
   modifier : Modifier = Modifier
@@ -145,7 +143,9 @@ fun TabContent(
 
 @Composable
 fun BottomSection() {
-  com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.ScrollableTable(kelompoksMentoring)
+  com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.ScrollableTable(
+    kelompoksMentoring
+  )
 
 }
 

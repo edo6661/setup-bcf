@@ -23,7 +23,7 @@ fun dropdownItemsPendaftaran(
     DropdownItem(
       text = "Cek Status Peserta",
       onClick = {
-        Log.d("SideNav", "Cek Status Peserta clicked")
+        navigateAndCloseSideNav(Screen.Peserta.CheckStatusRegistrasi.route)
       },
       route = null
     )
