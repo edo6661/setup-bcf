@@ -5,13 +5,16 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -67,7 +70,7 @@ fun MainScaffold(
               isSideNavVisible = ! isSideNavVisible
             },
             onNavigateHome = onNavigateHome,
-            nama = user?.namaPeserta
+            user = user
           )
 
           config.showBackNav -> BackNav(
@@ -94,6 +97,7 @@ fun MainScaffold(
         .zIndex(1f),
       isSideNavVisible = isSideNavVisible,
       offSetX = offSetXSideNav,
+      user = user
     ) {
       SideNavContent(
         navController = navController,
@@ -114,7 +118,7 @@ fun MainScaffold(
 fun PrimaryNav(
   onMenuClick : () -> Unit,
   onNavigateHome : () -> Unit,
-  nama : String?
+  user : User?
 ) {
   TopAppBar(
     colors = TopAppBarDefaults.topAppBarColors(
@@ -141,12 +145,38 @@ fun PrimaryNav(
     },
 
     actions = {
+
       Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
       ) {
-        nama?.let {
-          Text(nama)
-          
+
+        user?.namaPeserta?.let {
+          Text(
+            text = user.role,
+            style = StyledText.MobileBaseRegular,
+            color = ColorPalette.OnSurfaceVariant
+          )
+          IconButton(
+            onClick = {}
+          ) {
+            Icon(
+              imageVector = Icons.Default.Notifications,
+              contentDescription = "Announcement"
+            )
+          }
+          IconButton(
+            onClick = {}
+          ) {
+            Image(
+              painter = painterResource(id = R.drawable.avatar_sampul),
+              contentDescription = "Profile",
+              contentScale = ContentScale.Crop,
+              modifier = Modifier
+                .size(35.dp)
+                .clip(CircleShape)
+            )
+          }
         }
         IconButton(
           onClick = onMenuClick

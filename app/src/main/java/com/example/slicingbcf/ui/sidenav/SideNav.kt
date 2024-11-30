@@ -26,6 +26,7 @@ import androidx.navigation.NavHostController
 import com.example.slicingbcf.R
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
+import com.example.slicingbcf.data.local.model.Role
 import com.example.slicingbcf.data.local.model.User
 import com.example.slicingbcf.ui.navigation.Screen
 import com.example.slicingbcf.ui.navigation.navigateSingleTop
@@ -37,6 +38,7 @@ fun SideNav(
   modifier : Modifier,
   isSideNavVisible : Boolean,
   offSetX : Float,
+  user : User?,
   content : @Composable () -> Unit,
 ) {
   val width = 275
@@ -169,48 +171,56 @@ private fun BottomSideNav(
     Column(
       verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-      if (user == null) {
-        PrimaryButton(
-          text = "Masuk",
-          onClick = {
-            navigateAndCloseSideNav(Screen.Auth.Login.route)
+      when {
+        user == null -> {
+          SideNavDropdownGuest(
+            navigateAndCloseSideNav,
+            isActiveRoute
+          )
+        }
+
+        user.role == Role.PESERTA.name -> {
+          SideNavDropdownPeserta(
+            navigateAndCloseSideNav,
+            isActiveRoute
+          )
+        }
+
+        user.role == Role.MENTOR.name -> {
+          SideNavDropdownMentor(
+            navigateAndCloseSideNav,
+            isActiveRoute
+          )
+        }
+
+
+      }
+    }
+
+    if (user != null) {
+      Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier
+          .clickable {
+            showLogoutDialog = true
           }
+      ) {
+        Text(
+          text = "Logout",
+          style = StyledText.MobileBaseMedium,
+          color = Color(0xFFB02A37),
+          modifier = Modifier
+            .padding(
+              horizontal = 16.dp,
+            )
+            .padding(top = 16.dp)
         )
-        PrimaryButton(
-          text = "Daftar",
-          onClick = {
-            navigateAndCloseSideNav(Screen.Auth.Registrasi.route)
-          }
+        HorizontalDivider(
+          modifier = Modifier.fillMaxWidth()
         )
       }
-      SideNavDropdownGuest(
-        navigateAndCloseSideNav,
-        isActiveRoute
-      )
     }
 
-
-    Column(
-      verticalArrangement = Arrangement.spacedBy(16.dp),
-      modifier = Modifier
-        .clickable {
-          showLogoutDialog = true
-        }
-    ) {
-      Text(
-        text = "Logout",
-        style = StyledText.MobileBaseMedium,
-        color = Color(0xFFB02A37),
-        modifier = Modifier
-          .padding(
-            horizontal = 16.dp,
-          )
-          .padding(top = 16.dp)
-      )
-      HorizontalDivider(
-        modifier = Modifier.fillMaxWidth()
-      )
-    }
   }
 
   if (showLogoutDialog) {
@@ -349,56 +359,195 @@ private fun SideNavDropdownItem(
 }
 
 
-// TODO: nanti ganti sesuai dengan role user
+// TODO: GUEST
+
 @Composable
 private fun SideNavDropdownGuest(
   navigateAndCloseSideNav : (String) -> Unit,
   isActiveRoute : (String) -> Boolean
 ) {
+  PrimaryButton(
+    text = "Masuk",
+    onClick = {
+      navigateAndCloseSideNav(Screen.Auth.Login.route)
+    }
+  )
   SideNavDropdown(
-    "Registrasi",
-    items = dropdownItemsPendaftaran(
+    "Beranda",
+    items = null,
+    isActiveRoute = isActiveRoute,
+    onClickDropdown = {
+      navigateAndCloseSideNav(Screen.Home.route)
+    }
+  )
+  SideNavDropdown(
+    "Pendaftaran",
+    items = dropdownItemsPendaftaran_Guest(
+      navigateAndCloseSideNav
+    ),
+    isActiveRoute = isActiveRoute
+  )
+
+  SideNavDropdown(
+    "Pusat Informasi",
+    items = null,
+    isActiveRoute = isActiveRoute,
+    onClickDropdown = {
+      navigateAndCloseSideNav(Screen.Mentor.Pengaturan.route)
+    }
+  )
+
+}
+
+
+// TODO: SEMUA ROLE BIAR ENAK BISA LIAT SEMUA
+//
+//@Composable
+//private fun SideNavDropdownGuest(
+//  navigateAndCloseSideNav : (String) -> Unit,
+//  isActiveRoute : (String) -> Boolean
+//) {
+//  SideNavDropdown(
+//    "Registrasi",
+//    items = dropdownItemsPendaftaran(
+//      navigateAndCloseSideNav
+//    ),
+//    isActiveRoute = isActiveRoute
+//  )
+//  SideNavDropdown(
+//    "Mentor",
+//    items = dropdownItemsMentor_Guest(
+//      navigateAndCloseSideNav
+//    ),
+//    isActiveRoute = isActiveRoute
+//  )
+//  SideNavDropdown(
+//    "Tugas",
+//    items = dropdownItemsTugas_Guest(
+//      navigateAndCloseSideNav
+//    ),
+//    isActiveRoute = isActiveRoute
+//  )
+//
+//  SideNavDropdown(
+//    "Peserta",
+//    items = dropdownItemsPeserta_Guest(
+//      navigateAndCloseSideNav
+//    ),
+//    isActiveRoute = isActiveRoute
+//  )
+//
+//  SideNavDropdown(
+//    "Kegiatan",
+//    items = dropdownItemsKegiatan_Guest(
+//      navigateAndCloseSideNav
+//    ),
+//    isActiveRoute = isActiveRoute
+//  )
+//}
+
+
+@Composable
+private fun SideNavDropdownMentor(
+  navigateAndCloseSideNav : (String) -> Unit,
+  isActiveRoute : (String) -> Boolean
+) {
+
+  SideNavDropdown(
+    "Peserta",
+    items = dropdownItemsPeserta_Mentor(
       navigateAndCloseSideNav
     ),
     isActiveRoute = isActiveRoute
   )
   SideNavDropdown(
-    "Kegiatan",
-    onClickDropdown = {
-//      navigateAndCloseSideNav(Screen.Kegiatan.route)
-    },
-    isActiveRoute = isActiveRoute
-  )
-  SideNavDropdown(
     "Mentor",
-    items = dropdownItemsMentor(
+    items = dropdownItemsMentor_Mentor(
       navigateAndCloseSideNav
     ),
     isActiveRoute = isActiveRoute
   )
   SideNavDropdown(
     "Tugas",
-    items = dropdownItemsTugas(
+    items = dropdownItemsTugas_Mentor(
       navigateAndCloseSideNav
     ),
     isActiveRoute = isActiveRoute
   )
-
-  SideNavDropdown(
-    "Peserta",
-    items = dropdownItemsPeserta(
-      navigateAndCloseSideNav
-    ),
-    isActiveRoute = isActiveRoute
-  )
-
-
   SideNavDropdown(
     "Kegiatan",
-    items = dropdownItemsKegiatan(
+    items = dropdownItemsKegiatan_Mentor(
       navigateAndCloseSideNav
     ),
     isActiveRoute = isActiveRoute
+  )
+  SideNavDropdown(
+    "Forum Diskusi",
+    items = null,
+    isActiveRoute = isActiveRoute,
+    onClickDropdown = {
+      navigateAndCloseSideNav(Screen.Mentor.ForumDiskusi.route)
+    }
+  )
+  SideNavDropdown(
+    "Pengaturan",
+    items = null,
+    isActiveRoute = isActiveRoute,
+    onClickDropdown = {
+      navigateAndCloseSideNav(Screen.Mentor.Pengaturan.route)
+    }
   )
 }
 
+@Composable
+private fun SideNavDropdownPeserta(
+  navigateAndCloseSideNav : (String) -> Unit,
+  isActiveRoute : (String) -> Boolean
+) {
+
+  SideNavDropdown(
+    "Peserta",
+    items = dropdownItemsPeserta_Peserta(
+      navigateAndCloseSideNav
+    ),
+    isActiveRoute = isActiveRoute
+  )
+  SideNavDropdown(
+    "Mentor",
+    items = dropdownItemsMentor_Peserta(
+      navigateAndCloseSideNav
+    ),
+    isActiveRoute = isActiveRoute
+  )
+  SideNavDropdown(
+    "Tugas",
+    items = dropdownItemsTugas_Peserta(
+      navigateAndCloseSideNav
+    ),
+    isActiveRoute = isActiveRoute
+  )
+  SideNavDropdown(
+    "Kegiatan",
+    items = dropdownItemsKegiatan_Peserta(
+      navigateAndCloseSideNav
+    ),
+    isActiveRoute = isActiveRoute
+  )
+  SideNavDropdown(
+    "Forum Diskusi",
+    items = null,
+    isActiveRoute = isActiveRoute,
+    onClickDropdown = {
+      navigateAndCloseSideNav(Screen.Peserta.PusatInformasi.route)
+    }
+  )
+  SideNavDropdown(
+    "Pengaturan",
+    items = null,
+    isActiveRoute = isActiveRoute,
+    onClickDropdown = {
+      navigateAndCloseSideNav(Screen.Peserta.Pengaturan.route)
+    }
+  )
+
+}
