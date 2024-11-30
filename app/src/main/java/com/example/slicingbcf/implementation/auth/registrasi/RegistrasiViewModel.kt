@@ -6,29 +6,40 @@ import androidx.lifecycle.viewModelScope
 import com.example.slicingbcf.data.local.model.Role
 import com.example.slicingbcf.data.local.model.User
 import com.example.slicingbcf.data.repo.user.UserRepository
+import com.example.slicingbcf.di.IODispatcher
+import com.example.slicingbcf.di.MainDispatcher
 import com.example.slicingbcf.domain.model.JangkauanPenerimaManfaat
 import com.example.slicingbcf.domain.validator.ValidationResult
 import com.example.slicingbcf.domain.validator.isBlankOrEmpty
 import com.example.slicingbcf.domain.validator.validateEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RegistrasiViewModel @Inject constructor(
-  private val userRepository : UserRepository
+  private val userRepository : UserRepository,
+  @IODispatcher private val ioDispatcher : CoroutineDispatcher,
+  @MainDispatcher private val mainDispatcher : CoroutineDispatcher
 ) : ViewModel() {
 
   private val _uiState = MutableStateFlow(RegistrasiState())
   val uiState = _uiState.asStateFlow()
 
 
+  private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+    _uiState.update {
+      it.copy(isLoading = false, error = exception.message ?: "Terjadi kesalahan")
+    }
+  }
+
+
   private fun onSubmit() {
-    // ! debugging purposes, soon removed
+
     if (! validate()) {
 
       _uiState.update {
@@ -38,10 +49,9 @@ class RegistrasiViewModel @Inject constructor(
       }
       return
     }
-
     _uiState.update { it.copy(isLoading = true) }
 
-    viewModelScope.launch {
+    viewModelScope.launch(ioDispatcher + exceptionHandler) {
       try {
         val user = User(
           namaLembaga = _uiState.value.namaLembaga,
@@ -84,36 +94,34 @@ class RegistrasiViewModel @Inject constructor(
           pengalamanMendaftarLead = _uiState.value.halLainYangInginDisampaikan,
           role = Role.PESERTA.name
         )
-
         val isEmailExist = isEmailAlreadyExist(user.emailPeserta !!)
         if (isEmailExist) {
-          _uiState.update {
-            it.copy(
-              isLoading = false,
-              error = "Email sudah terdaftar"
-            )
+          withContext(mainDispatcher) {
+            _uiState.update {
+              it.copy(isLoading = false, error = "Email sudah terdaftar")
+            }
           }
           return@launch
-        }
 
+        }
 
         userRepository.insertUser(user)
+        delay(3000)
 
-        _uiState.update {
-          it.copy(
-            isSuccess = true,
-            isLoading = false,
-            message = "Registrasi berhasil"
-          )
+        withContext(mainDispatcher) {
+          _uiState.update {
+            it.copy(isSuccess = true, isLoading = false, message = "Registrasi berhasil")
+          }
         }
+
 
       } catch (e : Exception) {
-        _uiState.update {
-          it.copy(
-            isLoading = false,
-            error = e.message ?: "Terjadi kesalahan saat registrasi"
-          )
+        withContext(mainDispatcher) {
+          _uiState.update {
+            it.copy(isLoading = false, error = e.message ?: "Terjadi kesalahan saat registrasi")
+          }
         }
+
       }
     }
   }

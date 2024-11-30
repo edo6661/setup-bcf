@@ -1,7 +1,6 @@
 package com.example.slicingbcf.ui.upload
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -38,7 +37,6 @@ fun FileUploadSection(
 ) {
   val color = if (error != null) ColorPalette.Error else ColorPalette.PrimaryColor400
 
-  Log.d("FileUploadSection", "error $title: $error")
   Column(
     verticalArrangement = Arrangement.spacedBy(12.dp),
     modifier = Modifier.animateContentSize()

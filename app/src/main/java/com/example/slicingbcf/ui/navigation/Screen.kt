@@ -8,7 +8,9 @@ sealed class Screen(val route : String) {
     object Login : Auth("login")
     object ForgotPassword : Auth("forgot-password")
     object Registrasi : Peserta("registrasi")
+    object UmpanBalikRegistrasi : Auth("umpan-balik-registrasi")
   }
+
 
   sealed class Peserta(route : String) : Screen(route) {
     object DataPeserta : Peserta("data-peserta")

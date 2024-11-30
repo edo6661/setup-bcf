@@ -1,5 +1,7 @@
 package com.example.slicingbcf.implementation.auth.registrasi
 
+import com.example.slicingbcf.R
+
 class ConstantRegistrasi {
   companion object {
 
@@ -111,3 +113,18 @@ object RegistrasiValidationMessages {
 
 }
 
+
+object ConstantUmpanBalik {
+  data class UmpanBalik(
+    val title : String,
+    val emote : Int
+  )
+
+  val emotes = listOf(
+    UmpanBalik("Sangat Kecewa", R.drawable.emote_angry),
+    UmpanBalik("Kecewa", R.drawable.emote_sad),
+    UmpanBalik("Biasa Saja", R.drawable.emote_flat),
+    UmpanBalik("Bagus", R.drawable.emote_smile),
+    UmpanBalik("Sangat Bagus", R.drawable.emote_love),
+  )
+}

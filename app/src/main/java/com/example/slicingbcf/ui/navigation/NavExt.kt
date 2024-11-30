@@ -22,6 +22,16 @@ fun NavController.navigateAndClearStack(route : String) {
   }
 }
 
+fun NavController.navigateAndClearStackButHome(
+  route : String,
+) {
+  navigate(route) {
+    popUpTo(Screen.Home.route) { inclusive = false }
+    launchSingleTop = true
+  }
+}
+
+
 fun NavController.navigateWithClearUntil(route : String, clearUntilRoute : String) {
   this.navigate(route) {
     popUpTo(clearUntilRoute) {

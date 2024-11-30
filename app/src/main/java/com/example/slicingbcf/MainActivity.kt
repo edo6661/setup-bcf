@@ -1,7 +1,6 @@
 package com.example.slicingbcf
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,7 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.slicingbcf.data.local.viewmodel.UserViewModel
 import com.example.slicingbcf.ui.navigation.NavGraph
 import com.example.slicingbcf.ui.navigation.Screen
-import com.example.slicingbcf.ui.navigation.navigateAndClearStack
+import com.example.slicingbcf.ui.navigation.navigateAndClearStackButHome
 import com.example.slicingbcf.ui.scaffold.MainScaffold
 import com.example.slicingbcf.ui.scaffold.scaffoldConfig
 import com.example.slicingbcf.ui.theme.SlicingBcfTheme
@@ -39,10 +38,6 @@ class MainActivity : ComponentActivity() {
     setContent {
       val user by userViewModel.currentUser.collectAsState()
 
-      user?.let {
-        Log.d("MainActivity", "Current user: ${it.namaPeserta}, ${it.role}")
-      }
-
 
       val navController = rememberNavController()
       val currentBackStackEntry = navController.currentBackStackEntryAsState()
@@ -60,7 +55,7 @@ class MainActivity : ComponentActivity() {
             userViewModel.viewModelScope.launch {
               userViewModel.clearUserSession()
             }
-            navController.navigateAndClearStack(Screen.Auth.Login.route)
+            navController.navigateAndClearStackButHome(Screen.Auth.Login.route)
 
           },
           navController = navController,

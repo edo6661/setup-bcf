@@ -35,7 +35,7 @@ fun CustomOutlinedTextField(
   modifier : Modifier = Modifier,
   value : String,
   onValueChange : (String) -> Unit,
-  label : String,
+  label : String? = "",
   placeholder : String,
   isPassword : Boolean = false,
   isPasswordVisible : MutableState<Boolean>? = null,
@@ -80,17 +80,19 @@ fun CustomOutlinedTextField(
       visualTransformation = getVisualTransformation(isPassword, isPasswordVisible),
       keyboardOptions = getKeyboardOptions(isPassword, keyboardType),
       label = {
-        TextLabel(
-          label = label,
-          error = error,
-          isFocused = isFocused ?: false,
-          focusedColor = labelFocusedColor,
-          styleFocused = labelFocusedStyle,
-          labelDefaultStyle = labelDefaultStyle,
-          defaultColor = labelDefaultColor,
-          valueNotEmpty = value.isNotEmpty()
+        if (label != null) {
+          TextLabel(
+            label = label,
+            error = error,
+            isFocused = isFocused ?: false,
+            focusedColor = labelFocusedColor,
+            styleFocused = labelFocusedStyle,
+            labelDefaultStyle = labelDefaultStyle,
+            defaultColor = labelDefaultColor,
+            valueNotEmpty = value.isNotEmpty()
 
-        )
+          )
+        }
       },
       placeholder = {
         TextLabel(

@@ -44,7 +44,9 @@ import com.example.slicingbcf.implementation.auth.registrasi.ConstantRegistrasi.
 import com.example.slicingbcf.ui.animations.AnimatedContentSlide
 import com.example.slicingbcf.ui.animations.AnimatedMessage
 import com.example.slicingbcf.ui.animations.MessageType
+import com.example.slicingbcf.ui.animations.SubmitLoadingIndicator
 import com.example.slicingbcf.ui.shared.PrimaryButton
+import com.example.slicingbcf.ui.shared.dialog.CustomConfirmationDialog
 import com.example.slicingbcf.ui.shared.message.ErrorMessageTextField
 import com.example.slicingbcf.ui.shared.message.SecondaryButton
 import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextField
@@ -59,7 +61,7 @@ import kotlinx.coroutines.delay
 fun RegistrasiScreen(
   modifier : Modifier,
   viewModel : RegistrasiViewModel = hiltViewModel(),
-  navigateToLogin : () -> Unit,
+  navigateToUmpanBalik : () -> Unit
 ) {
 
   val state by viewModel.uiState.collectAsState()
@@ -97,11 +99,11 @@ fun RegistrasiScreen(
   }
 
   val titleBasedOnScreen = when (currentScreen) {
-    0    -> "Profil Lembaga"
-    1    -> "Program Lembaga"
-    2    -> "Pendaftaran Peserta"
-    3    -> "Pertanyaan Umum"
-    4    -> "Ringkasan Data Pendaftaran"
+    0 -> "Profil Lembaga"
+    1 -> "Program Lembaga"
+    2 -> "Pendaftaran Peserta"
+    3 -> "Pertanyaan Umum"
+    4 -> "Ringkasan Data Pendaftaran"
     else -> "Wrong Screen"
   }
 
@@ -110,25 +112,20 @@ fun RegistrasiScreen(
   }
 
 
-
-  LaunchedEffect(state.isSuccess, state.error != null) {
-    when {
-      state.isSuccess     -> {
-        delay(4000)
-        resetScreenAndIndicator()
-        viewModel.onEvent(RegisterEvent.ClearState)
-        navigateToLogin()
-
-
-      }
-
-      state.error != null -> {
-        delay(4000)
-        viewModel.onEvent(RegisterEvent.ClearError)
-      }
+  LaunchedEffect(state.isSuccess) {
+    if (state.isSuccess) {
+      delay(1500)
+      resetScreenAndIndicator()
+      viewModel.onEvent(RegisterEvent.ClearState)
+      navigateToUmpanBalik()
     }
   }
-
+  LaunchedEffect(state.error != null) {
+    if (state.error != null) {
+      delay(4000)
+      viewModel.onEvent(RegisterEvent.ClearError)
+    }
+  }
 
 
 
@@ -159,13 +156,10 @@ fun RegistrasiScreen(
         gotoProfilPeserta = gotoProfilPeserta
       )
     }
-    AnimatedMessage(
-      isVisible = state.isSuccess,
-      message = state.message ?: "Register Success.",
-      messageType = MessageType.Success,
-      modifier = Modifier
-        .padding(top = 16.dp)
-        .align(Alignment.TopCenter)
+    // TODO: akalin biar overlay nya nutupin semuanya
+    SubmitLoadingIndicator(
+      isLoading = state.isLoading,
+      modifier = Modifier.align(Alignment.Center)
     )
 
     AnimatedMessage(
@@ -339,12 +333,12 @@ private fun BottomSection(
         verticalArrangement = Arrangement.spacedBy(24.dp)
       ) {
         // TODO: FOR DEBUGGING, SOON TO BE REMOVED
-//        PrimaryButton(
-//          text = "Kirim",
-//          onClick = {
-//            onEvent(RegisterEvent.Submit)
-//          }
-//        )
+        PrimaryButton(
+          text = "Kirim",
+          onClick = {
+            onEvent(RegisterEvent.Submit)
+          }
+        )
         when (targetScreen) {
           0 -> FirstScreen(
             selectedDate = state.selectedDate,
@@ -1299,6 +1293,8 @@ fun FifthScreen(
   onEvent : (RegisterEvent) -> Unit,
   gotoProfilPeserta : () -> Unit
 ) {
+  var showSubmitDialog by remember { mutableStateOf(false) }
+
   val headerTable = listOf("No", "Provinsi", "Jumlah Penerima Manfaaat", "Rincian")
   val columnWeights = listOf(
     0.5f,
@@ -1315,6 +1311,22 @@ fun FifthScreen(
         "Rincian"
       )
     }
+  if (showSubmitDialog) {
+    CustomConfirmationDialog(
+      title = "Apakah anda yakin data yang diisi sudah benar??",
+      supportingText = "Pastikan seluruh data yang anda isikan pada proses pendaftaran program ini telah sesuai sebelum melanjutkan",
+      confirmButtonText = "Kirim",
+      dismissButtonText = "Batal",
+      onConfirm = {
+        onEvent(RegisterEvent.Submit)
+        showSubmitDialog = false
+
+      },
+      onDismiss = {
+        showSubmitDialog = false
+      }
+    )
+  }
   Column(
     verticalArrangement = Arrangement.spacedBy(20.dp)
   ) {
@@ -1443,7 +1455,7 @@ fun FifthScreen(
     PrimaryButton(
       text = "Kirim",
       onClick = {
-        onEvent(RegisterEvent.Submit)
+        showSubmitDialog = true
       }
     )
   }
