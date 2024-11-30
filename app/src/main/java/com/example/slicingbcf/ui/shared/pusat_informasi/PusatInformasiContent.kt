@@ -1,8 +1,10 @@
 package com.example.slicingbcf.ui.shared.pusat_informasi
 
-import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -16,8 +18,9 @@ import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.R
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
-import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextField
 import com.example.slicingbcf.ui.shared.textfield.OutlineTextFieldComment
+import com.example.slicingbcf.util.formatDate
+import com.example.slicingbcf.util.parseDate
 
 
 @Composable
@@ -25,7 +28,9 @@ fun PusatInformasiContent(
   data : DataPusatInformasi,
   isCommentable : Boolean = true,
   isEnabledTextField : Boolean = false,
-  onSubmitComment : () -> Unit = {},
+  question : String = "",
+  onChangeQuestion : (String) -> Unit = {},
+  onSubmitComment : (DataPusatInformasi) -> Unit = {},
   onCancelComment : () -> Unit = {},
 ) {
   Column(
@@ -53,7 +58,7 @@ fun PusatInformasiContent(
           color = ColorPalette.OnSurface
         )
         Text(
-          text = "Now",
+          text = formatDate(data.timestamp),
           style = StyledText.MobileXsRegular,
           color = ColorPalette.Monochrome400
         )
@@ -76,13 +81,23 @@ fun PusatInformasiContent(
       color = ColorPalette.OnSurfaceVariant
     )
     if (isCommentable) {
-     
+
       OutlineTextFieldComment(
-        value = "",
-        onValueChange = {},
-        onSubmit = { Log.d("submit", "submit") },
+        value = question,
+        onValueChange = {
+          onChangeQuestion(it)
+        },
+        onSubmit = {
+          onSubmitComment(
+            DataPusatInformasi(
+              profilePicture = R.drawable.ic_launcher_background,
+              username = "Guest",
+              question = question,
+              timestamp = parseDate("1 days ago"),
+            )
+          )
+        },
         label = "Tambah komentar",
-        placeholder = "Tambah komentar",
         isEnabled = isEnabledTextField,
       )
 
@@ -93,7 +108,7 @@ fun PusatInformasiContent(
 data class DataPusatInformasi(
   val username : String?,
   val profilePicture : Int?,
-  val date : String,
+  val timestamp : Long,
   val question : String,
 )
 
@@ -102,13 +117,13 @@ val mockDataPusatInformasi = listOf(
   DataPusatInformasi(
     username = "John Doe",
     profilePicture = null,
-    date = "2 days ago",
+    timestamp = parseDate("2 days ago"),
     question = "Bagaimana cara membuat pitch deck yang menarik?"
   ),
   DataPusatInformasi(
     username = "Jane Doe",
     profilePicture = R.drawable.avatar,
-    date = "3 days ago",
+    timestamp = parseDate("3 days ago"),
     question = "Apa saja yang harus dipersiapkan sebelum membuat pitch deck?"
   ),
 )

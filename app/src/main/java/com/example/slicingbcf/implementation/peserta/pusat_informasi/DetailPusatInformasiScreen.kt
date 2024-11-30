@@ -79,7 +79,7 @@ private fun TopSection(
 @Composable
 private fun CurrentPusatInformasi(
   data : DataPusatInformasi,
-  onSubmitComment : () -> Unit = {},
+  onSubmitComment : (DataPusatInformasi) -> Unit = {},
   onCancelComment : () -> Unit = {},
 ) {
   Column(
@@ -99,8 +99,9 @@ private fun CurrentPusatInformasi(
       data,
       true,
       true,
-      onSubmitComment,
-      onCancelComment
+      onSubmitComment = {
+        onSubmitComment(it)
+      },
     )
   }
 }

@@ -130,9 +130,9 @@ private fun TopSection(
         onValueChange = {},
         onSubmit = { Log.d("submit", "submit") },
         label = "Ketik disini untuk membuka obrolan...",
-        placeholder = "Buka Obrolan...",
-        isEnabled = true
-      )
+        isEnabled = true,
+
+        )
     }
     HorizontalDivider(
       modifier = Modifier.fillMaxWidth()

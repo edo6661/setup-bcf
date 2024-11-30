@@ -34,6 +34,7 @@ import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
 import com.example.slicingbcf.ui.shared.message.ErrorMessageTextField
 
+@Suppress("t")
 @Composable
 fun CustomOutlinedTextField(
   modifier : Modifier = Modifier,
@@ -59,10 +60,14 @@ fun CustomOutlinedTextField(
   borderColor : Color = ColorPalette.Outline,
   bgColor : Color = Color.White,
   borderFocusedColor : Color = ColorPalette.Monochrome400,
+  isFocused : Boolean? = null,
+  onFocusChange : (Boolean) -> Unit = {}
 ) {
 
   val focusRequester = remember { FocusRequester() }
-  var isFocused by remember { mutableStateOf(false) }
+  var isFocusedDefault by remember { mutableStateOf(false) }
+
+  val actualIsFocus = isFocused ?: isFocusedDefault
 
   Column(
     verticalArrangement = Arrangement.Top,
@@ -75,7 +80,13 @@ fun CustomOutlinedTextField(
       modifier = modifier
         .focusRequester(focusRequester)
         .onFocusChanged { focusState ->
-          isFocused = focusState.isFocused
+          isFocused.let {
+            if (it != null) {
+              onFocusChange(focusState.isFocused)
+            } else {
+              isFocusedDefault = focusState.isFocused
+            }
+          }
         },
       singleLine = ! multiLine,
       maxLines = if (multiLine) maxLines else 1,
@@ -97,7 +108,7 @@ fun CustomOutlinedTextField(
             valueNotEmpty = value.isNotEmpty(),
             labelDefaultStyle = labelDefaultStyle,
             labelDefaultColor = labelDefaultColor,
-            isFocused = isFocused,
+            isFocused = actualIsFocus,
             labelFocusedColor = labelFocusedColor
 
           )
@@ -110,7 +121,7 @@ fun CustomOutlinedTextField(
             valueNotEmpty = value.isNotEmpty(),
             labelDefaultStyle = labelDefaultStyle,
             labelDefaultColor = labelDefaultColor,
-            isFocused = isFocused,
+            isFocused = actualIsFocus,
             isPlaceholder = true,
             labelFocusedColor = labelFocusedColor,
 

@@ -18,11 +18,13 @@ fun OutlineTextFieldComment(
   value : String,
   onValueChange : (String) -> Unit,
   onSubmit : () -> Unit,
+
   label : String,
-  placeholder : String,
   isEnabled : Boolean = false
 
 ) {
+  val rounded = if (isEnabled) 16 else 80
+  val modifier = if (isEnabled) Modifier.height(120.dp) else Modifier
   var isFocused by remember { mutableStateOf(false) }
   val focusManager = LocalFocusManager.current
 
@@ -40,13 +42,13 @@ fun OutlineTextFieldComment(
       value = value,
       onValueChange = onValueChange,
       maxLines = 5,
-      placeholder = placeholder,
-//      isFocused = isFocused,
-//      onFocusChange = { isFocused = it },
-      rounded = 80,
+      multiLine = true,
+      isFocused = isFocused,
+      onFocusChange = { isFocused = it },
+      rounded = rounded,
       labelFocusedColor = ColorPalette.PrimaryColor700,
       labelDefaultColor = ColorPalette.Monochrome400,
-      modifier = Modifier.fillMaxWidth(),
+      modifier = modifier.fillMaxWidth(),
       borderFocusedColor = ColorPalette.PrimaryColor700,
       isEnabled = isEnabled
 
