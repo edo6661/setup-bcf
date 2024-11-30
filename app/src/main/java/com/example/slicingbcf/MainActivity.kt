@@ -1,11 +1,12 @@
 package com.example.slicingbcf
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -32,11 +33,16 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState : Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
-//    insertDummyData()
+
+    userViewModel.viewModelScope.launch {
+      userViewModel.insertDummyData()
+    }
 
 
     setContent {
       val user by userViewModel.currentUser.collectAsState()
+
+      Log.d("MainActivity", "onCreate: ${user?.role}")
 
 
       val navController = rememberNavController()
@@ -63,7 +69,13 @@ class MainActivity : ComponentActivity() {
           ) { paddingValues ->
           NavGraph(
             navController = navController,
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier
+              .padding(paddingValues)
+              .padding(
+                WindowInsets.navigationBars.asPaddingValues()
+              )
+              .imePadding()
+
           )
         }
       }

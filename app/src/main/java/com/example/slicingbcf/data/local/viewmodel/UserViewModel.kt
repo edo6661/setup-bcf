@@ -28,6 +28,7 @@ class UserViewModel @Inject constructor(
       userPreferences.getUserData().collect { user ->
         _currentUser.value = user
       }
+
     }
   }
 
@@ -47,55 +48,61 @@ class UserViewModel @Inject constructor(
     userPreferences.clearUserSession()
   }
 
+  fun insertDummyData() {
+    viewModelScope.launch {
+      try {
 
-  private fun insertDummyData() {
-    val dataList = listOf(
-      JangkauanPenerimaManfaat("Jawa Barat", 100),
-      JangkauanPenerimaManfaat("Jawa Timur", 200)
-    )
-    val dummyUser = User(
-      namaLembaga = "Lembaga Contoh",
-      emailLembaga = "example@lembaga.com",
-      alamatLembaga = "Jl. Contoh No. 123",
-      provinsi = "Jawa Barat",
-      kota = "Bandung",
-      tanggalBerdiri = "2024-01-01",
-      jenisLembagaSosial = "Non-Profit",
-      jenisClusterLembagaSosial = "Pendidikan",
-      fokusIsu = "Kesejahteraan Anak",
-      profilSingkatLembaga = "Lembaga yang fokus pada pendidikan anak",
-      alasanMengikutiLead = "Pengembangan Lembaga",
-      dokumenProfilPerusahaan = "Profil.pdf",
-      jangkauanProgram = "Nasional",
-      wilayahJangkauanProgram = "Perkotaan",
-      jumlahAngkaPenerimaanManfaat = dataList,
-      targetUtamaProgram = "Anak-anak",
-      proposalProgramMitra = "Proposal.pdf",
-      namaPeserta = "John Doe",
-      posisi = "Manajer",
-      pendidikanTerakhir = "S1",
-      jenisKelamin = "Laki-laki",
-      nomorWhatsapp = "081234567890",
-      emailPeserta = "peserta@gmail.com",
-      password = "peserta123",
-      ktp = "1234567890123456",
-      cv = "CV_JohnDoe.pdf",
-      adaPengurusLainYangAkanDiikutSertakanSebagaiPeserta = false,
-      alasanMengikutiAgenda = "Belajar dan Networking",
-      pernahMengikutiPelatihan = true,
-      darimanaMengetahuiLead = "Media Sosial",
-      yangDiketahuiTerkaitDesainProgram = "Peningkatan Dampak",
-      yangDiketahuiTerkaitKeberlanjutan = "Keberlanjutan Program",
-      yangDiketahuiTerkaitLaporanSosial = "Pelaporan",
-      laporanAkhirTahun = "Laporan2024.pdf",
-      ekspetasiMengikutiLead = "Jaringan dan Ilmu Baru",
-      halYangInginDitanyakanKeLead = "Peluang Kolaborasi",
-      umpanBalik = "Program bermanfaat",
-      pengalamanMendaftarLead = "Pernah",
-      role = Role.PESERTA.name
-    )
-    insertUser(dummyUser)
-
+        val dataList = listOf(
+          JangkauanPenerimaManfaat("Jawa Barat", 100),
+          JangkauanPenerimaManfaat("Jawa Timur", 200)
+        )
+        val dummyUser = User(
+          namaLembaga = "Lembaga Contoh",
+          emailLembaga = "example@lembaga.com",
+          alamatLembaga = "Jl. Contoh No. 123",
+          provinsi = "Jawa Barat",
+          kota = "Bandung",
+          tanggalBerdiri = "2024-01-01",
+          jenisLembagaSosial = "Non-Profit",
+          jenisClusterLembagaSosial = "Pendidikan",
+          fokusIsu = "Kesejahteraan Anak",
+          profilSingkatLembaga = "Lembaga yang fokus pada pendidikan anak",
+          alasanMengikutiLead = "Pengembangan Lembaga",
+          dokumenProfilPerusahaan = "Profil.pdf",
+          jangkauanProgram = "Nasional",
+          wilayahJangkauanProgram = "Perkotaan",
+          jumlahAngkaPenerimaanManfaat = dataList,
+          targetUtamaProgram = "Anak-anak",
+          proposalProgramMitra = "Proposal.pdf",
+          namaPeserta = "mentor",
+          posisi = "Manajer",
+          pendidikanTerakhir = "S1",
+          jenisKelamin = "Laki-laki",
+          nomorWhatsapp = "081234567890",
+          emailPeserta = "mentor@gmail.com",
+          password = "mentor123",
+          ktp = "1234567890123456",
+          cv = "CV_JohnDoe.pdf",
+          adaPengurusLainYangAkanDiikutSertakanSebagaiPeserta = false,
+          alasanMengikutiAgenda = "Belajar dan Networking",
+          pernahMengikutiPelatihan = true,
+          darimanaMengetahuiLead = "Media Sosial",
+          yangDiketahuiTerkaitDesainProgram = "Peningkatan Dampak",
+          yangDiketahuiTerkaitKeberlanjutan = "Keberlanjutan Program",
+          yangDiketahuiTerkaitLaporanSosial = "Pelaporan",
+          laporanAkhirTahun = "Laporan2024.pdf",
+          ekspetasiMengikutiLead = "Jaringan dan Ilmu Baru",
+          halYangInginDitanyakanKeLead = "Peluang Kolaborasi",
+          umpanBalik = "Program bermanfaat",
+          pengalamanMendaftarLead = "Pernah",
+          role = Role.MENTOR.name
+        )
+        insertUser(dummyUser)
+        Log.d("UserViewModel", "Dummy user inserted")
+      } catch (e : Exception) {
+        Log.e("UserViewModel", "Error inserting dummy data: ${e.message}")
+      }
+    }
   }
 
 

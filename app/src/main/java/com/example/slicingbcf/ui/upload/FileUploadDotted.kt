@@ -20,7 +20,10 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
@@ -33,9 +36,18 @@ fun FileUploadSection(
   onFileSelect : () -> Unit,
   selectedFileUri : Uri?,
   deleteFile : () -> Unit,
-  error : String? = null
+  error : String? = null,
+  asteriskAtEnd : Boolean = false
 ) {
   val color = if (error != null) ColorPalette.Error else ColorPalette.PrimaryColor400
+  val displayText = buildAnnotatedString {
+    append(title)
+    if (asteriskAtEnd) {
+      withStyle(SpanStyle(color = ColorPalette.Danger500)) {
+        append("*")
+      }
+    }
+  }
 
   Column(
     verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -45,7 +57,7 @@ fun FileUploadSection(
       verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
       Text(
-        text = title,
+        text = displayText,
         style = StyledText.MobileSmallMedium,
         color = ColorPalette.PrimaryColor700,
         modifier = Modifier.fillMaxWidth()
@@ -95,39 +107,49 @@ fun FileUploadSection(
 
 
     }
-    Box(
-      modifier = Modifier
-        .fillMaxWidth()
-        .height(70.dp)
-        .drawBehind {
-          val dashWidth = 10.dp.toPx()
-          val gapWidth = 5.dp.toPx()
-
-          val stroke = Stroke(
-            width = 1.dp.toPx(),
-            pathEffect = PathEffect.dashPathEffect(
-              floatArrayOf(dashWidth, gapWidth),
-              0f
-            )
-          )
-
-          drawRoundRect(
-            color = color,
-            size = size,
-            cornerRadius = CornerRadius(12.dp.toPx()),
-            style = stroke
-          )
-        }
-        .clickable {
-          onFileSelect()
-        },
-      contentAlignment = Alignment.Center
+    Column(
+      verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+      Box(
+        modifier = Modifier
+          .fillMaxWidth()
+          .height(70.dp)
+          .drawBehind {
+            val dashWidth = 10.dp.toPx()
+            val gapWidth = 5.dp.toPx()
+
+            val stroke = Stroke(
+              width = 1.dp.toPx(),
+              pathEffect = PathEffect.dashPathEffect(
+                floatArrayOf(dashWidth, gapWidth),
+                0f
+              )
+            )
+
+            drawRoundRect(
+              color = color,
+              size = size,
+              cornerRadius = CornerRadius(12.dp.toPx()),
+              style = stroke
+            )
+          }
+          .clickable {
+            onFileSelect()
+          },
+        contentAlignment = Alignment.Center
+      ) {
+        Text(
+          text = buttonText,
+          style = StyledText.MobileSmallMedium,
+          textAlign = TextAlign.Center,
+          color = ColorPalette.PrimaryColor400
+        )
+      }
       Text(
-        text = buttonText,
-        style = StyledText.MobileSmallMedium,
-        textAlign = TextAlign.Center,
-        color = ColorPalette.PrimaryColor400
+        text = "Maks Size: 5MB, Format File: PDF",
+        style = StyledText.MobileSmallRegular,
+        color = ColorPalette.Monochrome400,
+        textAlign = TextAlign.Left
       )
     }
     AnimatedVisibility(visible = error != null) {

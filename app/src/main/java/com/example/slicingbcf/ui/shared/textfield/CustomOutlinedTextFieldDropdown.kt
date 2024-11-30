@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
@@ -29,7 +30,11 @@ fun CustomOutlinedTextFieldDropdown(
   labelDefaultColor : Color = ColorPalette.PrimaryColor700,
   labelFocusedColor : Color = ColorPalette.PrimaryColor700,
   size : Int = 48,
-  error : String? = null
+  rounded : Int = 40,
+  error : String? = null,
+  labelDefaultStyle : TextStyle = StyledText.MobileSmallRegular,
+  asteriskAtEnd : Boolean = false,
+  borderColor : Color = ColorPalette.Outline
 
 ) {
 
@@ -38,17 +43,23 @@ fun CustomOutlinedTextFieldDropdown(
 
   ) {
     CustomOutlinedTextField(
-      modifier = Modifier.fillMaxWidth(),
+      modifier = Modifier
+        .fillMaxWidth(),
       value = value,
       onValueChange = onValueChange,
       label = label,
       placeholder = placeholder,
-      rounded = 40,
+      rounded = rounded,
       readOnly = true,
       error = error,
+
+
       labelFocusedColor = labelFocusedColor,
       labelDefaultColor = labelDefaultColor,
-      labelFocusedStyle = StyledText.MobileSmallMedium,
+      labelDefaultStyle = labelDefaultStyle,
+      asteriskAtEnd = asteriskAtEnd,
+      borderColor = borderColor,
+//      labelFocusedStyle = StyledText.MobileSmallMedium,
       trailingIcon = {
         Icon(
           imageVector = Icons.Default.ArrowDropDown,

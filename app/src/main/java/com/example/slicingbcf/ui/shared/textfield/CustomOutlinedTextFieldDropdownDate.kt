@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.constant.ColorPalette
-import com.example.slicingbcf.constant.StyledText
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +33,8 @@ fun CustomOutlinedTextFieldDropdownDate(
   labelDefaultColor : Color = ColorPalette.PrimaryColor700,
   labelFocusedColor : Color = ColorPalette.PrimaryColor700,
   datePickerState : DatePickerState,
-  error : String? = null
+  error : String? = null,
+  asteriskAtEnd : Boolean = false
 ) {
   Box(
     modifier = Modifier
@@ -57,12 +57,12 @@ fun CustomOutlinedTextFieldDropdownDate(
         label = label,
         placeholder = placeholder,
         rounded = 40,
+        asteriskAtEnd = asteriskAtEnd,
         readOnly = true,
 
         error = error,
         labelFocusedColor = labelFocusedColor,
         labelDefaultColor = labelDefaultColor,
-        labelFocusedStyle = StyledText.MobileSmallMedium,
         trailingIcon = {
           Icon(
             imageVector = Icons.Default.ArrowDropDown,

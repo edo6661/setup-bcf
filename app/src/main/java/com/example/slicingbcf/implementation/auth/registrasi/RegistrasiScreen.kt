@@ -46,6 +46,7 @@ import com.example.slicingbcf.ui.animations.AnimatedMessage
 import com.example.slicingbcf.ui.animations.MessageType
 import com.example.slicingbcf.ui.animations.SubmitLoadingIndicator
 import com.example.slicingbcf.ui.shared.PrimaryButton
+import com.example.slicingbcf.ui.shared.TextWithAsterisk
 import com.example.slicingbcf.ui.shared.dialog.CustomConfirmationDialog
 import com.example.slicingbcf.ui.shared.message.ErrorMessageTextField
 import com.example.slicingbcf.ui.shared.message.SecondaryButton
@@ -55,6 +56,7 @@ import com.example.slicingbcf.ui.shared.textfield.CustomOutlinedTextFieldDropdow
 import com.example.slicingbcf.ui.upload.FileUploadSection
 import com.example.slicingbcf.util.convertMillisToDate
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -99,18 +101,20 @@ fun RegistrasiScreen(
   }
 
   val titleBasedOnScreen = when (currentScreen) {
-    0 -> "Profil Lembaga"
-    1 -> "Program Lembaga"
-    2 -> "Pendaftaran Peserta"
-    3 -> "Pertanyaan Umum"
-    4 -> "Ringkasan Data Pendaftaran"
+    0    -> "Profil Lembaga"
+    1    -> "Program Lembaga"
+    2    -> "Pendaftaran Peserta"
+    3    -> "Pertanyaan Umum"
+    4    -> "Ringkasan Data Pendaftaran"
     else -> "Wrong Screen"
   }
 
+  val coroutineScope = rememberCoroutineScope()
   LaunchedEffect(currentScreen) {
-    verticalScroll.scrollTo(0)
+    coroutineScope.launch {
+      verticalScroll.scrollTo(0)
+    }
   }
-
 
   LaunchedEffect(state.isSuccess) {
     if (state.isSuccess) {
@@ -122,7 +126,7 @@ fun RegistrasiScreen(
   }
   LaunchedEffect(state.error != null) {
     if (state.error != null) {
-      delay(4000)
+      delay(3000)
       viewModel.onEvent(RegisterEvent.ClearError)
     }
   }
@@ -333,12 +337,12 @@ private fun BottomSection(
         verticalArrangement = Arrangement.spacedBy(24.dp)
       ) {
         // TODO: FOR DEBUGGING, SOON TO BE REMOVED
-        PrimaryButton(
-          text = "Kirim",
-          onClick = {
-            onEvent(RegisterEvent.Submit)
-          }
-        )
+//        PrimaryButton(
+//          text = "Kirim",
+//          onClick = {
+//            onEvent(RegisterEvent.Submit)
+//          }
+//        )
         when (targetScreen) {
           0 -> FirstScreen(
             selectedDate = state.selectedDate,
@@ -454,7 +458,6 @@ private fun FirstScreen(
 
   ) {
 
-  var isFocusedNamaLembaga by remember { mutableStateOf(false) }
 
   CustomOutlinedTextField(
     label = "Nama Lembaga",
@@ -465,41 +468,30 @@ private fun FirstScreen(
     },
     placeholder = "Masukkan nama lembaga",
     modifier = Modifier.fillMaxWidth(),
-    isFocused = isFocusedNamaLembaga,
-    onFocusChange = { isFocusedNamaLembaga = it },
     labelDefaultColor = ColorPalette.Monochrome400,
     labelFocusedColor = ColorPalette.PrimaryColor700,
-    borderFocusedColor = ColorPalette.PrimaryColor700,
-    rounded = 40
-  )
-
-  CustomOutlinedTextFieldDropdownDate(
-    label = "Tanggal Berdiri",
-    value = selectedDate,
-    placeholder = "DD/MM/YYYY",
-    modifier = Modifier.fillMaxWidth(),
-    labelDefaultColor = ColorPalette.Monochrome400,
-    datePickerState = datePickerState,
-    error = state.selectedDateError,
-    expanded = expandedDate,
-    onChangeExpanded = {
-      onExpandedDateChange(it)
-    },
+    borderColor = ColorPalette.Outline,
+    rounded = 40,
   )
   CustomOutlinedTextField(
     label = "Email Formal Lembaga",
     value = state.emailLembaga,
+    asteriskAtEnd = true,
     onValueChange = {
       onEvent(RegisterEvent.EmailLembagaChanged(it))
     },
+    labelDefaultStyle = StyledText.MobileSmallRegular,
+
     error = state.emailLembagaError,
     placeholder = "contoh@bcf.or.id",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
     rounded = 40
   )
+
   CustomOutlinedTextField(
-    label = "Masukkan alamat lengkap lembaga",
+    label = "Alamat Lengkap Lembaga",
+    asteriskAtEnd = true,
     value = state.alamatLembaga,
     onValueChange = {
       onEvent(RegisterEvent.AlamatLembagaChanged(it))
@@ -508,12 +500,17 @@ private fun FirstScreen(
     placeholder = "contoh@bcf.or.id",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
-    rounded = 40
+    rounded = 40,
 
-  )
+
+    )
+
+
+
   CustomOutlinedTextFieldDropdown(
     label = "Provinsi",
     value = state.provinsi,
+    asteriskAtEnd = true,
     onValueChange = {
       onEvent(RegisterEvent.ProvinsiChanged(it))
     },
@@ -534,6 +531,8 @@ private fun FirstScreen(
     onValueChange = {
       onEvent(RegisterEvent.KotaChanged(it))
     },
+    asteriskAtEnd = true,
+
     placeholder = "Pilih kota/kabupaten",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -544,9 +543,24 @@ private fun FirstScreen(
     },
     error = state.kotaError
   )
+  CustomOutlinedTextFieldDropdownDate(
+    label = "Tanggal Berdiri",
+    value = selectedDate,
+    placeholder = "DD/MM/YYYY",
+    modifier = Modifier.fillMaxWidth(),
+    labelDefaultColor = ColorPalette.Monochrome400,
+    datePickerState = datePickerState,
+    asteriskAtEnd = true,
+    error = state.selectedDateError,
+    expanded = expandedDate,
+    onChangeExpanded = {
+      onExpandedDateChange(it)
+    },
+  )
   CustomOutlinedTextFieldDropdown(
     label = "Jenis Lembaga Sosial",
     value = state.jenisLembagaSosial,
+    asteriskAtEnd = true,
     onValueChange = {
       onEvent(RegisterEvent.JenisLembagaSosialChanged(it))
     },
@@ -573,6 +587,7 @@ private fun FirstScreen(
     onChangeExpanded = {
       onExpandedClusterLembagaSosialChange(it)
     },
+    asteriskAtEnd = true,
     dropdownItems = jenisClusterLembagaSosials,
     error = state.jenisClusterLembagaSosialError
   )
@@ -587,6 +602,8 @@ private fun FirstScreen(
     labelDefaultColor = ColorPalette.Monochrome400,
     dropdownItems = fokusIsus,
     expanded = expandedFokusIsu,
+    asteriskAtEnd = true,
+
     onChangeExpanded = {
       onExpandedFokusIsuChange(it)
     },
@@ -598,12 +615,17 @@ private fun FirstScreen(
     onValueChange = {
       onEvent(RegisterEvent.ProfilLembagaChanged(it))
     },
+    asteriskAtEnd = true,
     error = state.profilLembagaError,
-    placeholder = "Masukkan profil singkat lembaga",
-    modifier = Modifier.fillMaxWidth(),
+    placeholder = "Berisi uraian penjelasan mengenai kritik dan saran dari peserta untuk agenda sesi mentoring selanjutnya",
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(148.dp),
+    multiLine = true,
+    maxLines = 5,
     labelDefaultColor = ColorPalette.Monochrome400,
-
-    rounded = 40,
+    rounded = 20,
+    borderColor = ColorPalette.Outline,
 
     )
   CustomOutlinedTextField(
@@ -612,16 +634,25 @@ private fun FirstScreen(
     onValueChange = {
       onEvent(RegisterEvent.AlasanKeikutsertaanChanged(it))
     },
+    asteriskAtEnd = true,
     error = state.alasanKeikutsertaanError,
-    placeholder = "Masukkan alasan anda mengikuti LEAD Indonesia 2023",
-    modifier = Modifier.fillMaxWidth(),
+    placeholder = "Berisi uraian penjelasan mengenai kritik dan saran dari peserta untuk agenda sesi mentoring selanjutnya",
+    modifier = Modifier
+      .fillMaxWidth()
+      .height(148.dp),
+    multiLine = true,
+    maxLines = 5,
+
     labelDefaultColor = ColorPalette.Monochrome400,
-    rounded = 40,
+    rounded = 20,
+    borderColor = ColorPalette.Outline,
 
     )
   FileUploadSection(
     title = "Dokumentasi sesi mentoring cluster",
-    buttonText = "Klik untuk unggah file dokumentasi",
+    asteriskAtEnd = true,
+
+    buttonText = "Klik untuk unggah file",
     onFileSelect = { filePickerLauncher.launch(arrayOf("image/*", "application/pdf")) },
     selectedFileUri = state.selectedFileUriDokumentasiSesiMentoringCluster,
     deleteFile = deleteFile,
@@ -667,6 +698,7 @@ private fun SecondScreen(
       onChangeExpanded = {
         onExpandedJangkauanProgramChange(it)
       },
+      asteriskAtEnd = true,
       error = state.jangkauanProgramError
     )
     CustomOutlinedTextFieldDropdown(
@@ -683,14 +715,19 @@ private fun SecondScreen(
       onChangeExpanded = {
         onExpandedWilayahJangkauanProgramChange(it)
       },
+      asteriskAtEnd = true,
+
       error = state.wilayahJangkauanProgramError
     )
+
     Column(
       verticalArrangement = Arrangement.spacedBy(12.dp),
       modifier = Modifier.animateContentSize()
     ) {
       Text(
-        text = "Jumlah Angka Penerimaan Manfaat*",
+        text = TextWithAsterisk(
+          label = "Jumlah Angka Penerimaan Manfaat",
+        ),
         style = StyledText.MobileSmallMedium,
         color = ColorPalette.PrimaryColor700
       )
@@ -699,7 +736,7 @@ private fun SecondScreen(
         var expandedPilihKota by remember { mutableStateOf(false) }
 
         CustomRowWithFields(
-          dropdownLabel = "Pilih Kota/Kabupaten",
+          dropdownLabel = "Pilih Kota",
           dropdownValue = field.kota,
           onDropdownValueChange = { newValue ->
             onEvent(
@@ -709,6 +746,7 @@ private fun SecondScreen(
               )
             )
           },
+          labelFocusedColor = ColorPalette.Monochrome800,
           dropdownPlaceholder = "",
           dropdownItems = kotas,
           expanded = expandedPilihKota,
@@ -762,10 +800,13 @@ private fun SecondScreen(
       onValueChange = {
         onEvent(RegisterEvent.TargetUtamaProgramChanged(it))
       },
+      asteriskAtEnd = true,
       error = state.targetUtamaProgramError,
       placeholder = "Ketik target utama program",
       modifier = Modifier.fillMaxWidth(),
       labelDefaultColor = ColorPalette.Monochrome400,
+      labelFocusedColor = ColorPalette.PrimaryColor700,
+      borderColor = ColorPalette.Outline,
       rounded = 40
     )
 
@@ -775,7 +816,8 @@ private fun SecondScreen(
       onFileSelect = { filePickerLauncher.launch(arrayOf("image/*", "application/pdf")) },
       selectedFileUri = state.selectedFileUriProposalProgram,
       deleteFile = deleteFile,
-      error = state.selectedFileUriProposalProgramError
+      error = state.selectedFileUriProposalProgramError,
+      asteriskAtEnd = true
     )
 
 
@@ -811,6 +853,9 @@ private fun ThirdScreen(
     labelDefaultColor = ColorPalette.Monochrome400,
     error = state.namaLengkapPesertaError,
     rounded = 40,
+    asteriskAtEnd = true,
+    labelFocusedColor = ColorPalette.PrimaryColor700,
+    borderColor = ColorPalette.Outline,
     onValueChange = {
       onEvent(RegisterEvent.NamaLengkapPesertaChanged(it))
     }
@@ -821,7 +866,9 @@ private fun ThirdScreen(
     onValueChange = {
       onEvent(RegisterEvent.PosisiPesertaChanged(it))
     },
-
+    asteriskAtEnd = true,
+    labelFocusedColor = ColorPalette.PrimaryColor700,
+    borderColor = ColorPalette.Outline,
     error = state.posisiPesertaError,
     placeholder = "Masukkan posisi",
     modifier = Modifier.fillMaxWidth(),
@@ -835,6 +882,8 @@ private fun ThirdScreen(
     onValueChange = {
       onEvent(RegisterEvent.PendidikanTerakhirChanged(it))
     },
+    asteriskAtEnd = true,
+    labelFocusedColor = ColorPalette.PrimaryColor700,
     placeholder = "Pilih Pendidikan Terakhir",
     modifier = Modifier.fillMaxWidth(),
     labelDefaultColor = ColorPalette.Monochrome400,
@@ -852,6 +901,8 @@ private fun ThirdScreen(
     onValueChange = {
       onEvent(RegisterEvent.JurusanPendidikanTerakhirChanged(it))
     },
+    asteriskAtEnd = true,
+    labelFocusedColor = ColorPalette.PrimaryColor700,
 
     error = state.jurusanPendidikanTerakhirError,
     placeholder = "Ketik jurusan pendidikan terakhir anda",
@@ -871,6 +922,9 @@ private fun ThirdScreen(
     labelDefaultColor = ColorPalette.Monochrome400,
     dropdownItems = jenisKelamins,
     expanded = expandedJenisKelamin,
+    asteriskAtEnd = true,
+    labelFocusedColor = ColorPalette.PrimaryColor700,
+    borderColor = ColorPalette.Outline,
     onChangeExpanded = {
       onExpandedJenisKelaminChange(it)
     },
@@ -885,8 +939,11 @@ private fun ThirdScreen(
     error = state.nomorWhatsappPesertaError,
     placeholder = "Contoh: 08980861214",
     modifier = Modifier.fillMaxWidth(),
+    asteriskAtEnd = true,
+    labelFocusedColor = ColorPalette.PrimaryColor700,
     labelDefaultColor = ColorPalette.Monochrome400,
     rounded = 40,
+    borderColor = ColorPalette.Outline,
   )
 
   CustomOutlinedTextField(
@@ -895,7 +952,9 @@ private fun ThirdScreen(
     onValueChange = {
       onEvent(RegisterEvent.EmailPesertaChanged(it))
     },
-
+    asteriskAtEnd = true,
+    labelFocusedColor = ColorPalette.PrimaryColor700,
+    borderColor = ColorPalette.Outline,
     error = state.emailPesertaError,
     placeholder = "Contoh: @gmail.com",
     modifier = Modifier.fillMaxWidth(),
@@ -908,6 +967,8 @@ private fun ThirdScreen(
     onFileSelect = { filePickerLauncherKTP.launch(arrayOf("image/*", "application/pdf")) },
     selectedFileUri = selectedFileUriKTP,
     deleteFile = deleteFileKTP,
+    asteriskAtEnd = true,
+
     error = state.selectedFileUriKTPError
   )
   FileUploadSection(
@@ -916,6 +977,7 @@ private fun ThirdScreen(
     onFileSelect = { filePickerLauncherCV.launch(arrayOf("image/*", "application/pdf")) },
     selectedFileUri = selectedFileUriCV,
     deleteFile = deleteFileCV,
+    asteriskAtEnd = true,
     error = state.selectedFileUriCVError
   )
 
@@ -926,7 +988,7 @@ private fun ThirdScreen(
       verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
       Text(
-        text = "Apakah ada pengurus lain yang akan diikutsertakan sebagai peserta?*",
+        text = TextWithAsterisk("Apakah ada pengurus lain yang akan diikutsertakan sebagai peserta?"),
         style = StyledText.MobileSmallMedium,
         color = ColorPalette.PrimaryColor700
       )
@@ -961,7 +1023,7 @@ private fun ThirdScreen(
   ) {
 
     Text(
-      text = "Apakah ada pengurus lain yang akan diikutsertakan sebagai peserta?*",
+      text = TextWithAsterisk("Apakah ada pengurus lain yang akan diikutsertakan sebagai peserta?"),
       style = StyledText.MobileSmallMedium,
       color = ColorPalette.PrimaryColor700
     )
@@ -1012,12 +1074,12 @@ private fun ThirdScreen(
     verticalArrangement = Arrangement.spacedBy(20.dp)
   ) {
     Text(
-      text = "Apakah ada pengurus lain yang akan diikutsertakan sebagai peserta?*",
+      text = TextWithAsterisk("Apakah ada pengurus lain yang akan diikutsertakan sebagai peserta?"),
       style = StyledText.MobileSmallMedium,
       color = ColorPalette.PrimaryColor700
     )
     CustomOutlinedTextField(
-      label = "Masukkan alasan anda tidak bersedia mengikuti agenda tersebut",
+      label = "Masukkan alasan anda bersedia mengikuti agenda tersebut",
       value = state.alasanTidakMengikutiAgenda,
       error = state.alasanTidakMengikutiAgendaError,
       onValueChange = {
@@ -1025,8 +1087,13 @@ private fun ThirdScreen(
       },
       placeholder = "Ketik alasan anda tidak bersedia mengikuti agenda tersebut",
       labelDefaultColor = ColorPalette.Monochrome400,
-      modifier = Modifier.fillMaxWidth(),
-      rounded = 40
+      modifier = Modifier
+        .fillMaxWidth()
+        .height(148.dp),
+      rounded = 20,
+      labelFocusedColor = ColorPalette.Monochrome800,
+      maxLines = 5,
+      multiLine = true,
     )
 
   }
@@ -1050,6 +1117,9 @@ fun RowRadioButton(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
       .fillMaxWidth()
+      .background(
+        if (selected) ColorPalette.PrimaryColor100 else Color.Transparent
+      )
       .clickable {
         onClick()
       }
@@ -1148,7 +1218,7 @@ fun FourthScreen(
   ) {
 
     Text(
-      text = "Apakah anda pernah mengikuti pelatihan atau memiliki pengetahuan terkait desain program sebelum mendaftar LEAD Indonesia 2024?*",
+      text = TextWithAsterisk("Apakah anda pernah mengikuti pelatihan atau memiliki pengetahuan terkait desain program sebelum mendaftar LEAD Indonesia 2024?"),
       style = StyledText.MobileSmallMedium,
       color = ColorPalette.PrimaryColor700
     )
@@ -1174,7 +1244,7 @@ fun FourthScreen(
     verticalArrangement = Arrangement.spacedBy(20.dp)
   ) {
     Text(
-      text = "Darimana anda mengetahui LEAD Indonesia?*",
+      text = "Darimana anda mengetahui LEAD Indonesia?",
       style = StyledText.MobileSmallMedium,
       color = ColorPalette.PrimaryColor700
     )
@@ -1200,26 +1270,33 @@ fun FourthScreen(
 
   }
   Column(
-    verticalArrangement = Arrangement.spacedBy(12.dp)
+    verticalArrangement = Arrangement.spacedBy(20.dp)
   ) {
 
     Text(
-      text = "Apa yang anda ketahui terkait desain program?",
+      text = TextWithAsterisk("Apa yang anda ketahui terkait desain program?"),
       style = StyledText.MobileSmallMedium,
       color = ColorPalette.PrimaryColor700
     )
 
     CustomOutlinedTextField(
       label = "Jelaskan pengetahuan mu terkait Desain Program",
+
       value = state.pengetahuanDesainProgram,
       onValueChange = {
         onEvent(RegisterEvent.PengetahuanDesainProgramChanged(it))
       },
+      multiLine = true,
+      maxLines = 5,
       error = state.pengetahuanDesainProgramError,
       placeholder = "Ketik pengetahuanmu terkait Desain Program",
-      modifier = Modifier.fillMaxWidth(),
-      rounded = 40
-    )
+      modifier = Modifier
+        .fillMaxWidth()
+        .height(148.dp),
+      rounded = 20,
+      borderColor = ColorPalette.Outline,
+
+      )
   }
   ColumnTextField(
     label = "Apakah yang anda ketahui terkait sustainability atau keberlanjutan?",
@@ -1229,7 +1306,6 @@ fun FourthScreen(
 
       onEvent(RegisterEvent.PengetahuanSustainabilityChanged(it))
     },
-    placeholder = "Ketik pengetahuanmu terkait sustainability atau keberlanjutan",
     modifier = Modifier.fillMaxWidth(),
     error = state.pengetahuanSustainabilityError
 
@@ -1241,8 +1317,9 @@ fun FourthScreen(
     onValueChange = {
       onEvent(RegisterEvent.PengetahuanSocialReportChanged(it))
     },
-    placeholder = "Ketik pengetahuanmu terkait social report atau laporan social",
-    modifier = Modifier.fillMaxWidth(),
+    modifier = Modifier
+      .fillMaxWidth(),
+
     error = state.pengetahuanSocialReportError
   )
   FileUploadSection(
@@ -1251,7 +1328,8 @@ fun FourthScreen(
     onFileSelect = { filePickerLauncher.launch(arrayOf("image/*", "application/pdf")) },
     selectedFileUri = selectedFileUri,
     deleteFile = deleteFile,
-    error = state.selectedFileUriLaporanAkhirTahunError
+    error = state.selectedFileUriLaporanAkhirTahunError,
+    asteriskAtEnd = true
   )
   ColumnTextField(
     label = "Jelaskan ekspetasi anda setelah mengikuti kegiatan LEAD Indonesia 2023?",
@@ -1260,7 +1338,6 @@ fun FourthScreen(
     onValueChange = {
       onEvent(RegisterEvent.EkspetasiSetelahLEADChanged(it))
     },
-    placeholder = "Ketik ekspetasi anda setelah mengikuti kegiatan LEAD Indonesia 2023",
     modifier = Modifier.fillMaxWidth(),
     error = state.ekspetasiSetelahLEADError
   )
@@ -1271,8 +1348,8 @@ fun FourthScreen(
     onValueChange = {
       onEvent(RegisterEvent.HalLainYangInginDisampaikanChanged(it))
     },
-    placeholder = "Ketik hal lain yang ingin anda tanyakan atau sampaikan terkait LEAD Indonesia 2023",
     modifier = Modifier.fillMaxWidth(),
+
     error = state.halLainYangInginDisampaikanError
   )
 
@@ -1373,16 +1450,30 @@ fun FifthScreen(
       value = state.targetUtamaProgram,
       error = state.targetUtamaProgramError
     )
-    Text(
-      text = "Wilayah Jangkauan Program",
-      style = StyledText.MobileSmallSemibold,
-      color = ColorPalette.Monochrome800
-    )
-    Table(
-      headers = headerTable,
-      columnWeights = columnWeights,
-      rows = rowsJangkauanProgram
-    )
+
+
+
+    when (state.jumlahAngkaPenerimaanManfaat.isEmpty() || state.jumlahAngkaPenerimaanManfaat.all { it.kota.isEmpty() }) {
+      true  -> {
+        ColumnKeyValue(
+          key = "Jumlah Angka Penerimaan Manfaat",
+          value = "",
+        )
+      }
+
+      false -> {
+        Text(
+          text = "Wilayah Jangkauan Program",
+          style = StyledText.MobileSmallSemibold,
+          color = ColorPalette.Monochrome800
+        )
+        Table(
+          headers = headerTable,
+          columnWeights = columnWeights,
+          rows = rowsJangkauanProgram
+        )
+      }
+    }
     HorizontalDivider(
       modifier = Modifier.fillMaxWidth()
     )
@@ -1570,13 +1661,14 @@ private fun ColumnKeyValue(
   error : String? = null
 ) {
   Column(
-    verticalArrangement = Arrangement.spacedBy(8.dp)
+    verticalArrangement = Arrangement.spacedBy(4.dp)
   ) {
     Text(
       text = key,
       style = StyledText.MobileSmallSemibold,
       color = ColorPalette.Monochrome800
     )
+
     AnimatedVisibility(visible = error != null) {
       error?.let {
         ErrorMessageTextField(
@@ -1585,14 +1677,21 @@ private fun ColumnKeyValue(
         )
       }
     }
+    if (value.isNotEmpty()) {
+      Text(
+        text = value,
+        style = StyledText.MobileSmallRegular,
+        color = ColorPalette.Monochrome800
+      )
+    } else {
+      Text(
+        text = "Belum diisi",
+        style = StyledText.MobileSmallRegular,
+        color = ColorPalette.Monochrome400
+      )
+    }
   }
-  if (value.isNotEmpty()) {
-    Text(
-      text = value,
-      style = StyledText.MobileSmallRegular,
-      color = ColorPalette.Monochrome800
-    )
-  }
+
 }
 
 
@@ -1661,16 +1760,15 @@ private fun ColumnTextField(
   value : String,
   text : String,
   onValueChange : (String) -> Unit,
-  placeholder : String,
   modifier : Modifier = Modifier,
   error : String? = null
 ) {
   Column(
-    verticalArrangement = Arrangement.spacedBy(12.dp),
+    verticalArrangement = Arrangement.spacedBy(20.dp),
     modifier = modifier
   ) {
     Text(
-      text = text,
+      text = TextWithAsterisk(text),
       style = StyledText.MobileSmallMedium,
       color = ColorPalette.PrimaryColor700
     )
@@ -1678,15 +1776,21 @@ private fun ColumnTextField(
       label = label,
       value = value,
       onValueChange = onValueChange,
-      placeholder = placeholder,
-      modifier = Modifier.fillMaxWidth(),
+      modifier = Modifier
+
+        .fillMaxWidth()
+
+        .height(148.dp),
       labelDefaultColor = ColorPalette.Monochrome400,
-      rounded = 40,
+      labelFocusedColor = ColorPalette.Monochrome800,
+      rounded = 20,
+      maxLines = 5,
+      multiLine = true,
+      borderColor = ColorPalette.Outline,
       error = error
     )
   }
 }
-
 
 @Composable
 private fun CustomRowWithFields(
@@ -1699,33 +1803,43 @@ private fun CustomRowWithFields(
   onExpandedChange : (Boolean) -> Unit,
   jumlahValue : String,
   onJumlahValueChange : (String) -> Unit,
-  modifier : Modifier = Modifier
+  modifier : Modifier = Modifier,
+  labelFocusedColor : Color = ColorPalette.PrimaryColor700
 ) {
   Row(
     horizontalArrangement = Arrangement.spacedBy(16.dp),
     modifier = modifier.fillMaxWidth(),
-    verticalAlignment = Alignment.Top
   ) {
-    CustomOutlinedTextFieldDropdown(
-      label = dropdownLabel,
-      value = dropdownValue,
-      onValueChange = onDropdownValueChange,
-      placeholder = dropdownPlaceholder,
-      modifier = Modifier.weight(0.7f),
-      labelDefaultColor = ColorPalette.Monochrome400,
-      dropdownItems = dropdownItems,
-      expanded = expanded,
-      onChangeExpanded = onExpandedChange
-    )
-    CustomOutlinedTextFieldJumlah(
-      value = jumlahValue,
-      onValueChange = onJumlahValueChange,
-      placeholder = "Jumlah",
-      modifier = Modifier.weight(0.3f)
-    )
+    Box(
+      modifier = Modifier.weight(0.7f)
+    ) {
+      CustomOutlinedTextFieldDropdown(
+        label = dropdownLabel,
+        value = dropdownValue,
+        onValueChange = onDropdownValueChange,
+        placeholder = dropdownPlaceholder,
+        labelFocusedColor = labelFocusedColor,
+        modifier = Modifier.fillMaxWidth(),
+        labelDefaultColor = ColorPalette.Monochrome400,
+        dropdownItems = dropdownItems,
+        expanded = expanded,
+        onChangeExpanded = onExpandedChange
+      )
+    }
+
+    Box(
+      modifier = Modifier.weight(0.3f),
+      contentAlignment = Alignment.TopStart
+    ) {
+      CustomOutlinedTextFieldJumlah(
+        value = jumlahValue,
+        onValueChange = onJumlahValueChange,
+        placeholder = "Jumlah",
+        modifier = Modifier.fillMaxWidth()
+      )
+    }
   }
 }
-
 
 @Composable
 private fun CustomOutlinedTextFieldJumlah(
@@ -1733,10 +1847,10 @@ private fun CustomOutlinedTextFieldJumlah(
   onValueChange : (String) -> Unit,
   placeholder : String,
   modifier : Modifier = Modifier,
-  size : Dp = 62.dp,
+  size : Dp = 64.dp,
   textStyle : TextStyle = StyledText.MobileSmallRegular,
-  borderColor : Color = ColorPalette.Monochrome400,
-  focusedBorderColor : Color = ColorPalette.PrimaryColor700
+  borderColor : Color = ColorPalette.Outline,
+  focusedBorderColor : Color = ColorPalette.Outline
 ) {
   OutlinedTextField(
     value = value,

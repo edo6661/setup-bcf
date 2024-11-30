@@ -12,18 +12,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.slicingbcf.constant.ColorPalette
@@ -33,10 +37,11 @@ import com.example.slicingbcf.ui.shared.message.ErrorMessageTextField
 @Composable
 fun CustomOutlinedTextField(
   modifier : Modifier = Modifier,
+  asteriskAtEnd : Boolean = false,
   value : String,
   onValueChange : (String) -> Unit,
   label : String? = "",
-  placeholder : String,
+  placeholder : String? = "",
   isPassword : Boolean = false,
   isPasswordVisible : MutableState<Boolean>? = null,
   leadingIcon : @Composable (() -> Unit)? = null,
@@ -46,26 +51,31 @@ fun CustomOutlinedTextField(
   multiLine : Boolean = false,
   maxLines : Int = 1,
   isEnabled : Boolean = true,
-  labelFocusedColor : Color = ColorPalette.Monochrome400,
-  labelFocusedStyle : TextStyle = StyledText.MobileSmallRegular,
+  labelFocusedColor : Color = ColorPalette.PrimaryColor700,
   labelDefaultStyle : TextStyle = StyledText.MobileSmallRegular,
   labelDefaultColor : Color = ColorPalette.Monochrome300,
   trailingIcon : @Composable (() -> Unit)? = null,
   readOnly : Boolean = false,
   borderColor : Color = ColorPalette.Outline,
   bgColor : Color = Color.White,
-  isFocused : Boolean? = null,
-  onFocusChange : (Boolean) -> Unit = {},
-  borderFocusedColor : Color = ColorPalette.Monochrome400
+  borderFocusedColor : Color = ColorPalette.Monochrome400,
 ) {
 
-  Column {
+  val focusRequester = remember { FocusRequester() }
+  var isFocused by remember { mutableStateOf(false) }
+
+  Column(
+    verticalArrangement = Arrangement.Top,
+    horizontalAlignment = Alignment.Start
+
+  ) {
     OutlinedTextField(
       value = value,
       onValueChange = onValueChange,
       modifier = modifier
+        .focusRequester(focusRequester)
         .onFocusChanged { focusState ->
-          onFocusChange(focusState.isFocused)
+          isFocused = focusState.isFocused
         },
       singleLine = ! multiLine,
       maxLines = if (multiLine) maxLines else 1,
@@ -81,29 +91,32 @@ fun CustomOutlinedTextField(
       keyboardOptions = getKeyboardOptions(isPassword, keyboardType),
       label = {
         if (label != null) {
-          TextLabel(
+          TextFieldSupport(
             label = label,
-            error = error,
-            isFocused = isFocused ?: false,
-            focusedColor = labelFocusedColor,
-            styleFocused = labelFocusedStyle,
+            asteriskAtEnd = asteriskAtEnd,
+            valueNotEmpty = value.isNotEmpty(),
             labelDefaultStyle = labelDefaultStyle,
-            defaultColor = labelDefaultColor,
-            valueNotEmpty = value.isNotEmpty()
+            labelDefaultColor = labelDefaultColor,
+            isFocused = isFocused,
+            labelFocusedColor = labelFocusedColor
 
           )
         }
       },
       placeholder = {
-        TextLabel(
-          label = placeholder,
-          error = error,
-          isFocused = isFocused ?: false,
-          styleFocused = labelFocusedStyle,
-          defaultColor = labelDefaultColor,
-          valueNotEmpty = value.isNotEmpty(),
-          labelDefaultStyle = labelDefaultStyle
-        )
+        if (placeholder != null) {
+          TextFieldSupport(
+            label = placeholder,
+            valueNotEmpty = value.isNotEmpty(),
+            labelDefaultStyle = labelDefaultStyle,
+            labelDefaultColor = labelDefaultColor,
+            isFocused = isFocused,
+            isPlaceholder = true,
+            labelFocusedColor = labelFocusedColor,
+
+
+            )
+        }
       },
       textStyle = StyledText.MobileSmallRegular,
       isError = error != null,
@@ -111,10 +124,13 @@ fun CustomOutlinedTextField(
         borderColor = borderColor,
         borderFocusedColor = borderFocusedColor,
         bgColor = bgColor,
+        labelFocusedColor = labelFocusedColor,
+        labelDefaultColor = labelDefaultColor
       ),
       enabled = isEnabled,
-      readOnly = readOnly
-    )
+      readOnly = readOnly,
+
+      )
 
     AnimatedVisibility(visible = error != null) {
       error?.let {
@@ -158,30 +174,46 @@ private fun getKeyboardOptions(
 }
 
 @Composable
-private fun TextLabel(
+private fun TextFieldSupport(
   label : String,
-  error : String?,
-  isFocused : Boolean,
-  focusedColor : Color = ColorPalette.Monochrome400,
-  styleFocused : TextStyle = StyledText.MobileSmallRegular,
-  defaultColor : Color = ColorPalette.Monochrome300,
+  asteriskAtEnd : Boolean = false,
   valueNotEmpty : Boolean,
-  labelDefaultStyle : TextStyle
+  labelDefaultStyle : TextStyle,
+  labelDefaultColor : Color,
+  labelFocusedColor : Color,
+  isFocused : Boolean = false,
+  isPlaceholder : Boolean = false
 ) {
-  val color = when {
-    error != null -> ColorPalette.Error
-    isFocused     -> focusedColor
-    else          -> defaultColor
+  val fontWeight = if (isPlaceholder) FontWeight.Medium else when {
+    valueNotEmpty -> FontWeight.Medium
+    isFocused     -> FontWeight.Medium
+    else          -> FontWeight.Normal
   }
-  val fontWeight = if (isFocused || valueNotEmpty) FontWeight.Medium else FontWeight.Normal
-  val style = if (isFocused) styleFocused else labelDefaultStyle
+
+  val color = if (isPlaceholder) labelDefaultColor else when {
+    valueNotEmpty -> labelFocusedColor
+    isFocused     -> labelFocusedColor
+    else          -> labelDefaultColor
+  }
+  val displayText = buildAnnotatedString {
+    append(label)
+    if (asteriskAtEnd && (isFocused || valueNotEmpty)) {
+      withStyle(SpanStyle(color = ColorPalette.Danger500)) {
+        append("*")
+      }
+    }
+  }
+
+
+
+
   Text(
-    text = label,
-    style = style,
-    color = color,
+    text = displayText,
+    style = labelDefaultStyle,
     modifier = Modifier.padding(
       horizontal = 4.dp,
     ),
+    color = color,
     fontWeight = fontWeight
 
   )
@@ -192,6 +224,8 @@ private fun getTextFieldColors(
   borderColor : Color,
   borderFocusedColor : Color,
   bgColor : Color,
+  labelFocusedColor : Color,
+  labelDefaultColor : Color
 ) : TextFieldColors {
 
   return OutlinedTextFieldDefaults.colors(
@@ -201,6 +235,8 @@ private fun getTextFieldColors(
     unfocusedContainerColor = bgColor,
     focusedContainerColor = bgColor,
     disabledContainerColor = bgColor,
+    focusedLabelColor = labelFocusedColor,
+    unfocusedLabelColor = labelDefaultColor,
     errorBorderColor = ColorPalette.Error,
     errorLabelColor = ColorPalette.Error,
     errorLeadingIconColor = ColorPalette.Error,

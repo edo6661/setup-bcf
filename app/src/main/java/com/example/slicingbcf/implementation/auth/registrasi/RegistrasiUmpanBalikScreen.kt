@@ -138,7 +138,7 @@ private fun ReactEmote(
   ) {
     Box(
       modifier = Modifier
-        .size(68.dp)
+        .size(52.dp)
         .background(
           color = color,
           shape = RoundedCornerShape(100)
@@ -149,7 +149,9 @@ private fun ReactEmote(
       Image(
         painter = painterResource(id = emote),
         contentDescription = "React Emote",
-        modifier = Modifier.size(38.dp)
+        modifier = Modifier.size(
+          32.dp
+        )
       )
     }
 

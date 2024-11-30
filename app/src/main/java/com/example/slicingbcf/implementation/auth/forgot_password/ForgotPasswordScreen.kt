@@ -140,10 +140,10 @@ fun BottomSection(
       value = email,
       onValueChange = { onChange(it) },
       label = "Email Peserta",
-      isFocused = isFocusedEmail,
-      onFocusChange = { isFocusedEmail = it },
+//      isFocused = isFocusedEmail,
+//      onFocusChange = { isFocusedEmail = it },
       labelDefaultColor = ColorPalette.OnSurfaceVariant,
-      labelFocusedStyle = StyledText.MobileSmallSemibold,
+//      labelFocusedStyle = StyledText.MobileSmallSemibold,
 
       placeholder = "contoh: @gmail.com",
       keyboardType = KeyboardType.Email,
