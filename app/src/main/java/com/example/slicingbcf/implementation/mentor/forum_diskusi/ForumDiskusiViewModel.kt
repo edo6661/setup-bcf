@@ -2,8 +2,8 @@ package com.example.slicingbcf.implementation.mentor.forum_diskusi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.slicingbcf.data.local.DataPusatInformasi
 import com.example.slicingbcf.di.IODispatcher
-import com.example.slicingbcf.ui.shared.pusat_informasi.DataPusatInformasi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay

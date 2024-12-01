@@ -1,9 +1,11 @@
 package com.example.slicingbcf.implementation.mentor.forum_diskusi
 
 import android.util.Log
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
@@ -12,7 +14,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -20,10 +21,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.slicingbcf.R
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
+import com.example.slicingbcf.data.local.DataPusatInformasi
 import com.example.slicingbcf.ui.animations.SubmitLoadingIndicatorDouble
 import com.example.slicingbcf.ui.scaffold.DiscussionScaffold
-import com.example.slicingbcf.ui.shared.pusat_informasi.DataPusatInformasi
-import com.example.slicingbcf.ui.shared.pusat_informasi.PusatInformasiContent
+import com.example.slicingbcf.ui.shared.pusat_informasi.PusatInformasiItem
 import com.example.slicingbcf.ui.shared.textfield.OutlineTextFieldComment
 import com.example.slicingbcf.ui.shared.textfield.SearchBarCustom
 import com.example.slicingbcf.util.parseDate
@@ -32,6 +33,7 @@ import com.example.slicingbcf.util.parseDate
 fun ForumDiskusiScreen(
   modifier : Modifier,
   onNavigateDetailForumDiskusi : (String) -> Unit,
+  onNavigateSearchForumDiskusi : () -> Unit,
   viewModel : ForumDiskusiViewModel = hiltViewModel()
 ) {
   val state by viewModel.state.collectAsState()
@@ -58,7 +60,8 @@ fun ForumDiskusiScreen(
       TopSection(
         addData = addData,
         pertanyaan = state.pertanyaan,
-        onChangePertanyaan = { viewModel.onEvent(ForumDiskusiEvent.PertanyaanChanged(it)) }
+        onChangePertanyaan = { viewModel.onEvent(ForumDiskusiEvent.PertanyaanChanged(it)) },
+        onNavigateSearchForumDiskusi = onNavigateSearchForumDiskusi
       )
       BottomSection(
         onNavigateDetailForumDiskusi = onNavigateDetailForumDiskusi,
@@ -99,7 +102,8 @@ private fun BottomSection(
 private fun TopSection(
   addData : (DataPusatInformasi) -> Unit,
   pertanyaan : String,
-  onChangePertanyaan : (String) -> Unit
+  onChangePertanyaan : (String) -> Unit,
+  onNavigateSearchForumDiskusi : () -> Unit
 ) {
   Column(
     modifier = Modifier
@@ -116,10 +120,15 @@ private fun TopSection(
       verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
       Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+          .fillMaxWidth()
+          .clickable {
+
+          },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-      ) {
+        verticalAlignment = Alignment.CenterVertically,
+
+        ) {
         SearchBarCustom(
           onSearch = { Log.d("search", it) },
           modifier = Modifier
@@ -128,6 +137,10 @@ private fun TopSection(
           color = ColorPalette.PrimaryColor700,
           textStyle = StyledText.MobileSmallMedium,
           title = "Cari Pertanyaan",
+          isEnable = false,
+          onClick = {
+            onNavigateSearchForumDiskusi()
+          }
         )
 
         SmallFloatingActionButton(
@@ -181,26 +194,3 @@ private fun TopSection(
   }
 }
 
-
-@Composable
-private fun PusatInformasiItem(
-  data : DataPusatInformasi,
-  onClick : () -> Unit,
-) {
-  Column(
-    modifier = Modifier
-      .clip(
-        shape = RoundedCornerShape(32.dp)
-      )
-      .clickable(onClick = onClick)
-      .background(ColorPalette.Monochrome100)
-      .padding(
-        horizontal = 16.dp,
-        vertical = 20.dp
-      )
-      .fillMaxWidth(),
-    verticalArrangement = Arrangement.spacedBy(32.dp)
-  ) {
-    PusatInformasiContent(data)
-  }
-}

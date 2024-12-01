@@ -30,7 +30,6 @@ import com.example.slicingbcf.data.local.model.Role
 import com.example.slicingbcf.data.local.model.User
 import com.example.slicingbcf.ui.navigation.Screen
 import com.example.slicingbcf.ui.navigation.navigateSingleTop
-import com.example.slicingbcf.ui.shared.PrimaryButton
 import com.example.slicingbcf.ui.shared.dialog.CustomAlertDialog
 
 @Composable
@@ -360,91 +359,91 @@ private fun SideNavDropdownItem(
 
 
 // TODO: GUEST
-
-@Composable
-private fun SideNavDropdownGuest(
-  navigateAndCloseSideNav : (String) -> Unit,
-  isActiveRoute : (String) -> Boolean
-) {
-  PrimaryButton(
-    text = "Masuk",
-    onClick = {
-      navigateAndCloseSideNav(Screen.Auth.Login.route)
-    }
-  )
-  SideNavDropdown(
-    "Beranda",
-    items = null,
-    isActiveRoute = isActiveRoute,
-    onClickDropdown = {
-      navigateAndCloseSideNav(Screen.Home.route)
-    }
-  )
-  SideNavDropdown(
-    "Pendaftaran",
-    items = dropdownItemsPendaftaran_Guest(
-      navigateAndCloseSideNav
-    ),
-    isActiveRoute = isActiveRoute
-  )
-
-  SideNavDropdown(
-    "Pusat Informasi",
-    items = null,
-    isActiveRoute = isActiveRoute,
-    onClickDropdown = {
-      navigateAndCloseSideNav(Screen.Mentor.Pengaturan.route)
-    }
-  )
-
-}
-
-
-// TODO: SEMUA ROLE BIAR ENAK BISA LIAT SEMUA
 //
 //@Composable
 //private fun SideNavDropdownGuest(
 //  navigateAndCloseSideNav : (String) -> Unit,
 //  isActiveRoute : (String) -> Boolean
 //) {
-//  SideNavDropdown(
-//    "Registrasi",
-//    items = dropdownItemsPendaftaran(
-//      navigateAndCloseSideNav
-//    ),
-//    isActiveRoute = isActiveRoute
+//  PrimaryButton(
+//    text = "Masuk",
+//    onClick = {
+//      navigateAndCloseSideNav(Screen.Auth.Login.route)
+//    }
 //  )
 //  SideNavDropdown(
-//    "Mentor",
-//    items = dropdownItemsMentor_Guest(
-//      navigateAndCloseSideNav
-//    ),
-//    isActiveRoute = isActiveRoute
+//    "Beranda",
+//    items = null,
+//    isActiveRoute = isActiveRoute,
+//    onClickDropdown = {
+//      navigateAndCloseSideNav(Screen.Home.route)
+//    }
 //  )
 //  SideNavDropdown(
-//    "Tugas",
-//    items = dropdownItemsTugas_Guest(
-//      navigateAndCloseSideNav
-//    ),
-//    isActiveRoute = isActiveRoute
-//  )
-//
-//  SideNavDropdown(
-//    "Peserta",
-//    items = dropdownItemsPeserta_Guest(
+//    "Pendaftaran",
+//    items = dropdownItemsPendaftaran_Guest(
 //      navigateAndCloseSideNav
 //    ),
 //    isActiveRoute = isActiveRoute
 //  )
 //
 //  SideNavDropdown(
-//    "Kegiatan",
-//    items = dropdownItemsKegiatan_Guest(
-//      navigateAndCloseSideNav
-//    ),
-//    isActiveRoute = isActiveRoute
+//    "Pusat Informasi",
+//    items = null,
+//    isActiveRoute = isActiveRoute,
+//    onClickDropdown = {
+//      navigateAndCloseSideNav(Screen.Mentor.Pengaturan.route)
+//    }
 //  )
+//
 //}
+
+
+// TODO: SEMUA ROLE BIAR ENAK BISA LIAT SEMUA
+
+@Composable
+private fun SideNavDropdownGuest(
+  navigateAndCloseSideNav : (String) -> Unit,
+  isActiveRoute : (String) -> Boolean
+) {
+  SideNavDropdown(
+    "Registrasi",
+    items = dropdownItemsPendaftaran(
+      navigateAndCloseSideNav
+    ),
+    isActiveRoute = isActiveRoute
+  )
+  SideNavDropdown(
+    "Mentor",
+    items = dropdownItemsMentor_Guest(
+      navigateAndCloseSideNav
+    ),
+    isActiveRoute = isActiveRoute
+  )
+  SideNavDropdown(
+    "Tugas",
+    items = dropdownItemsTugas_Guest(
+      navigateAndCloseSideNav
+    ),
+    isActiveRoute = isActiveRoute
+  )
+
+  SideNavDropdown(
+    "Peserta",
+    items = dropdownItemsPeserta_Guest(
+      navigateAndCloseSideNav
+    ),
+    isActiveRoute = isActiveRoute
+  )
+
+  SideNavDropdown(
+    "Kegiatan",
+    items = dropdownItemsKegiatan_Guest(
+      navigateAndCloseSideNav
+    ),
+    isActiveRoute = isActiveRoute
+  )
+}
 
 
 @Composable

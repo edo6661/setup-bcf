@@ -1,7 +1,7 @@
 package com.example.slicingbcf.implementation.mentor.forum_diskusi
 
-import com.example.slicingbcf.ui.shared.pusat_informasi.DataPusatInformasi
-import com.example.slicingbcf.ui.shared.pusat_informasi.mockDataPusatInformasi
+import com.example.slicingbcf.data.local.DataPusatInformasi
+import com.example.slicingbcf.data.local.mockDataPusatInformasi
 
 data class ForumDiskusiState(
   val pertanyaan : String = "",

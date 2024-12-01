@@ -10,89 +10,94 @@ data class ScaffoldConfig(
 fun scaffoldConfig(currentRoute : String?)
   : ScaffoldConfig {
   return when (currentRoute) {
-    Screen.Auth.Login.route          -> ScaffoldConfig(
+    Screen.Auth.Login.route                -> ScaffoldConfig(
       showMainNav = false,
     )
 
-    Screen.Auth.ForgotPassword.route -> ScaffoldConfig(
+    Screen.Auth.ForgotPassword.route       -> ScaffoldConfig(
       showMainNav = false,
     )
 
 
-    "pengumuman-peserta/{id}"        -> ScaffoldConfig(
-      showMainNav = false,
-      showBackNav = true,
-    )
-
-    "pengumuman-mentor/{id}"         -> ScaffoldConfig(
+    "pengumuman-peserta/{id}"              -> ScaffoldConfig(
       showMainNav = false,
       showBackNav = true,
     )
 
-    "worksheet-peserta/{id}"         -> {
+    "pengumuman-mentor/{id}"               -> ScaffoldConfig(
+      showMainNav = false,
+      showBackNav = true,
+    )
+
+    "worksheet-peserta/{id}"               -> {
       ScaffoldConfig(
         showMainNav = false,
         showBackNav = true,
       )
     }
 
-    "penilaian-peserta/{id}"         -> {
+    "penilaian-peserta/{id}"               -> {
       ScaffoldConfig(
         showMainNav = false,
         showBackNav = true,
       )
     }
 
-    "data-peserta-mentor/{id}"       -> {
+    "data-peserta-mentor/{id}"             -> {
       ScaffoldConfig(
         showMainNav = false,
         showBackNav = true,
       )
     }
 
-    "penilaian-peserta-mentor/{id}"  -> {
+    "penilaian-peserta-mentor/{id}"        -> {
       ScaffoldConfig(
         showMainNav = false,
         showBackNav = true,
       )
     }
 
-    "pitchdeck/{id}"                 -> {
+    "pitchdeck/{id}"                       -> {
       ScaffoldConfig(
         showMainNav = false,
         showBackNav = true,
       )
     }
 
-    "pitchdeck/{id}/more"            -> {
+    "pitchdeck/{id}/more"                  -> {
       ScaffoldConfig(
         showMainNav = false,
         showBackNav = true,
       )
     }
 
-    "pusat-informasi/{id}"           -> {
+    "pusat-informasi/{id}"                 -> {
       ScaffoldConfig(
         showMainNav = false,
         showBackNav = true,
       )
     }
 
-    "forum-diskusi/{id}"             -> {
+    "forum-diskusi/{id}"                   -> {
       ScaffoldConfig(
         showMainNav = false,
         showBackNav = true,
       )
     }
 
-    "form-monthly-report/{id}"       -> {
+    "form-monthly-report/{id}"             -> {
       ScaffoldConfig(
         showMainNav = false,
         showBackNav = true,
       )
     }
 
-    else                             -> ScaffoldConfig()
+    Screen.Mentor.SearchForumDiskusi.route -> ScaffoldConfig(
+      showMainNav = false,
+      showBackNav = true,
+    )
+
+    else                                   -> ScaffoldConfig()
 
   }
 }

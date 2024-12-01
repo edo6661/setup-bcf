@@ -8,6 +8,7 @@ import com.example.slicingbcf.implementation.mentor.data_peserta.DataPesertaMent
 import com.example.slicingbcf.implementation.mentor.feedback_peserta.FeedbackPesertaScreen
 import com.example.slicingbcf.implementation.mentor.forum_diskusi.DetailForumDiskusiScreen
 import com.example.slicingbcf.implementation.mentor.forum_diskusi.ForumDiskusiScreen
+import com.example.slicingbcf.implementation.mentor.forum_diskusi.SearchForumDiskusiScreen
 import com.example.slicingbcf.implementation.mentor.kelompok_mentoring_mentor.KelompokMentoringScreen
 import com.example.slicingbcf.implementation.mentor.pengaturan_mentor.PengaturanScreen
 import com.example.slicingbcf.implementation.mentor.pengumuman_mentor.DetailPengumumanMentorScreen
@@ -102,7 +103,24 @@ fun NavGraphBuilder.mentorNavGraph(
       val onNavigateDetailForumDiskusi = { id : String ->
         navController.navigateSingleTop("forum-diskusi/$id")
       }
+      val onNavigateSearchForumDiskusi = {
+        navController.navigateSingleTop(Screen.Mentor.SearchForumDiskusi.route)
+      }
       ForumDiskusiScreen(
+        modifier = modifier,
+        onNavigateDetailForumDiskusi = onNavigateDetailForumDiskusi,
+        onNavigateSearchForumDiskusi = onNavigateSearchForumDiskusi
+      )
+    }
+    composable(
+      route = Screen.Mentor.SearchForumDiskusi.route
+    ) {
+
+      val onNavigateDetailForumDiskusi = { id : String ->
+        navController.navigateSingleTop("forum-diskusi/$id")
+      }
+
+      SearchForumDiskusiScreen(
         modifier = modifier,
         onNavigateDetailForumDiskusi = onNavigateDetailForumDiskusi
       )

@@ -59,6 +59,7 @@ object ColorPalette {
   val PrimaryBorder = Color(0xFF333333) // #333333
   val PrimaryContainer = Color(0xFFEADDFF) // #EADDFF
   val BgStatusSuccess2 = Color(0xFFD4F8D3) // #D4F8D3
+  val SysOnPrimaryContainer = Color(0xFF4F378A) // #4F378A
 
   // keeping the original color from figma aswell
   val colors = mapOf(
@@ -109,6 +110,7 @@ object ColorPalette {
     "Bg Status Success2" to "#D4F8D3",
     "Primary Border" to "#333333",
     "Success 500" to "#198754",
-    "Primary Container" to "#EADDFF"
+    "Primary Container" to "#EADDFF",
+    "Sys On Primary Container" to "#4F378A"
   )
 }

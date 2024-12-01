@@ -15,6 +15,7 @@ import com.example.slicingbcf.implementation.peserta.pengumuman_peserta.Pengumum
 import com.example.slicingbcf.implementation.peserta.penilaian_peserta.PenilaianPesertaScreen
 import com.example.slicingbcf.implementation.peserta.pusat_informasi.DetailPusatInformasiScreen
 import com.example.slicingbcf.implementation.peserta.pusat_informasi.PusatInformasiScreen
+import com.example.slicingbcf.implementation.peserta.pusat_informasi.SearchPusatInformasiScreen
 import com.example.slicingbcf.implementation.peserta.worksheet_peserta.DetailWorksheetPesertaScreen
 import com.example.slicingbcf.implementation.peserta.worksheet_peserta.WorksheetPesertaScreen
 
@@ -103,7 +104,23 @@ fun NavGraphBuilder.pesertaNavGraph(
       val onNavigateDetailPusatInformasi = { id : String ->
         navController.navigateSingleTop("pusat-informasi/$id")
       }
+      val onNavigateSearchPusatInformasi = {
+        navController.navigateSingleTop(Screen.Peserta.SearchPusatInformasi.route)
+      }
       PusatInformasiScreen(
+        modifier = modifier,
+        onNavigateDetailPusatInformasi = onNavigateDetailPusatInformasi,
+        onNavigateSearchForumDiskusi = onNavigateSearchPusatInformasi
+
+      )
+    }
+    composable(
+      route = Screen.Peserta.SearchPusatInformasi.route,
+    ) {
+      val onNavigateDetailPusatInformasi = { id : String ->
+        navController.navigateSingleTop("pusat-informasi/$id")
+      }
+      SearchPusatInformasiScreen(
         modifier = modifier,
         onNavigateDetailPusatInformasi = onNavigateDetailPusatInformasi
       )

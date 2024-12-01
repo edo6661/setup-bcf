@@ -18,9 +18,9 @@ import androidx.compose.ui.unit.dp
 import com.example.slicingbcf.R
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
+import com.example.slicingbcf.data.local.DataPusatInformasi
 import com.example.slicingbcf.ui.shared.textfield.OutlineTextFieldComment
 import com.example.slicingbcf.util.formatDate
-import com.example.slicingbcf.util.parseDate
 
 
 @Composable
@@ -93,7 +93,7 @@ fun PusatInformasiContent(
               profilePicture = R.drawable.ic_launcher_background,
               username = "Guest",
               question = question,
-              timestamp = parseDate("1 days ago"),
+              timestamp = System.currentTimeMillis(),
             )
           )
         },
@@ -104,27 +104,3 @@ fun PusatInformasiContent(
     }
   }
 }
-
-data class DataPusatInformasi(
-  val username : String?,
-  val profilePicture : Int?,
-  val timestamp : Long,
-  val question : String,
-)
-
-
-val mockDataPusatInformasi = listOf(
-  DataPusatInformasi(
-    username = "John Doe",
-    profilePicture = null,
-    timestamp = parseDate("2 days ago"),
-    question = "Bagaimana cara membuat pitch deck yang menarik?"
-  ),
-  DataPusatInformasi(
-    username = "Jane Doe",
-    profilePicture = R.drawable.avatar,
-    timestamp = parseDate("3 days ago"),
-    question = "Apa saja yang harus dipersiapkan sebelum membuat pitch deck?"
-  ),
-)
-

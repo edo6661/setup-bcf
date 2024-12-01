@@ -23,6 +23,7 @@ fun NavGraph(
 //          animationSpec = tween(700)
 //        )
 //      }
+      
     ) {
       LandingPageScreen(
         modifier = modifier,

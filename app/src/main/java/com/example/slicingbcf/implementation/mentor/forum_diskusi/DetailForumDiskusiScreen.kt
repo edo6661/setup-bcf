@@ -17,10 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.slicingbcf.constant.ColorPalette
 import com.example.slicingbcf.constant.StyledText
+import com.example.slicingbcf.data.local.DataPusatInformasi
+import com.example.slicingbcf.data.local.mockDataPusatInformasi
 import com.example.slicingbcf.ui.scaffold.DiscussionScaffold
-import com.example.slicingbcf.ui.shared.pusat_informasi.DataPusatInformasi
 import com.example.slicingbcf.ui.shared.pusat_informasi.PusatInformasiContent
-import com.example.slicingbcf.ui.shared.pusat_informasi.mockDataPusatInformasi
 
 
 @Composable
